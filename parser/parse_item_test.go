@@ -29,6 +29,50 @@ func TestParser(t *testing.T) {
 			},
 		},
 		{
+			"Doc{prop:1}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop": &ast.Value{
+						PmlToken: tokenInteger("1"),
+					},
+				},
+			},
+		},
+		{
+			"Doc{prop:1.1}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop": &ast.Value{
+						PmlToken: tokenFloat("1.1"),
+					},
+				},
+			},
+		},
+		{
+			"Doc{prop:\"test\"}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop": &ast.Value{
+						PmlToken: tokenString("test"),
+					},
+				},
+			},
+		},
+		{
+			"Doc{prop:#123123}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop": &ast.Value{
+						PmlToken: tokenColor("123123"),
+					},
+				},
+			},
+		},
+		{
 			"Doc{prop1:prop2 prop3:prop4}",
 			&ast.Item{
 				TokenType: tokenIdentifier("Doc"),
@@ -66,6 +110,7 @@ func TestParserError(t *testing.T) {
 		{"a{a", errNextTokenIsNotTheExpectedOne},
 		{"a{a:b a:b}", errPropertyDefinedTwice},
 		{"a{a:b b:b :", errNextTokenIsNotTheExpectedOne},
+		{"a{a::}", errNotAValueType},
 	}
 
 	for _, tt := range tests {
@@ -82,6 +127,34 @@ func TestParserError(t *testing.T) {
 func tokenIdentifier(literal string) token.Token {
 	return token.Token{
 		Type:    token.IDENTIFIER,
+		Literal: literal,
+	}
+}
+
+func tokenInteger(literal string) token.Token {
+	return token.Token{
+		Type:    token.INTEGER,
+		Literal: literal,
+	}
+}
+
+func tokenFloat(literal string) token.Token {
+	return token.Token{
+		Type:    token.FLOAT,
+		Literal: literal,
+	}
+}
+
+func tokenString(literal string) token.Token {
+	return token.Token{
+		Type:    token.STRING,
+		Literal: literal,
+	}
+}
+
+func tokenColor(literal string) token.Token {
+	return token.Token{
+		Type:    token.COLOR,
 		Literal: literal,
 	}
 }

@@ -51,7 +51,28 @@ func (p *parser) parseProperty() (ast.Expression, error) {
 
 	p.goToNextToken()
 
-	return &ast.Value{
+	return p.parseValue()
+}
+
+func (p *parser) parseValue() (*ast.Value, error) {
+	v := &ast.Value{
 		PmlToken: p.current,
-	}, nil
+	}
+
+	switch p.current.Type {
+	case token.IDENTIFIER:
+		return v, nil
+	case token.INTEGER:
+		return v, nil
+	case token.FLOAT:
+		return v, nil
+	case token.STRING:
+		return v, nil
+	case token.COLOR:
+		return v, nil
+	}
+
+	fmt.Println(p.current.Type)
+
+	return nil, fmt.Errorf("%w : got %s", errNotAValueType, string(p.current.Type))
 }
