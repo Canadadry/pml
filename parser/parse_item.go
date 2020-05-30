@@ -1,14 +1,14 @@
 package parser
 
 import (
-	"errors"
+	"fmt"
 	"pml/ast"
 	"pml/token"
 )
 
 func (p *parser) parseItem() (*ast.Item, error) {
 	if !p.isCurrentTokenA(token.IDENTIFIER) {
-		return nil, errors.New("not an IDENTIFIER")
+		return nil, fmt.Errorf("%w : not an IDENTIFIER", errNextTokenIsNotTheExpectedOne)
 	}
 
 	item := &ast.Item{
