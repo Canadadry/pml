@@ -102,7 +102,7 @@ func isLetter(ch byte) bool {
 
 func (lexer *Lexer) readIdentifier() string {
 	start := lexer.current
-	for isLetter(lexer.ch) {
+	for isLetter(lexer.ch) || isNumeric(lexer.ch) {
 		lexer.readChar()
 	}
 	return lexer.source[start:lexer.current]

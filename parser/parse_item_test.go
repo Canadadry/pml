@@ -13,7 +13,35 @@ func TestParser(t *testing.T) {
 		program  string
 		expected *ast.Item
 	}{
-		{"Doc{}", &ast.Item{TokenType: tokenIdentifier("Doc")}},
+		{
+			"Doc{}",
+			&ast.Item{TokenType: tokenIdentifier("Doc")},
+		},
+		{
+			"Doc{prop:prop}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop": &ast.Value{
+						PmlToken: tokenIdentifier("prop"),
+					},
+				},
+			},
+		},
+		{
+			"Doc{prop1:prop2 prop3:prop4}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Properties: map[string]ast.Expression{
+					"prop1": &ast.Value{
+						PmlToken: tokenIdentifier("prop2"),
+					},
+					"prop3": &ast.Value{
+						PmlToken: tokenIdentifier("prop4"),
+					},
+				},
+			},
+		},
 	}
 
 	for i, tt := range tests {
@@ -36,6 +64,8 @@ func TestParserError(t *testing.T) {
 		{"{}", errNextTokenIsNotTheExpectedOne},
 		{"a}", errNextTokenIsNotTheExpectedOne},
 		{"a{a", errNextTokenIsNotTheExpectedOne},
+		{"a{a:b a:b}", errPropertyDefinedTwice},
+		{"a{a:b b:b :", errNextTokenIsNotTheExpectedOne},
 	}
 
 	for _, tt := range tests {

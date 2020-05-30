@@ -12,8 +12,8 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 	familly:"helevetica"
 	size:12
 	weight:3.3
-	color:#fafafaff
-	color:#fafafa
+	color1:#fafafaff
+	color2:#fafafa
 	fake:#fafaf
 	+
 	12a
@@ -34,12 +34,12 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: token.IDENTIFIER, Literal: "weight", Line: 5, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 5, Column: 8},
 		{Type: token.FLOAT, Literal: "3.3", Line: 5, Column: 9},
-		{Type: token.IDENTIFIER, Literal: "color", Line: 6, Column: 2},
-		{Type: token.DOTS, Literal: ":", Line: 6, Column: 7},
-		{Type: token.COLOR, Literal: "fafafaff", Line: 6, Column: 8},
-		{Type: token.IDENTIFIER, Literal: "color", Line: 7, Column: 2},
-		{Type: token.DOTS, Literal: ":", Line: 7, Column: 7},
-		{Type: token.COLOR, Literal: "fafafa", Line: 7, Column: 8},
+		{Type: token.IDENTIFIER, Literal: "color1", Line: 6, Column: 2},
+		{Type: token.DOTS, Literal: ":", Line: 6, Column: 8},
+		{Type: token.COLOR, Literal: "fafafaff", Line: 6, Column: 9},
+		{Type: token.IDENTIFIER, Literal: "color2", Line: 7, Column: 2},
+		{Type: token.DOTS, Literal: ":", Line: 7, Column: 8},
+		{Type: token.COLOR, Literal: "fafafa", Line: 7, Column: 9},
 		{Type: token.IDENTIFIER, Literal: "fake", Line: 8, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 8, Column: 6},
 		{Type: token.ILLEGAL, Literal: "fafaf", Line: 8, Column: 7},

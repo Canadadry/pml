@@ -1,6 +1,7 @@
 package parser
 
 import (
+	"fmt"
 	"pml/ast"
 	"pml/lexer"
 	"pml/token"
@@ -38,7 +39,7 @@ func (p *parser) isNextTokenA(t token.TokenType) bool {
 
 func (p *parser) goToNextTokenIfIsA(t token.TokenType) error {
 	if !p.isNextTokenA(t) {
-		return errNextTokenIsNotTheExpectedOne
+		return fmt.Errorf("%w got %s", errNextTokenIsNotTheExpectedOne, string(t))
 	}
 	p.goToNextToken()
 
