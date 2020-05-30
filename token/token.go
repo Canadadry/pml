@@ -10,17 +10,14 @@ type Token struct {
 }
 
 const (
-	ILLEGAL = "ILLEGAL"
-	EOF     = "EOF"
-
-	IDENTIFIER = "IDENTIFIER"
-	INTEGER    = "INTEGER"
-	FLOAT      = "FLOAT"
-	STRING     = "STRING"
-	COLOR      = "COLOR"
-
-	DOTS = "DOTS"
-
-	LEFT_BRACE  = "LEFT_BRACE"
-	RIGHT_BRACE = "RIGHT_BRACE"
+	ILLEGAL     TokenType = "ILLEGAL"
+	EOF                   = "EOF"
+	IDENTIFIER            = "IDENTIFIER"
+	INTEGER               = "INTEGER"
+	FLOAT                 = "FLOAT"
+	STRING                = "STRING"
+	COLOR                 = "COLOR"
+	DOTS                  = "DOTS"
+	LEFT_BRACE            = "LEFT_BRACE"
+	RIGHT_BRACE           = "RIGHT_BRACE"
 )
