@@ -21,6 +21,7 @@ Document{
 			width:100.0
 			height:100.0
 			color:#000000
+			align: {{ .align }}
 		}
 	}
 	Page{

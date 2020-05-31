@@ -86,6 +86,7 @@ var items = itemDefinitions{
 				"width":  token.FLOAT,
 				"height": token.FLOAT,
 				"color":  token.COLOR,
+				"align":  token.IDENTIFIER,
 			},
 		},
 		itemFont: itemDefinition{

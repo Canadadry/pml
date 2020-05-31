@@ -1,3 +1,6 @@
-{
-	"title":"hello world"
+{	
+	"title":"titre",
+	"x":"10.0",
+	"y":"10.0",
+	"bgcolor":"#ff0000"
 }

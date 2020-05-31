@@ -15,9 +15,25 @@ type textProperties struct {
 	width  *float64
 	height *float64
 	color  *color.RGBA
+	align  string
 }
 
 func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error) {
+
+	alignPossibleValue := map[string]string{
+		"TopLeft":        "TL",
+		"TopCenter":      "TC",
+		"TopRight":       "TR",
+		"MiddleLeft":     "LM",
+		"MiddleCenter":   "CM",
+		"MiddleRight":    "RM",
+		"BottomLeft":     "BL",
+		"BottomCenter":   "BC",
+		"BottomRight":    "BR",
+		"BaselineLeft":   "AL",
+		"BaselineCenter": "AC",
+		"BaselineRight":  "AR",
+	}
 
 	tp := &textProperties{}
 
@@ -62,6 +78,13 @@ func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error
 				return nil, err
 			}
 			tp.color = &value
+		case "align":
+			align := expression.Token().Literal
+			alignValue, ok := alignPossibleValue[align]
+			if !ok {
+				return nil, fmt.Errorf("%s is not a valid value for align property of text", align)
+			}
+			tp.align = alignValue
 		default:
 			return nil, fmt.Errorf("Cannot extract in textItem %s: %w", property, invalidTypeForProperty)
 
@@ -100,9 +123,13 @@ func (r *renderer) renderText(pdf *gofpdf.Fpdf, text *ast.Item) error {
 		properties.color = &defaultValue
 	}
 
+	if len(properties.align) != 2 {
+		properties.align = "TL"
+	}
+
 	pdf.SetTextColor(int(properties.color.R), int(properties.color.G), int(properties.color.B))
 	pdf.SetXY(*properties.x, *properties.y)
-	pdf.Cell(*properties.width, *properties.height, properties.text)
+	pdf.CellFormat(*properties.width, *properties.height, properties.text, "", 0, properties.align, false, 0, "")
 
 	for _, child := range text.Children {
 

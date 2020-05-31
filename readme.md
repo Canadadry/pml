@@ -129,6 +129,7 @@ Where `Item` is one of the following :
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
  - `text` : text to write
+ - `align` : how the text is render in his box. Possible values are : `TopLeft`, `TopCenter`, `TopRight`, `MiddleLeft`, `MiddleCenter`, `MiddleRight`, `BottomLeft`, `BottomCenter`, `BottomRight`, `BaselineLeft`, `BaselineCenter`, `BaselineRight`, 
 
 ## Next step 
 
