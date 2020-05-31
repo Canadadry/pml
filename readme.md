@@ -28,6 +28,7 @@ go run main.go -in my-spec.pml
  - `render` : render a file without templateing
  - `template` : no rendering done just template apply. resulting out is a pml file
  - `full` : default mode, apply template then rendre the output into a pdf file
+ - `api` : launch a web server allow to render every pml file in the `in` folder, for template pass parmater with a `POST` request
 
  Why is there so many mode ? Because it is usefull when developping this tool. I will remove them when stable 
 
