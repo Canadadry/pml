@@ -3,6 +3,13 @@ Document{
 		Rectangle{
 			x:0.0
 			y:0.0
+			width:210.0
+			height:297.0
+			color:#00aaff
+		}
+		Rectangle{
+			x:0.0
+			y:0.0
 			width:100.0
 			height:100.0
 			color:#ffaa00
