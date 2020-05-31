@@ -68,13 +68,24 @@ var items = itemDefinitions{
 			authorizedProperties: map[string]token.TokenType{},
 		},
 		itemRectangle: itemDefinition{
-			authorizedChildren:   []string{itemRectangle, itemText},
-			authorizedProperties: map[string]token.TokenType{},
-		},
-		itemText: itemDefinition{
 			authorizedChildren: []string{itemRectangle, itemText},
 			authorizedProperties: map[string]token.TokenType{
-				"text": token.STRING,
+				"x":      token.FLOAT,
+				"y":      token.FLOAT,
+				"width":  token.FLOAT,
+				"height": token.FLOAT,
+				"color":  token.COLOR,
+			},
+		},
+		itemText: itemDefinition{
+			authorizedChildren: []string{},
+			authorizedProperties: map[string]token.TokenType{
+				"text":   token.STRING,
+				"x":      token.FLOAT,
+				"y":      token.FLOAT,
+				"width":  token.FLOAT,
+				"height": token.FLOAT,
+				"color":  token.COLOR,
 			},
 		},
 		itemFont: itemDefinition{
