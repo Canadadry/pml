@@ -3,13 +3,14 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"io"
 	"pml/pkg/lexer"
 	"pml/pkg/parser"
 	"pml/pkg/renderer"
 	"pml/pkg/template"
 )
 
-func Full(input string, output string, param []byte) error {
+func Full(input string, output io.Writer, param []byte) error {
 
 	var dat interface{}
 	if err := json.Unmarshal(param, &dat); err != nil {

@@ -4,45 +4,86 @@ import (
 	"flag"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"pml/cmd"
 )
 
 func main() {
 
-	mode := flag.String("mode", "full", "mode : lexer|parser|renderer|template|full")
+	mode := flag.String("mode", "full", "mode : lexer|parser|renderer|template|full|api")
 	filename := flag.String("in", "", "entry pml filename")
 	paramfile := flag.String("param", "", "param for pml filename")
 	output := flag.String("out", "out.pdf", "pdf output for renderer mode")
 
 	flag.Parse()
 
-	if len(*filename) == 0 {
-		flag.PrintDefaults()
-		return
-	}
-
-	file, err := ioutil.ReadFile(*filename)
-	if err != nil {
-		fmt.Println("Cannot find file " + *filename)
-		return
-	}
-
 	switch *mode {
 	case "lexer":
+		if len(*filename) == 0 {
+			flag.PrintDefaults()
+			return
+		}
+
+		file, err := ioutil.ReadFile(*filename)
+		if err != nil {
+			fmt.Println("Cannot find file " + *filename)
+			return
+		}
+
 		cmd.Lexer(string(file))
 	case "parser":
-		err := cmd.Parser(string(file))
+		if len(*filename) == 0 {
+			flag.PrintDefaults()
+			return
+		}
+
+		file, err := ioutil.ReadFile(*filename)
+		if err != nil {
+			fmt.Println("Cannot find file " + *filename)
+			return
+		}
+
+		err = cmd.Parser(string(file))
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 	case "renderer":
-		err := cmd.Renderer(string(file), *output)
+		if len(*filename) == 0 {
+			flag.PrintDefaults()
+			return
+		}
+
+		file, err := ioutil.ReadFile(*filename)
+		if err != nil {
+			fmt.Println("Cannot find file " + *filename)
+			return
+		}
+
+		fOut, err := os.Create(*output)
+		if err != nil {
+			fmt.Println("Cannot create file " + *output)
+			return
+		}
+		defer fOut.Close()
+
+		err = cmd.Renderer(string(file), fOut)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
 	case "template":
+		if len(*filename) == 0 {
+			flag.PrintDefaults()
+			return
+		}
+
+		file, err := ioutil.ReadFile(*filename)
+		if err != nil {
+			fmt.Println("Cannot find file " + *filename)
+			return
+		}
+
 		if len(*paramfile) == 0 {
 			flag.PrintDefaults()
 			return
@@ -58,6 +99,16 @@ func main() {
 			return
 		}
 	case "full":
+		if len(*filename) == 0 {
+			flag.PrintDefaults()
+			return
+		}
+
+		file, err := ioutil.ReadFile(*filename)
+		if err != nil {
+			fmt.Println("Cannot find file " + *filename)
+			return
+		}
 		if len(*paramfile) == 0 {
 			flag.PrintDefaults()
 			return
@@ -67,7 +118,20 @@ func main() {
 			fmt.Println("Cannot find file " + *paramfile)
 			return
 		}
-		err = cmd.Full(string(file), *output, param)
+
+		fOut, err := os.Create(*output)
+		if err != nil {
+			fmt.Println("Cannot create file " + *output)
+			return
+		}
+		defer fOut.Close()
+		err = cmd.Full(string(file), fOut, param)
+		if err != nil {
+			fmt.Println(err)
+			return
+		}
+	case "api":
+		err := cmd.Api(*filename)
 		if err != nil {
 			fmt.Println(err)
 			return

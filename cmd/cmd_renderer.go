@@ -2,12 +2,13 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"pml/pkg/lexer"
 	"pml/pkg/parser"
 	"pml/pkg/renderer"
 )
 
-func Renderer(file string, output string) error {
+func Renderer(file string, output io.Writer) error {
 
 	l := lexer.New(string(file))
 	p := parser.New(l)

@@ -3,15 +3,16 @@ package renderer
 import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
+	"io"
 	"pml/pkg/ast"
 )
 
 type renderer struct {
-	output      string
+	output      io.Writer
 	definitions itemDefinitions
 }
 
-func New(output string) renderer {
+func New(output io.Writer) renderer {
 	return renderer{
 		output:      output,
 		definitions: items,
@@ -45,7 +46,7 @@ func (r *renderer) renderDocument(document *ast.Item) error {
 		}
 	}
 
-	return pdf.OutputFileAndClose(r.output)
+	return pdf.Output(r.output)
 }
 
 func (r *renderer) renderPage(pdf *gofpdf.Fpdf, page *ast.Item) error {
