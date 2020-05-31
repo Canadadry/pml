@@ -86,15 +86,15 @@ func TestParser(t *testing.T) {
 				},
 			},
 		},
-		// {
-		// 	"Doc{Page{}}",
-		// 	&ast.Item{
-		// 		TokenType: tokenIdentifier("Doc"),
-		// 		Children: []ast.Item{
-		// 			{TokenType: tokenIdentifier("Page")},
-		// 		},
-		// 	},
-		// },
+		{
+			"Doc{Page{}}",
+			&ast.Item{
+				TokenType: tokenIdentifier("Doc"),
+				Children: []ast.Item{
+					{TokenType: tokenIdentifier("Page")},
+				},
+			},
+		},
 	}
 
 	for i, tt := range tests {

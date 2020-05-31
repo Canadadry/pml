@@ -14,6 +14,7 @@ func (p *parser) parseItem() (*ast.Item, error) {
 	item := &ast.Item{
 		TokenType:  p.current,
 		Properties: map[string]ast.Expression{},
+		Children:   []ast.Item{},
 	}
 
 	err := p.goToNextTokenIfIsA(token.LEFT_BRACE)
@@ -28,6 +29,12 @@ func (p *parser) parseItem() (*ast.Item, error) {
 			if err := p.parsePropertyInItem(item); err != nil {
 				return nil, err
 			}
+		} else if p.isNextTokenA(token.LEFT_BRACE) {
+			child, err := p.parseItem()
+			if err != nil {
+				return nil, err
+			}
+			item.Children = append(item.Children, *child)
 		} else {
 			return nil, fmt.Errorf("In %s, token.IDENTIFIER %s is not a property : %w", item.TokenType.Literal, p.current.Literal, errInvalidIdentifier)
 		}
