@@ -11,14 +11,15 @@ It aim to depend only a basic interface, in which you can implement the way you 
 ## Usage
 
 ```
-go get ????
-go run main.go -file my-spec.pml
+git clone https://github.com/canadadry/pml
+cd pml
+go run main.go -in my-spec.pml
 ```
 
 
 ## Example 
 
-Here basic pdf document
+Here basic pml document
 
 ```pml
 Document{
@@ -42,7 +43,7 @@ Document{
 }
 ```
 
-Which produce the following  ![GitHub Logo](/example/helloworld.pdf)
+Which produce the following  ![GitHub Logo](/example/helloworld.png)
 
 more in [example folder](/example)
 
