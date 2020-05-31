@@ -120,6 +120,7 @@ func TestParserError(t *testing.T) {
 		{"a{a:b a:b}", errPropertyDefinedTwice},
 		{"a{a:b b:b :", errNextTokenIsNotTheExpectedOne},
 		{"a{a::}", errNotAValueType},
+		{"a{a{", errNextTokenIsNotTheExpectedOne},
 	}
 
 	for i, tt := range tests {
