@@ -86,6 +86,15 @@ func TestParser(t *testing.T) {
 				},
 			},
 		},
+		// {
+		// 	"Doc{Page{}}",
+		// 	&ast.Item{
+		// 		TokenType: tokenIdentifier("Doc"),
+		// 		Children: []ast.Item{
+		// 			{TokenType: tokenIdentifier("Page")},
+		// 		},
+		// 	},
+		// },
 	}
 
 	for i, tt := range tests {
@@ -94,7 +103,7 @@ func TestParser(t *testing.T) {
 
 		result, err := parser.Parse()
 		if err != nil {
-			t.Fatalf("%v", err)
+			t.Fatalf("[%d] Failed with error : %v", i, err)
 		}
 		testItem(t, i, result, tt.expected)
 	}
@@ -107,19 +116,19 @@ func TestParserError(t *testing.T) {
 	}{
 		{"{}", errNextTokenIsNotTheExpectedOne},
 		{"a}", errNextTokenIsNotTheExpectedOne},
-		{"a{a", errNextTokenIsNotTheExpectedOne},
+		{"a{a", errInvalidIdentifier},
 		{"a{a:b a:b}", errPropertyDefinedTwice},
 		{"a{a:b b:b :", errNextTokenIsNotTheExpectedOne},
 		{"a{a::}", errNotAValueType},
 	}
 
-	for _, tt := range tests {
+	for i, tt := range tests {
 		l := lexer.New(tt.program)
 		parser := New(l)
 
 		_, err := parser.Parse()
 		if !errors.Is(err, tt.expected) {
-			t.Fatalf("error was not the one expected got %s, exp %s", err, tt.expected)
+			t.Fatalf("[%d] error was not the one expected got %s, exp %s", i, err, tt.expected)
 		}
 	}
 }
@@ -143,6 +152,20 @@ func testItem(t *testing.T, index int, actual *ast.Item, expected *ast.Item) {
 
 	for k := range expected.Properties {
 		testProperty(t, index, k, actual, expected)
+	}
+
+	if len(actual.Children) != len(expected.Children) {
+		t.Fatalf(
+			"[%d] Wrong number of Children for item %s got %d expected %d",
+			index,
+			actual.TokenType.Literal,
+			len(actual.Children),
+			len(expected.Children),
+		)
+	}
+
+	for i := 0; i < len(expected.Children); i++ {
+		testItem(t, index, &actual.Children[i], &expected.Children[i])
 	}
 }
 

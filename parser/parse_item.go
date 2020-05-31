@@ -23,16 +23,14 @@ func (p *parser) parseItem() (*ast.Item, error) {
 
 	for p.isNextTokenA(token.IDENTIFIER) {
 		p.goToNextToken()
-		propertyName := p.current.Literal
-		value, err := p.parseProperty()
-		if err != nil {
-			return nil, fmt.Errorf("In %s, parsing property %s : %w", item.TokenType.Literal, propertyName, err)
+
+		if p.isNextTokenA(token.DOTS) {
+			if err := p.parsePropertyInItem(item); err != nil {
+				return nil, err
+			}
+		} else {
+			return nil, fmt.Errorf("In %s, token.IDENTIFIER %s is not a property : %w", item.TokenType.Literal, p.current.Literal, errInvalidIdentifier)
 		}
-		_, ok := item.Properties[propertyName]
-		if ok {
-			return nil, fmt.Errorf("In %s, property %s : %w", item.TokenType.Literal, propertyName, errPropertyDefinedTwice)
-		}
-		item.Properties[propertyName] = value
 	}
 
 	err = p.goToNextTokenIfIsA(token.RIGHT_BRACE)
@@ -43,15 +41,22 @@ func (p *parser) parseItem() (*ast.Item, error) {
 	return item, nil
 }
 
-func (p *parser) parseProperty() (ast.Expression, error) {
-	err := p.goToNextTokenIfIsA(token.DOTS)
-	if err != nil {
-		return nil, err
-	}
-
+func (p *parser) parsePropertyInItem(item *ast.Item) error {
+	propertyName := p.current.Literal
+	p.goToNextToken()
 	p.goToNextToken()
 
-	return p.parseValue()
+	_, ok := item.Properties[propertyName]
+	if ok {
+		return fmt.Errorf("In %s, property %s : %w", item.TokenType.Literal, propertyName, errPropertyDefinedTwice)
+	}
+	value, err := p.parseValue()
+	if err != nil {
+		return fmt.Errorf("In %s, property %s : %w", item.TokenType.Literal, propertyName, err)
+	}
+	item.Properties[propertyName] = value
+
+	return nil
 }
 
 func (p *parser) parseValue() (*ast.Value, error) {
@@ -71,8 +76,6 @@ func (p *parser) parseValue() (*ast.Value, error) {
 	case token.COLOR:
 		return v, nil
 	}
-
-	fmt.Println(p.current.Type)
 
 	return nil, fmt.Errorf("%w : got %s", errNotAValueType, string(p.current.Type))
 }

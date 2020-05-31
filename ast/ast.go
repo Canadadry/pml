@@ -7,7 +7,7 @@ import (
 type Item struct {
 	TokenType  token.Token
 	Properties map[string]Expression
-	Child      []Item
+	Children   []Item
 }
 
 type Expression interface {
