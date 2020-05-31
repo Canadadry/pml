@@ -5,6 +5,8 @@ import (
 )
 
 var (
-	rootMustBeDocumentItem      = errors.New("rootMustBeDocumentItem")
-	renderingItemNotImplemented = errors.New("renderingItemNotImplemented")
+	rootMustBeDocumentItem           = errors.New("rootMustBeDocumentItem")
+	renderingItemNotImplemented      = errors.New("renderingItemNotImplemented")
+	extractingPropertyNotImplemented = errors.New("renderingPropertyNotImplemented")
+	invalidTypeForProperty           = errors.New("invalidTypeForProperty")
 )

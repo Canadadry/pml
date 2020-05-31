@@ -42,7 +42,6 @@ func (r *renderer) renderDocument(document *ast.Item) error {
 			}
 		default:
 			return fmt.Errorf("Cannot render %s: %w", child.TokenType.Literal, renderingItemNotImplemented)
-
 		}
 	}
 
@@ -57,28 +56,6 @@ func (r *renderer) renderPage(pdf *gofpdf.Fpdf, page *ast.Item) error {
 	for _, child := range page.Children {
 
 		if err := r.definitions.validateChildType(itemPage, child.TokenType.Literal); err != nil {
-			return err
-		}
-		switch child.TokenType.Literal {
-		case itemText:
-			if err := r.renderText(pdf, &child); err != nil {
-				return err
-			}
-		default:
-			return fmt.Errorf("Cannot render %s: %w", child.TokenType.Literal, renderingItemNotImplemented)
-
-		}
-	}
-	return nil
-}
-
-func (r *renderer) renderText(pdf *gofpdf.Fpdf, text *ast.Item) error {
-
-	pdf.CellFormat(190, 7, "Welcome to golangcode.com", "0", 0, "CM", false, 0, "")
-
-	for _, child := range text.Children {
-
-		if err := r.definitions.validateChildType(itemText, child.TokenType.Literal); err != nil {
 			return err
 		}
 		switch child.TokenType.Literal {

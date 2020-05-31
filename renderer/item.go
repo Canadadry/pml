@@ -15,8 +15,9 @@ const (
 )
 
 var (
-	errItemNotFound       = errors.New("errItemNotFound")
-	errChildrenNotAllowed = errors.New("errChildrenNotAllowed")
+	errItemNotFound               = errors.New("errItemNotFound")
+	errChildrenNotAllowed         = errors.New("errChildrenNotAllowed")
+	errPropertyDefinitionNotFound = errors.New("errPropertyDefinitionNotFound")
 )
 
 type itemDefinition struct {
@@ -40,6 +41,20 @@ func (id itemDefinitions) validateChildType(itemName string, childType string) e
 		}
 	}
 	return fmt.Errorf("in %s : %w children %s", itemName, errChildrenNotAllowed, childType)
+}
+
+func (id itemDefinitions) getPropertyType(itemName string, propertyName string) (token.TokenType, error) {
+	item, ok := id.items[itemName]
+	if !ok {
+		return token.ILLEGAL, fmt.Errorf("%w searching %s", errItemNotFound, itemName)
+	}
+
+	pptType, ok := item.authorizedProperties[propertyName]
+	if !ok {
+		return token.ILLEGAL, fmt.Errorf("in %s : %w property %s", itemName, errPropertyDefinitionNotFound, propertyName)
+	}
+
+	return pptType, nil
 }
 
 var items = itemDefinitions{
