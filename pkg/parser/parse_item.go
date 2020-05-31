@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"pml/ast"
-	"pml/token"
+	"pml/pkg/ast"
+	"pml/pkg/token"
 )
 
 func (p *parser) parseItem() (*ast.Item, error) {

@@ -1,15 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"pml/lexer"
-	"pml/parser"
-	"pml/renderer"
-	"pml/template"
-	"pml/token"
+	"pml/cmd"
 )
 
 func main() {
@@ -32,33 +27,19 @@ func main() {
 		return
 	}
 
-	l := lexer.New(string(file))
-	p := parser.New(l)
-	r := renderer.New(*output)
-
 	switch *mode {
 	case "lexer":
-		tok := l.GetNextToken()
-		for tok.Type != token.EOF {
-			fmt.Println(tok)
-			tok = l.GetNextToken()
-		}
+		cmd.Lexer(string(file))
 	case "parser":
-		item, err := p.Parse()
+		err := cmd.Parser(string(file))
 		if err != nil {
-			fmt.Printf("parsing failed : %v", err)
+			fmt.Println(err)
 			return
 		}
-		fmt.Println(item)
 	case "renderer":
-		item, err := p.Parse()
+		err := cmd.Renderer(string(file), *output)
 		if err != nil {
-			fmt.Printf("parsing failed : %v", err)
-			return
-		}
-		err = r.Render(item)
-		if err != nil {
-			fmt.Printf("rendering failed : %v", err)
+			fmt.Println(err)
 			return
 		}
 	case "template":
@@ -66,56 +47,29 @@ func main() {
 			flag.PrintDefaults()
 			return
 		}
-
-		var dat interface{}
 		param, err := ioutil.ReadFile(*paramfile)
 		if err != nil {
 			fmt.Println("Cannot find file " + *paramfile)
 			return
 		}
-		if err := json.Unmarshal(param, &dat); err != nil {
-			fmt.Println("Cannot unmarshall json file " + *paramfile)
-			return
-		}
-		out, err := template.Apply(string(file), dat)
+		err = cmd.Template(string(file), param)
 		if err != nil {
-			fmt.Printf("failed to transform template : %v\n", err)
+			fmt.Println(err)
 			return
 		}
-		fmt.Println(out)
 	case "full":
 		if len(*paramfile) == 0 {
 			flag.PrintDefaults()
 			return
 		}
-
-		var dat interface{}
 		param, err := ioutil.ReadFile(*paramfile)
 		if err != nil {
 			fmt.Println("Cannot find file " + *paramfile)
 			return
 		}
-		if err := json.Unmarshal(param, &dat); err != nil {
-			fmt.Println("Cannot unmarshall json file " + *paramfile)
-			return
-		}
-		out, err := template.Apply(string(file), dat)
+		err = cmd.Full(string(file), *output, param)
 		if err != nil {
-			fmt.Printf("failed to transform template : %v\n", err)
-			return
-		}
-		l := lexer.New(out)
-		p := parser.New(l)
-		r := renderer.New(*output)
-
-		item, err := p.Parse()
-		if err != nil {
-			fmt.Printf("parsing failed : %v", err)
-			return
-		}
-		err = r.Render(item)
-		if err != nil {
-			fmt.Printf("rendering failed : %v", err)
+			fmt.Println(err)
 			return
 		}
 	default:

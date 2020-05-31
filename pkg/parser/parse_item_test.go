@@ -2,9 +2,9 @@ package parser
 
 import (
 	"errors"
-	"pml/ast"
-	"pml/lexer"
-	"pml/token"
+	"pml/pkg/ast"
+	"pml/pkg/lexer"
+	"pml/pkg/token"
 	"testing"
 )
 

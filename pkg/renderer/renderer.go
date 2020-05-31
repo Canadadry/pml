@@ -3,7 +3,7 @@ package renderer
 import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
-	"pml/ast"
+	"pml/pkg/ast"
 )
 
 type renderer struct {

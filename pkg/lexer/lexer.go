@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"pml/token"
+	"pml/pkg/token"
 )
 
 type Lexer struct {

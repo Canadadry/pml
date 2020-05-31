@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
 	"image/color"
-	"pml/ast"
+	"pml/pkg/ast"
 	"strconv"
 )
 
-type rectangleProperties struct {
+type textProperties struct {
+	text   string
 	x      *float64
 	y      *float64
 	width  *float64
@@ -16,12 +17,12 @@ type rectangleProperties struct {
 	color  *color.RGBA
 }
 
-func (r *renderer) extractRectangleProperties(rectangle *ast.Item) (*rectangleProperties, error) {
+func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error) {
 
-	rp := &rectangleProperties{}
+	tp := &textProperties{}
 
-	for property, expression := range rectangle.Properties {
-		pptType, err := r.definitions.getPropertyType(itemRectangle, property)
+	for property, expression := range text.Properties {
+		pptType, err := r.definitions.getPropertyType(itemText, property)
 		if err != nil {
 			return nil, err
 		}
@@ -29,47 +30,49 @@ func (r *renderer) extractRectangleProperties(rectangle *ast.Item) (*rectanglePr
 			return nil, fmt.Errorf("in textItem, %w property %s exp %s, got %s", invalidTypeForProperty, property, pptType, expression.Token().Type)
 		}
 		switch property {
+		case "text":
+			tp.text = expression.Token().Literal
 		case "x":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
 				return nil, err
 			}
-			rp.x = &value
+			tp.x = &value
 		case "y":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
 				return nil, err
 			}
-			rp.y = &value
+			tp.y = &value
 		case "width":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
 				return nil, err
 			}
-			rp.width = &value
+			tp.width = &value
 		case "height":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
 				return nil, err
 			}
-			rp.height = &value
+			tp.height = &value
 		case "color":
 			value, err := parseHexColor(expression.Token().Literal)
 			if err != nil {
 				return nil, err
 			}
-			rp.color = &value
+			tp.color = &value
 		default:
 			return nil, fmt.Errorf("Cannot extract in textItem %s: %w", property, invalidTypeForProperty)
 
 		}
 	}
-	return rp, nil
+	return tp, nil
 }
 
-func (r *renderer) renderRectangle(pdf *gofpdf.Fpdf, rectangle *ast.Item) error {
+func (r *renderer) renderText(pdf *gofpdf.Fpdf, text *ast.Item) error {
 
-	properties, err := r.extractRectangleProperties(rectangle)
+	properties, err := r.extractTextProperties(text)
 	if err != nil {
 		return err
 	}
@@ -97,10 +100,11 @@ func (r *renderer) renderRectangle(pdf *gofpdf.Fpdf, rectangle *ast.Item) error 
 		properties.color = &defaultValue
 	}
 
-	pdf.SetFillColor(int(properties.color.R), int(properties.color.G), int(properties.color.B))
-	pdf.Rect(*properties.x, *properties.y, *properties.width, *properties.height, "F")
+	pdf.SetTextColor(int(properties.color.R), int(properties.color.G), int(properties.color.B))
+	pdf.SetXY(*properties.x, *properties.y)
+	pdf.Cell(*properties.width, *properties.height, properties.text)
 
-	for _, child := range rectangle.Children {
+	for _, child := range text.Children {
 
 		if err := r.definitions.validateChildType(itemText, child.TokenType.Literal); err != nil {
 			return err

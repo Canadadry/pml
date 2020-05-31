@@ -3,7 +3,7 @@ package renderer
 import (
 	"errors"
 	"fmt"
-	"pml/token"
+	"pml/pkg/token"
 )
 
 const (

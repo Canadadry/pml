@@ -1,7 +1,7 @@
 package ast
 
 import (
-	"pml/token"
+	"pml/pkg/token"
 )
 
 type Item struct {
