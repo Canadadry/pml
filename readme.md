@@ -13,7 +13,17 @@ It aim to depend only a basic interface, in which you can implement the way you 
 ```
 git clone https://github.com/canadadry/pml
 cd pml
-go run main.go -in my-spec.pml
+go run main.go -in example/ -mode api &
+
+curl --request GET \
+  --url http://localhost:8080/template \
+  --header 'content-type: application/json' \
+  --data '{
+    "title":"titre",
+    "x":"10.0",
+    "y":"10.0",
+    "bgcolor":"#ff0000"
+}'
 ```
 
 ### CLI Options

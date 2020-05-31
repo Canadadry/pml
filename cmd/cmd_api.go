@@ -3,6 +3,7 @@ package cmd
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"net/http"
 )
 
@@ -11,7 +12,7 @@ func Api(pmlFolder string) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("starting server on " + pmlFolder)
+	log.Println("starting server on " + pmlFolder)
 	http.HandleFunc("/", HelloServer(pmlFolder, pmls))
 	return http.ListenAndServe(":8080", nil)
 }
@@ -23,18 +24,26 @@ func HelloServer(pmlFolder string, pmls []string) http.HandlerFunc {
 		if len(id) > 0 {
 			for _, pml := range pmls {
 				if pml == id {
-					fmt.Printf("rendering %s\n", pmlFolder+id+".pml")
+					log.Printf("rendering %s\n", pmlFolder+id+".pml")
 					file, err := ioutil.ReadFile(pmlFolder + id + ".pml")
 					if err != nil {
-						fmt.Println("Cannot find file " + pmlFolder + id + ".pml")
+						log.Println("Cannot find file " + pmlFolder + id + ".pml")
 						fmt.Fprintf(w, "Cannot find file "+pmlFolder+id+".pml")
+						return
+					}
+
+					bodyBytes, err := ioutil.ReadAll(r.Body)
+					if err != nil {
+						log.Printf("Cannot read request : %v", err)
+						fmt.Fprintf(w, "Cannot read request : %v", err)
 						return
 					}
 					w.Header().Set("Content-Type", "application/pdf")
 					w.WriteHeader(http.StatusOK)
-					err = Renderer(string(file), w)
+					err = Full(string(file), w, bodyBytes)
 					if err != nil {
-						fmt.Println("error writing result", err)
+						log.Println("error writing result", err)
+						fmt.Fprintf(w, "error writing result : %v", err)
 					}
 					return
 				}
