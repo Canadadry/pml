@@ -4,7 +4,7 @@
 ## Purpose
 
 Main purpose of this language is to have a dedicated language to describe pdf content. 
-This tool convert pml to go code that build the pdf. 
+This tool aim to convert pml to go code that build the pdf. For now it just use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf) to render a pdf
 
 It aim to depend only a basic interface, in which you can implement the way you want. 
 
