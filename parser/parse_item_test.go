@@ -124,6 +124,59 @@ func TestParserError(t *testing.T) {
 	}
 }
 
+func testItem(t *testing.T, index int, actual *ast.Item, expected *ast.Item) {
+	if actual.TokenType.Type != expected.TokenType.Type {
+		t.Fatalf("[%d] Wrong item type got %s expected %s", index, actual.TokenType.Type, expected.TokenType.Type)
+	}
+	if actual.TokenType.Literal != expected.TokenType.Literal {
+		t.Fatalf("[%d] Wrong item literal got %s expected %s", index, actual.TokenType.Literal, expected.TokenType.Literal)
+	}
+	if len(actual.Properties) != len(expected.Properties) {
+		t.Fatalf(
+			"[%d] Wrong number of Properties for item %s got %d expected %d",
+			index,
+			actual.TokenType.Literal,
+			len(actual.Properties),
+			len(expected.Properties),
+		)
+	}
+
+	for k := range expected.Properties {
+		testProperty(t, index, k, actual, expected)
+	}
+}
+
+func testProperty(t *testing.T, index int, property string, actual *ast.Item, expected *ast.Item) {
+	expectedValue := expected.Properties[property]
+	actualValue, ok := actual.Properties[property]
+	if !ok {
+		t.Fatalf(
+			"[%d] on item %s missing property %s",
+			index,
+			actual.TokenType.Literal,
+			property,
+		)
+	}
+	if actualValue.Token().Type != expectedValue.Token().Type {
+		t.Fatalf(
+			"[%d] Wrong property typeon %s got %s expected %s",
+			index,
+			property,
+			actualValue.Token().Type,
+			expectedValue.Token().Type,
+		)
+	}
+	if actualValue.Token().Literal != expectedValue.Token().Literal {
+		t.Fatalf(
+			"[%d] Wrong property literal %s got %s expected %s",
+			index,
+			property,
+			actualValue.Token().Literal,
+			expectedValue.Token().Literal,
+		)
+	}
+}
+
 func tokenIdentifier(literal string) token.Token {
 	return token.Token{
 		Type:    token.IDENTIFIER,
@@ -157,14 +210,4 @@ func tokenColor(literal string) token.Token {
 		Type:    token.COLOR,
 		Literal: literal,
 	}
-}
-
-func testItem(t *testing.T, index int, actual *ast.Item, expected *ast.Item) {
-	if actual.TokenType.Type != expected.TokenType.Type {
-		t.Fatalf("[%d] Wrong item type got %s expected %s", index, actual.TokenType.Type, expected.TokenType.Type)
-	}
-	if actual.TokenType.Literal != expected.TokenType.Literal {
-		t.Fatalf("[%d] Wrong item literal got %s expected %s", index, actual.TokenType.Literal, expected.TokenType.Literal)
-	}
-
 }
