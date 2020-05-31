@@ -6,13 +6,15 @@ import (
 	"io/ioutil"
 	"pml/lexer"
 	"pml/parser"
+	"pml/renderer"
 	"pml/token"
 )
 
 func main() {
 
-	mode := flag.String("mode", "lexer", "mode : lexer|parser")
-	filename := flag.String("filename", "", "entry filename")
+	mode := flag.String("mode", "renderer", "mode : lexer|parser|renderer")
+	filename := flag.String("in", "", "entry pml filename")
+	output := flag.String("out", "out.pdf", "pdf output for renderer mode")
 
 	flag.Parse()
 
@@ -28,6 +30,8 @@ func main() {
 	}
 
 	l := lexer.New(string(file))
+	p := parser.New(l)
+	r := renderer.New(*output)
 
 	switch *mode {
 	case "lexer":
@@ -37,13 +41,23 @@ func main() {
 			tok = l.GetNextToken()
 		}
 	case "parser":
-		p := parser.New(l)
 		item, err := p.Parse()
 		if err != nil {
-			fmt.Printf("failed : %v", err)
+			fmt.Printf("parsing failed : %v", err)
 			return
 		}
 		fmt.Println(item)
+	case "renderer":
+		item, err := p.Parse()
+		if err != nil {
+			fmt.Printf("parsing failed : %v", err)
+			return
+		}
+		err = r.Render(item)
+		if err != nil {
+			fmt.Printf("rendering failed : %v", err)
+			return
+		}
 	default:
 		fmt.Printf("Mode not handle : " + *mode)
 		flag.PrintDefaults()
