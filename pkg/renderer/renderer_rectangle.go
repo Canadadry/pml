@@ -118,6 +118,10 @@ func (r *renderer) renderRectangle(pdf *gofpdf.Fpdf, rectangle *ast.Item) error 
 			if err := r.renderImage(pdf, &child); err != nil {
 				return err
 			}
+		case itemVector:
+			if err := r.renderVector(pdf, &child); err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("Cannot render %s: %w", child.TokenType.Literal, renderingItemNotImplemented)
 

@@ -27,5 +27,9 @@ Document{
 			width:110.0
 			file:"example/image/github_logo.png"
 		}
+		Vector{
+			y:100.0
+			file:"example/image/signature.svg"
+		}
 	}
 }
