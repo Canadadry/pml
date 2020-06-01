@@ -11,6 +11,7 @@ import (
 type textProperties struct {
 	text     string
 	fontName string
+	fontSize *float64
 	x        *float64
 	y        *float64
 	width    *float64
@@ -51,6 +52,12 @@ func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error
 			tp.text = expression.Token().Literal
 		case "fontName":
 			tp.fontName = expression.Token().Literal
+		case "fontSize":
+			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
+			if err != nil {
+				return nil, err
+			}
+			tp.fontSize = &value
 		case "x":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
@@ -133,8 +140,12 @@ func (r *renderer) renderText(pdf *gofpdf.Fpdf, text *ast.Item) error {
 	if len(properties.fontName) == 0 {
 		properties.fontName = "Arial"
 	}
+	if properties.fontSize == nil {
+		defaultValue := float64(16)
+		properties.fontSize = &defaultValue
+	}
 
-	pdf.SetFont(properties.fontName, "", 16)
+	pdf.SetFont(properties.fontName, "", *properties.fontSize)
 	pdf.SetTextColor(int(properties.color.R), int(properties.color.G), int(properties.color.B))
 	pdf.SetXY(*properties.x, *properties.y)
 	pdf.CellFormat(*properties.width, *properties.height, properties.text, "", 0, properties.align, false, 0, "")

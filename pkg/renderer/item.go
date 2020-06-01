@@ -95,6 +95,7 @@ var items = itemDefinitions{
 				"color":    token.COLOR,
 				"align":    token.IDENTIFIER,
 				"fontName": token.STRING,
+				"fontSize": token.FLOAT,
 			},
 		},
 	},

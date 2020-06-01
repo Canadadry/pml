@@ -26,6 +26,8 @@ Document{
 			height:100.0
 			color:#000000
 			fontName:"{{ .font}}"
+			fontSize: {{.size}}
+			align: {{ .align }}
 		}
 	}
 }
