@@ -26,6 +26,10 @@ func newMatrix(
 	}
 }
 
+func identityMatrix() matrix {
+	return newMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1)
+}
+
 func (m matrix) clone() matrix {
 	return newMatrix(m.n11, m.n12, m.n13, m.n21, m.n22, m.n23, m.n31, m.n32, m.n33)
 }

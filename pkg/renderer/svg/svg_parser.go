@@ -16,7 +16,7 @@ type Element struct {
 	Content    string
 }
 
-func Parse(source io.Reader, validate bool) (*Element, error) {
+func Parse(source io.Reader) (*Element, error) {
 	raw, err := ioutil.ReadAll(source)
 	if err != nil {
 		return nil, err

@@ -13,11 +13,6 @@ func element(name string, attrs map[string]string) *Element {
 	}
 }
 
-func parse(svg string, validate bool) (*Element, error) {
-	element, err := Parse(strings.NewReader(svg), validate)
-	return element, err
-}
-
 func compare(left *Element, right *Element) bool {
 	if left.Name != right.Name || left.Content != right.Content ||
 		len(left.Attributes) != len(right.Attributes) ||
@@ -101,7 +96,7 @@ func TestParser(t *testing.T) {
 	}
 
 	for _, test := range testCases {
-		actual, err := parse(test.svg, false)
+		actual, err := Parse(strings.NewReader(test.svg))
 
 		if !(compare(&test.element, actual) && err == nil) {
 			t.Errorf("Parse: expected %v, actual %v\n", test.element, actual)
@@ -118,7 +113,7 @@ func TestValidDocument(t *testing.T) {
 		</svg>
 		`
 
-	element, err := parse(svg, true)
+	element, err := Parse(strings.NewReader(svg))
 	if !(element != nil && err == nil) {
 		t.Errorf("Validation: expected %v, actual %v\n", nil, err)
 	}
