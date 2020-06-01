@@ -110,12 +110,16 @@ Where `Item` is one of the following :
 
  `Document` has no property
 
+ `Font` proterties : 
+ - `file` : full path from working dir to ttf file. (must have `cp12__.map` file along side to work)
+ - `name` : registered name, will be use by `Text` item
+
  `Page` has no property
 
  `Rectangle` properties :
 
- - `x` : left coordinate must be a float value in millimeter
- - `y` : left coordinate must be a float value in millimeter
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
@@ -123,19 +127,20 @@ Where `Item` is one of the following :
 
  `Text` properties :
 
- - `x` : left coordinate must be a float value in millimeter
- - `y` : left coordinate must be a float value in millimeter
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
  - `text` : text to write
- - `align` : how the text is render in his box. Possible values are : `TopLeft`, `TopCenter`, `TopRight`, `MiddleLeft`, `MiddleCenter`, `MiddleRight`, `BottomLeft`, `BottomCenter`, `BottomRight`, `BaselineLeft`, `BaselineCenter`, `BaselineRight`, 
+ - `align` : how the text is render in his box. Possible values are : `TopLeft`, `TopCenter`, `TopRight`, `MiddleLeft`, `MiddleCenter`, `MiddleRight`, `BottomLeft`, `BottomCenter`, `BottomRight`, `BaselineLeft`, `BaselineCenter`, `BaselineRight`
+ - `fontSize` : define the size of the rendering font must be a float value in millimeter
+ - `fontName` : select the font to draw text must be one of the registerer fonts see item `Font`
 
 ## Next step 
 
 There is still important missing feature to concidere this stable
 
- - `Font` to allow using external font (UTF8,RTL,...)
  - `Image` to allow rendering png,jpeg,svg, ...
  - `Paragraphe` to allow styling only a part of the text
  - `Path`to draw custom form

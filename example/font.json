@@ -1,3 +1,5 @@
 {
-	"font":"OpenSans-ExtraBoldItalic"
+	"align":"BaselineRight",
+	"font":"OpenSans-ExtraBoldItalic",
+	"size":"32.0"
 }
