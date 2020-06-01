@@ -6,6 +6,7 @@ import (
 	"os"
 	"path/filepath"
 	"pml/pkg/ast"
+	"strings"
 )
 
 type fontProperties struct {
@@ -38,6 +39,14 @@ func (r *renderer) extractFontProperties(font *ast.Item) (*fontProperties, error
 	return fp, nil
 }
 
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
+
 func (r *renderer) renderFont(pdf *gofpdf.Fpdf, font *ast.Item) error {
 
 	properties, err := r.extractFontProperties(font)
@@ -51,13 +60,16 @@ func (r *renderer) renderFont(pdf *gofpdf.Fpdf, font *ast.Item) error {
 		return fmt.Errorf("in font item, you must specify a property name")
 	}
 
-	fmt.Printf("%#v\n", properties)
-
 	dir := filepath.Dir(properties.file)
+	base := filepath.Base(properties.file)
+	namePart := strings.Split(base, ".")
+	name := strings.Join(namePart[:len(namePart)-1], ".")
 
-	err = gofpdf.MakeFont(properties.file, dir+"/cp1258.map", dir, os.Stdout, true)
-	if err != nil {
-		return err
+	if !fileExists(dir + "/" + name + ".json") {
+		err = gofpdf.MakeFont(properties.file, dir+"/cp1258.map", dir, os.Stdout, true)
+		if err != nil {
+			return err
+		}
 	}
 
 	pdf.AddUTF8Font(properties.name, "", properties.file)
