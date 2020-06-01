@@ -63,6 +63,13 @@ var items = itemDefinitions{
 			authorizedChildren:   []string{itemPage, itemFont},
 			authorizedProperties: map[string]token.TokenType{},
 		},
+		itemFont: itemDefinition{
+			authorizedChildren: []string{},
+			authorizedProperties: map[string]token.TokenType{
+				"file": token.STRING,
+				"name": token.STRING,
+			},
+		},
 		itemPage: itemDefinition{
 			authorizedChildren:   []string{itemRectangle, itemText},
 			authorizedProperties: map[string]token.TokenType{},
@@ -80,18 +87,15 @@ var items = itemDefinitions{
 		itemText: itemDefinition{
 			authorizedChildren: []string{},
 			authorizedProperties: map[string]token.TokenType{
-				"text":   token.STRING,
-				"x":      token.FLOAT,
-				"y":      token.FLOAT,
-				"width":  token.FLOAT,
-				"height": token.FLOAT,
-				"color":  token.COLOR,
-				"align":  token.IDENTIFIER,
+				"text":     token.STRING,
+				"x":        token.FLOAT,
+				"y":        token.FLOAT,
+				"width":    token.FLOAT,
+				"height":   token.FLOAT,
+				"color":    token.COLOR,
+				"align":    token.IDENTIFIER,
+				"fontName": token.STRING,
 			},
-		},
-		itemFont: itemDefinition{
-			authorizedChildren:   []string{},
-			authorizedProperties: map[string]token.TokenType{},
 		},
 	},
 }

@@ -9,13 +9,14 @@ import (
 )
 
 type textProperties struct {
-	text   string
-	x      *float64
-	y      *float64
-	width  *float64
-	height *float64
-	color  *color.RGBA
-	align  string
+	text     string
+	fontName string
+	x        *float64
+	y        *float64
+	width    *float64
+	height   *float64
+	color    *color.RGBA
+	align    string
 }
 
 func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error) {
@@ -48,6 +49,8 @@ func (r *renderer) extractTextProperties(text *ast.Item) (*textProperties, error
 		switch property {
 		case "text":
 			tp.text = expression.Token().Literal
+		case "fontName":
+			tp.fontName = expression.Token().Literal
 		case "x":
 			value, err := strconv.ParseFloat(expression.Token().Literal, 64)
 			if err != nil {
@@ -127,6 +130,11 @@ func (r *renderer) renderText(pdf *gofpdf.Fpdf, text *ast.Item) error {
 		properties.align = "TL"
 	}
 
+	if len(properties.fontName) == 0 {
+		properties.fontName = "Arial"
+	}
+
+	pdf.SetFont(properties.fontName, "", 16)
 	pdf.SetTextColor(int(properties.color.R), int(properties.color.G), int(properties.color.B))
 	pdf.SetXY(*properties.x, *properties.y)
 	pdf.CellFormat(*properties.width, *properties.height, properties.text, "", 0, properties.align, false, 0, "")

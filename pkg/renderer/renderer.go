@@ -41,6 +41,10 @@ func (r *renderer) renderDocument(document *ast.Item) error {
 			if err := r.renderPage(pdf, &child); err != nil {
 				return err
 			}
+		case itemFont:
+			if err := r.renderFont(pdf, &child); err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("Cannot render %s: %w", child.TokenType.Literal, renderingItemNotImplemented)
 		}
@@ -52,7 +56,6 @@ func (r *renderer) renderDocument(document *ast.Item) error {
 func (r *renderer) renderPage(pdf *gofpdf.Fpdf, page *ast.Item) error {
 
 	pdf.AddPage()
-	pdf.SetFont("Arial", "B", 16)
 
 	for _, child := range page.Children {
 
