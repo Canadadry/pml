@@ -22,5 +22,10 @@ Document{
 			height:100.0
 			color:#000000
 		}
+		Image{
+			x:100.0
+			width:110.0
+			file:"example/image/github_logo.png"
+		}
 	}
 }

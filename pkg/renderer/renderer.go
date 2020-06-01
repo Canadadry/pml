@@ -71,6 +71,10 @@ func (r *renderer) renderPage(pdf *gofpdf.Fpdf, page *ast.Item) error {
 			if err := r.renderRectangle(pdf, &child); err != nil {
 				return err
 			}
+		case itemImage:
+			if err := r.renderImage(pdf, &child); err != nil {
+				return err
+			}
 		default:
 			return fmt.Errorf("Cannot render %s: %w", child.TokenType.Literal, renderingItemNotImplemented)
 

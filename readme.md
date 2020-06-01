@@ -98,12 +98,13 @@ Item{
 
 ### Item
 
-Where `Item` is one of the following : 
+Where `Item` and `Child` are one of the following : 
 
  - `Document` : Must be the root item
  - `Page` : to add page, every child will be drawn inside this one
  - `Rectangle` : to draw a rectangle
  - `Text` : to write text
+ - `Image` : to draw an image
 
 
  ### Properties
@@ -124,6 +125,13 @@ Where `Item` is one of the following :
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
 
+ `Image` properties :
+
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `width` : width of the image must be a float value in millimeter
+ - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `file` : full path from working dir to image file
 
  `Text` properties :
 
@@ -141,7 +149,7 @@ Where `Item` is one of the following :
 
 There is still important missing feature to concidere this stable
 
- - `Image` to allow rendering png,jpeg,svg, ...
+ - `Vector` to draw svg
  - `Paragraphe` to allow styling only a part of the text
  - `Path`to draw custom form
  - more options per Item, like relative position

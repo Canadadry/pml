@@ -12,6 +12,7 @@ const (
 	itemRectangle = "Rectangle"
 	itemText      = "Text"
 	itemFont      = "Font"
+	itemImage     = "Image"
 )
 
 var (
@@ -71,11 +72,11 @@ var items = itemDefinitions{
 			},
 		},
 		itemPage: itemDefinition{
-			authorizedChildren:   []string{itemRectangle, itemText},
+			authorizedChildren:   []string{itemRectangle, itemText, itemImage},
 			authorizedProperties: map[string]token.TokenType{},
 		},
 		itemRectangle: itemDefinition{
-			authorizedChildren: []string{itemRectangle, itemText},
+			authorizedChildren: []string{itemRectangle, itemText, itemImage},
 			authorizedProperties: map[string]token.TokenType{
 				"x":      token.FLOAT,
 				"y":      token.FLOAT,
@@ -96,6 +97,16 @@ var items = itemDefinitions{
 				"align":    token.IDENTIFIER,
 				"fontName": token.STRING,
 				"fontSize": token.FLOAT,
+			},
+		},
+		itemImage: itemDefinition{
+			authorizedChildren: []string{},
+			authorizedProperties: map[string]token.TokenType{
+				"x":      token.FLOAT,
+				"y":      token.FLOAT,
+				"width":  token.FLOAT,
+				"height": token.FLOAT,
+				"file":   token.STRING,
 			},
 		},
 	},
