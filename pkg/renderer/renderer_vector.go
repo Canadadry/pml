@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
 	"pml/pkg/ast"
+	"pml/pkg/renderer/svg"
 	"strconv"
 )
 
@@ -90,22 +91,7 @@ func (r *renderer) renderVector(pdf *gofpdf.Fpdf, vector *ast.Item) error {
 	if len(properties.file) == 0 {
 		return fmt.Errorf("in vector item, you must specify a property file")
 	}
-
-	sig, err := gofpdf.SVGBasicFileParse(properties.file)
-	if err != nil {
-		return err
-	}
-
-	scale := 100 / sig.Wd
-	scaleY := 30 / sig.Ht
-	if scale > scaleY {
-		scale = scaleY
-	}
-	pdf.SetLineCapStyle("round")
-	pdf.SetLineWidth(0.25)
-	pdf.SetDrawColor(0, 0, 128)
-	pdf.SetXY(*properties.x, *properties.x)
-	pdf.SVGBasicWrite(&sig, scale)
-
-	return nil
+	pdf.SetDrawColor(0xff, 0x00, 0x00)
+	pdf.SetFillColor(0x99, 0x99, 0x99)
+	return svg.Draw(pdf, properties.file, *properties.x, *properties.y, *properties.width, *properties.height)
 }

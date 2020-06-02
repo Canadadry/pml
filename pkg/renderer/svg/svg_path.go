@@ -2,29 +2,13 @@ package svg
 
 import (
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-type command struct {
-	kind byte
-	x1   float64
-	y1   float64
-	x2   float64
-	y2   float64
-	x3   float64
-	y3   float64
-}
-
-type svgPath struct {
-	worldToLocal matrix
-	commands     []command
-}
-
-func path(element *Element, worldToParent matrix) (*svgPath, error) {
-	sp := &svgPath{
+func path(element *Element, worldToParent matrix) (*svgNode, error) {
+	sp := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []command{},
 	}
@@ -48,7 +32,7 @@ func path(element *Element, worldToParent matrix) (*svgPath, error) {
 	return sp, nil
 }
 
-func (sp *svgPath) parsePath(path string) error {
+func (sp *svgNode) parsePath(path string) error {
 	r, err := regexp.Compile("([MmLlHhVvCcZz])([-0-9,\\. ]*)")
 	if err != nil {
 		return err
@@ -94,21 +78,6 @@ func (sp *svgPath) parsePath(path string) error {
 		}
 
 		sp.commands = append(sp.commands, command{kind, x1, y1, x2, y2, x3, y3})
-	}
-	return nil
-}
-
-func (sp *svgPath) draw(pdf *gofpdf.Fpdf) error {
-	for _, cmd := range sp.commands {
-		switch cmd.kind {
-		case 'M':
-			pdf.MoveTo(cmd.x1, cmd.y1)
-		case 'L':
-			pdf.LineTo(cmd.x1, cmd.y1)
-		case 'Z':
-			pdf.ClosePath()
-			pdf.DrawPath("FD")
-		}
 	}
 	return nil
 }

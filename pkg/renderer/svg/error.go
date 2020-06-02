@@ -6,4 +6,5 @@ import (
 
 var (
 	errCannotParseMainTransformAttr = errors.New("errCannotParseMainTransformAttr")
+	errMissingAttr                  = errors.New("errMissingAttr")
 )

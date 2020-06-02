@@ -29,7 +29,7 @@ Document{
 		}
 		Vector{
 			y:100.0
-			file:"example/image/signature.svg"
+			file:"example/image/test.svg"
 		}
 	}
 }

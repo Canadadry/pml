@@ -8,8 +8,46 @@ import (
 	"strings"
 )
 
-type object interface {
-	draw(pdf *gofpdf.Fpdf) error
+type command struct {
+	kind byte
+	x1   float64
+	y1   float64
+	x2   float64
+	y2   float64
+	x3   float64
+	y3   float64
+}
+
+type svgNode struct {
+	worldToLocal matrix
+	commands     []command
+	children     []*svgNode
+}
+
+func (sn *svgNode) draw(pdf *gofpdf.Fpdf) error {
+
+	for _, cmd := range sn.commands {
+		fmt.Printf("drawing %s, %g, %g\n", string(cmd.kind), cmd.x1, cmd.y2)
+		switch cmd.kind {
+		case 'M':
+			pdf.MoveTo(cmd.x1, cmd.y1)
+		case 'L':
+			pdf.LineTo(cmd.x1, cmd.y1)
+		case 'C':
+			pdf.LineTo(cmd.x1, cmd.y1)
+		case 'Z':
+			pdf.ClosePath()
+			pdf.DrawPath("FD")
+		}
+	}
+
+	for _, child := range sn.children {
+		err := child.draw(pdf)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func Draw(pdf *gofpdf.Fpdf, svg string, x float64, y float64, w float64, h float64) error {
@@ -59,4 +97,18 @@ func Draw(pdf *gofpdf.Fpdf, svg string, x float64, y float64, w float64, h float
 	}
 
 	return root.draw(pdf)
+}
+
+func readAttributeAsFloat(element *Element, attribute string) (float64, error) {
+	attr, ok := element.Attributes[attribute]
+	if !ok {
+		return 0, errMissingAttr
+	}
+
+	parsed, err := strconv.ParseFloat(attr, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return parsed, nil
 }

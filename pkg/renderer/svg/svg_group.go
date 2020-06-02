@@ -2,20 +2,14 @@ package svg
 
 import (
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
 	"strconv"
 	"strings"
 )
 
-type svgGroup struct {
-	worldToLocal matrix
-	children     []object
-}
-
-func group(element *Element, worldToParent matrix) (object, error) {
-	sg := &svgGroup{
+func group(element *Element, worldToParent matrix) (*svgNode, error) {
+	sg := &svgNode{
 		worldToLocal: worldToParent,
-		children:     []object{},
+		children:     []*svgNode{},
 	}
 
 	transformAttr, ok := element.Attributes["transform"]
@@ -35,19 +29,27 @@ func group(element *Element, worldToParent matrix) (object, error) {
 				return nil, err
 			}
 			sg.children = append(sg.children, child)
+		case "path":
+			child, err := path(child, sg.worldToLocal)
+			if err != nil {
+				return nil, err
+			}
+			sg.children = append(sg.children, child)
+		case "rect":
+			child, err := rectangle(child, sg.worldToLocal)
+			if err != nil {
+				return nil, err
+			}
+			sg.children = append(sg.children, child)
+		case "circle":
+			child, err := group(child, sg.worldToLocal)
+			if err != nil {
+				return nil, err
+			}
+			sg.children = append(sg.children, child)
 		}
 	}
 	return sg, nil
-}
-
-func (sg *svgGroup) draw(pdf *gofpdf.Fpdf) error {
-	for _, child := range sg.children {
-		err := child.draw(pdf)
-		if err != nil {
-			return err
-		}
-	}
-	return nil
 }
 
 func matrixFromGAttributes(transformAttr string) (matrix, error) {
