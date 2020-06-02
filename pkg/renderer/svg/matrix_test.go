@@ -1,11 +1,10 @@
 package svg
 
 import (
+	"fmt"
 	"math"
 	"testing"
 )
-
-const epsilon = 1e-6
 
 func TestSet(t *testing.T) {
 	coef := []float64{0, 1, 2, 3, 4, 5, 6, 7, 8}
@@ -90,33 +89,11 @@ func TestMultiplyMatrix(t *testing.T) {
 
 		result := tt.left.multiplyMatrix(tt.right)
 
-		if result.n11 != tt.result.n11 {
-			t.Fatalf("invalid coef m11 got %g, exp %g", result.n11, tt.result.n11)
+		err := testMatrixAreEquales(result, tt.result)
+		if err != nil {
+			t.Fatalf("%v", err)
 		}
-		if result.n12 != tt.result.n12 {
-			t.Fatalf("invalid coef m12 got %g, exp %g", result.n12, tt.result.n12)
-		}
-		if result.n13 != tt.result.n13 {
-			t.Fatalf("invalid coef m13 got %g, exp %g", result.n13, tt.result.n13)
-		}
-		if result.n21 != tt.result.n21 {
-			t.Fatalf("invalid coef m21 got %g, exp %g", result.n21, tt.result.n21)
-		}
-		if result.n22 != tt.result.n22 {
-			t.Fatalf("invalid coef m22 got %g, exp %g", result.n22, tt.result.n22)
-		}
-		if result.n23 != tt.result.n23 {
-			t.Fatalf("invalid coef m23 got %g, exp %g", result.n23, tt.result.n23)
-		}
-		if result.n31 != tt.result.n31 {
-			t.Fatalf("invalid coef m31 got %g, exp %g", result.n31, tt.result.n31)
-		}
-		if result.n32 != tt.result.n32 {
-			t.Fatalf("invalid coef m32 got %g, exp %g", result.n32, tt.result.n32)
-		}
-		if result.n33 != tt.result.n33 {
-			t.Fatalf("invalid coef m33 got %g, exp %g", result.n33, tt.result.n33)
-		}
+
 	}
 }
 
@@ -168,33 +145,11 @@ func TestScale(t *testing.T) {
 
 		result := tt.mat.scale(tt.scaleX, tt.scaleY)
 
-		if result.n11 != tt.result.n11 {
-			t.Fatalf("invalid coef m11 got %g, exp %g", result.n11, tt.result.n11)
+		err := testMatrixAreEquales(result, tt.result)
+		if err != nil {
+			t.Fatalf("%v", err)
 		}
-		if result.n12 != tt.result.n12 {
-			t.Fatalf("invalid coef m12 got %g, exp %g", result.n12, tt.result.n12)
-		}
-		if result.n13 != tt.result.n13 {
-			t.Fatalf("invalid coef m13 got %g, exp %g", result.n13, tt.result.n13)
-		}
-		if result.n21 != tt.result.n21 {
-			t.Fatalf("invalid coef m21 got %g, exp %g", result.n21, tt.result.n21)
-		}
-		if result.n22 != tt.result.n22 {
-			t.Fatalf("invalid coef m22 got %g, exp %g", result.n22, tt.result.n22)
-		}
-		if result.n23 != tt.result.n23 {
-			t.Fatalf("invalid coef m23 got %g, exp %g", result.n23, tt.result.n23)
-		}
-		if result.n31 != tt.result.n31 {
-			t.Fatalf("invalid coef m31 got %g, exp %g", result.n31, tt.result.n31)
-		}
-		if result.n32 != tt.result.n32 {
-			t.Fatalf("invalid coef m32 got %g, exp %g", result.n32, tt.result.n32)
-		}
-		if result.n33 != tt.result.n33 {
-			t.Fatalf("invalid coef m33 got %g, exp %g", result.n33, tt.result.n33)
-		}
+
 	}
 }
 
@@ -220,32 +175,9 @@ func TestRotate(t *testing.T) {
 
 		result := tt.mat.rotate(tt.theta)
 
-		if math.Abs(result.n11-tt.result.n11) > epsilon {
-			t.Fatalf("invalid coef m11 got %g, exp %g", result.n11, tt.result.n11)
-		}
-		if math.Abs(result.n12-tt.result.n12) > epsilon {
-			t.Fatalf("invalid coef m12 got %g, exp %g", result.n12, tt.result.n12)
-		}
-		if math.Abs(result.n13-tt.result.n13) > epsilon {
-			t.Fatalf("invalid coef m13 got %g, exp %g", result.n13, tt.result.n13)
-		}
-		if math.Abs(result.n21-tt.result.n21) > epsilon {
-			t.Fatalf("invalid coef m21 got %g, exp %g", result.n21, tt.result.n21)
-		}
-		if math.Abs(result.n22-tt.result.n22) > epsilon {
-			t.Fatalf("invalid coef m22 got %g, exp %g", result.n22, tt.result.n22)
-		}
-		if math.Abs(result.n23-tt.result.n23) > epsilon {
-			t.Fatalf("invalid coef m23 got %g, exp %g", result.n23, tt.result.n23)
-		}
-		if math.Abs(result.n31-tt.result.n31) > epsilon {
-			t.Fatalf("invalid coef m31 got %g, exp %g", result.n31, tt.result.n31)
-		}
-		if math.Abs(result.n32-tt.result.n32) > epsilon {
-			t.Fatalf("invalid coef m32 got %g, exp %g", result.n32, tt.result.n32)
-		}
-		if math.Abs(result.n33-tt.result.n33) > epsilon {
-			t.Fatalf("invalid coef m33 got %g, exp %g", result.n33, tt.result.n33)
+		err := testMatrixAreEquales(result, tt.result)
+		if err != nil {
+			t.Fatalf("%v", err)
 		}
 	}
 }
@@ -269,32 +201,82 @@ func TestTranslate(t *testing.T) {
 
 		result := tt.mat.translate(tt.tx, tt.ty)
 
-		if math.Abs(result.n11-tt.result.n11) > epsilon {
-			t.Fatalf("invalid coef m11 got %g, exp %g", result.n11, tt.result.n11)
-		}
-		if math.Abs(result.n12-tt.result.n12) > epsilon {
-			t.Fatalf("invalid coef m12 got %g, exp %g", result.n12, tt.result.n12)
-		}
-		if math.Abs(result.n13-tt.result.n13) > epsilon {
-			t.Fatalf("invalid coef m13 got %g, exp %g", result.n13, tt.result.n13)
-		}
-		if math.Abs(result.n21-tt.result.n21) > epsilon {
-			t.Fatalf("invalid coef m21 got %g, exp %g", result.n21, tt.result.n21)
-		}
-		if math.Abs(result.n22-tt.result.n22) > epsilon {
-			t.Fatalf("invalid coef m22 got %g, exp %g", result.n22, tt.result.n22)
-		}
-		if math.Abs(result.n23-tt.result.n23) > epsilon {
-			t.Fatalf("invalid coef m23 got %g, exp %g", result.n23, tt.result.n23)
-		}
-		if math.Abs(result.n31-tt.result.n31) > epsilon {
-			t.Fatalf("invalid coef m31 got %g, exp %g", result.n31, tt.result.n31)
-		}
-		if math.Abs(result.n32-tt.result.n32) > epsilon {
-			t.Fatalf("invalid coef m32 got %g, exp %g", result.n32, tt.result.n32)
-		}
-		if math.Abs(result.n33-tt.result.n33) > epsilon {
-			t.Fatalf("invalid coef m33 got %g, exp %g", result.n33, tt.result.n33)
+		err := testMatrixAreEquales(result, tt.result)
+		if err != nil {
+			t.Fatalf("%v", err)
 		}
 	}
+}
+
+func TestMatrixAreEquales(t *testing.T) {
+	tests := []struct {
+		left        matrix
+		right       matrix
+		shouldMatch bool
+	}{
+		{
+			left:        newMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1),
+			right:       newMatrix(1, 0, 3, 0, 1, 5, 0, 0, 1),
+			shouldMatch: false,
+		},
+		{
+			left:        newMatrix(1, 0, 3, 0, 1, 5, 0, 0, 1),
+			right:       newMatrix(1, 0, 3, 0, 1, 5, 0, 0, 1),
+			shouldMatch: true,
+		},
+		{
+			left:        identityMatrix(),
+			right:       identityMatrix().scale(2, 3),
+			shouldMatch: false,
+		},
+	}
+
+	for i, tt := range tests {
+
+		err := testMatrixAreEquales(tt.left, tt.right)
+
+		if tt.shouldMatch {
+			if err != nil {
+				t.Fatalf("[%d] matrix should be equlas but :%v", i, err)
+			}
+		}
+		if !tt.shouldMatch {
+			if err == nil {
+				t.Fatalf("[%d] matrix should not be equlas but \"testMatrixAreEquales\" say they are", i)
+			}
+		}
+
+	}
+}
+
+func testMatrixAreEquales(left matrix, right matrix) error {
+	epsilon := 1e-6
+	if math.Abs(left.n11-right.n11) > epsilon {
+		return fmt.Errorf("invalid coef m11 got %g, exp %g", left.n11, right.n11)
+	}
+	if math.Abs(left.n12-right.n12) > epsilon {
+		return fmt.Errorf("invalid coef m12 got %g, exp %g", left.n12, right.n12)
+	}
+	if math.Abs(left.n13-right.n13) > epsilon {
+		return fmt.Errorf("invalid coef m13 got %g, exp %g", left.n13, right.n13)
+	}
+	if math.Abs(left.n21-right.n21) > epsilon {
+		return fmt.Errorf("invalid coef m21 got %g, exp %g", left.n21, right.n21)
+	}
+	if math.Abs(left.n22-right.n22) > epsilon {
+		return fmt.Errorf("invalid coef m22 got %g, exp %g", left.n22, right.n22)
+	}
+	if math.Abs(left.n23-right.n23) > epsilon {
+		return fmt.Errorf("invalid coef m23 got %g, exp %g", left.n23, right.n23)
+	}
+	if math.Abs(left.n31-right.n31) > epsilon {
+		return fmt.Errorf("invalid coef m31 got %g, exp %g", left.n31, right.n31)
+	}
+	if math.Abs(left.n32-right.n32) > epsilon {
+		return fmt.Errorf("invalid coef m32 got %g, exp %g", left.n32, right.n32)
+	}
+	if math.Abs(left.n33-right.n33) > epsilon {
+		return fmt.Errorf("invalid coef m33 got %g, exp %g", left.n33, right.n33)
+	}
+	return nil
 }

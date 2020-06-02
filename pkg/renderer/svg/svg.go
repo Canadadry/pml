@@ -53,5 +53,10 @@ func Draw(pdf *gofpdf.Fpdf, svg string, x float64, y float64, w float64, h float
 	transform = transform.translate(viewBox.x, viewBox.y)
 	transform = transform.scale(1/viewBox.w, 1/viewBox.h)
 
-	return group(element, transform).draw(pdf)
+	root, err := group(element, transform)
+	if err != nil {
+		return err
+	}
+
+	return root.draw(pdf)
 }
