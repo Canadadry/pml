@@ -2,21 +2,22 @@ package svg
 
 import (
 	"errors"
+	"pml/pkg/renderer/svg/matrix"
 	"testing"
 )
 
 func TestMatrixFromGAttributes(t *testing.T) {
 	tests := []struct {
 		attribute string
-		expected  matrix
+		expected  matrix.Matrix
 	}{
 		{
 			attribute: "matrix(1,0,0,0,1,0)",
-			expected:  newMatrix(1, 0, 0, 0, 1, 0, 0, 0, 1),
+			expected:  matrix.New(1, 0, 0, 0, 1, 0, 0, 0, 1),
 		},
 		{
 			attribute: "matrix(3.04349,0,0,3.04349,54.9563,54.9563)",
-			expected:  newMatrix(3.04349, 0, 0, 3.04349, 54.9563, 54.9563, 0, 0, 1),
+			expected:  matrix.New(3.04349, 0, 0, 3.04349, 54.9563, 54.9563, 0, 0, 1),
 		},
 	}
 
@@ -26,7 +27,7 @@ func TestMatrixFromGAttributes(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d] should not failed but got %v", i, err)
 		}
-		err = testMatrixAreEquales(result, tt.expected)
+		err = matrix.AreEquales(result, tt.expected)
 		if err != nil {
 			t.Fatalf("[%d] wrong result : %v", i, err)
 		}

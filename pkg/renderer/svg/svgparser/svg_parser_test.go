@@ -1,4 +1,4 @@
-package svg
+package svgparser
 
 import (
 	"strings"

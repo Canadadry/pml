@@ -2,11 +2,13 @@ package svg
 
 import (
 	"fmt"
+	"pml/pkg/renderer/svg/matrix"
+	"pml/pkg/renderer/svg/svgparser"
 	"strconv"
 	"strings"
 )
 
-func group(element *Element, worldToParent matrix) (*svgNode, error) {
+func group(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 	sg := &svgNode{
 		worldToLocal: worldToParent,
 		children:     []*svgNode{},
@@ -18,7 +20,7 @@ func group(element *Element, worldToParent matrix) (*svgNode, error) {
 		if err != nil {
 			return nil, err
 		}
-		sg.worldToLocal = worldToParent.multiplyMatrix(transformMatrix)
+		sg.worldToLocal = worldToParent.MultiplyBy(transformMatrix)
 	}
 
 	for _, child := range element.Children {
@@ -52,14 +54,14 @@ func group(element *Element, worldToParent matrix) (*svgNode, error) {
 	return sg, nil
 }
 
-func matrixFromGAttributes(transformAttr string) (matrix, error) {
+func matrixFromGAttributes(transformAttr string) (matrix.Matrix, error) {
 
 	if len(transformAttr) < 7 {
-		return identityMatrix(), errCannotParseMainTransformAttr
+		return matrix.Identity(), errCannotParseMainTransformAttr
 	}
 
 	if transformAttr[:6] != "matrix" {
-		return identityMatrix(), errCannotParseMainTransformAttr
+		return matrix.Identity(), errCannotParseMainTransformAttr
 	}
 
 	param := transformAttr[7 : len(transformAttr)-1]
@@ -70,20 +72,22 @@ func matrixFromGAttributes(transformAttr string) (matrix, error) {
 			errCannotParseMainTransformAttr,
 			transformAttr,
 		)
-		return identityMatrix(), err
+		return matrix.Identity(), err
 	}
 
-	out := identityMatrix()
-	var err error
-	out.n11, err = strconv.ParseFloat(coef[0], 64)
-	out.n12, err = strconv.ParseFloat(coef[1], 64)
-	out.n13, err = strconv.ParseFloat(coef[2], 64)
-	out.n21, err = strconv.ParseFloat(coef[3], 64)
-	out.n22, err = strconv.ParseFloat(coef[4], 64)
-	out.n23, err = strconv.ParseFloat(coef[5], 64)
+	n11, err := strconv.ParseFloat(coef[0], 64)
+	n12, err := strconv.ParseFloat(coef[1], 64)
+	n13, err := strconv.ParseFloat(coef[2], 64)
+	n21, err := strconv.ParseFloat(coef[3], 64)
+	n22, err := strconv.ParseFloat(coef[4], 64)
+	n23, err := strconv.ParseFloat(coef[5], 64)
 
 	if err != nil {
-		return identityMatrix(), fmt.Errorf("%w : %v", errCannotParseMainTransformAttr, err)
+		return matrix.Identity(), fmt.Errorf("%w : %v", errCannotParseMainTransformAttr, err)
 	}
-	return out, nil
+	return matrix.New(
+		n11, n12, n13,
+		n21, n22, n23,
+		0, 0, 1,
+	), nil
 }

@@ -2,6 +2,8 @@ package svg
 
 import (
 	"math"
+	"pml/pkg/renderer/svg/matrix"
+	"pml/pkg/renderer/svg/svgparser"
 	"testing"
 )
 
@@ -10,12 +12,12 @@ func TestPathParsing(t *testing.T) {
 
 	tests := []struct {
 		path     string
-		tranform matrix
+		tranform matrix.Matrix
 		expected []command
 	}{
 		{
 			path:     "M148,148C148,88.448 196.449,40 256,40C315.551,40 364,88.448 364,148L10,12.33 21,23Z",
-			tranform: identityMatrix(),
+			tranform: matrix.Identity(),
 			expected: []command{
 				{'M', 148, 148, 0, 0, 0, 0},
 				{'C', 148, 88.448, 196.449, 40, 256, 40},
@@ -26,7 +28,7 @@ func TestPathParsing(t *testing.T) {
 		},
 		{
 			path:     "M123,456Z",
-			tranform: identityMatrix().scale(2, 3),
+			tranform: matrix.Identity().Scale(2, 3),
 			expected: []command{
 				{'M', 246, 1368, 0, 0, 0, 0},
 				{'Z', 0, 0, 0, 0, 0, 0},
@@ -35,7 +37,7 @@ func TestPathParsing(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		pathElement := &Element{
+		pathElement := &svgparser.Element{
 			Name: "Path",
 			Attributes: map[string]string{
 				"d": tt.path,

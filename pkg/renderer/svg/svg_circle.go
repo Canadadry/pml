@@ -2,9 +2,11 @@ package svg
 
 import (
 	"math"
+	"pml/pkg/renderer/svg/matrix"
+	"pml/pkg/renderer/svg/svgparser"
 )
 
-func circle(element *Element, worldToParent matrix) (*svgNode, error) {
+func circle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 
 	sn := &svgNode{
 		worldToLocal: worldToParent,
@@ -18,8 +20,8 @@ func circle(element *Element, worldToParent matrix) (*svgNode, error) {
 		return nil, err
 	}
 
-	newOriginX, newOriginY, _ := sn.worldToLocal.multiplyPoint(cx, cy, 1.0)
-	newRadiusX, _, _ := sn.worldToLocal.multiplyPoint(r, 0, 1.0)
+	newOriginX, newOriginY, _ := sn.worldToLocal.Project(cx, cy, 1.0)
+	newRadiusX, _, _ := sn.worldToLocal.Project(r, 0, 1.0)
 
 	cx = newOriginX
 	cy = newOriginY

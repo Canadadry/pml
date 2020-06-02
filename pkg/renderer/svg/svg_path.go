@@ -2,12 +2,14 @@ package svg
 
 import (
 	"fmt"
+	"pml/pkg/renderer/svg/matrix"
+	"pml/pkg/renderer/svg/svgparser"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func path(element *Element, worldToParent matrix) (*svgNode, error) {
+func path(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 	sp := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []command{},
@@ -55,7 +57,7 @@ func (sp *svgNode) parsePath(path string) error {
 
 		x1, err := strconv.ParseFloat(params[0], 64)
 		y1, err := strconv.ParseFloat(params[1], 64)
-		x1, y1, _ = sp.worldToLocal.multiplyPoint(x1, y1, 1.0)
+		x1, y1, _ = sp.worldToLocal.Project(x1, y1, 1.0)
 
 		x2 := float64(0)
 		y2 := float64(0)
@@ -63,7 +65,7 @@ func (sp *svgNode) parsePath(path string) error {
 		if len(params) > 2 {
 			x2, err = strconv.ParseFloat(params[2], 64)
 			y2, err = strconv.ParseFloat(params[3], 64)
-			x2, y2, _ = sp.worldToLocal.multiplyPoint(x2, y2, 1.0)
+			x2, y2, _ = sp.worldToLocal.Project(x2, y2, 1.0)
 		}
 
 		x3 := float64(0)
@@ -71,7 +73,7 @@ func (sp *svgNode) parsePath(path string) error {
 		if len(params) > 4 {
 			x3, err = strconv.ParseFloat(params[4], 64)
 			y3, err = strconv.ParseFloat(params[5], 64)
-			x3, y3, _ = sp.worldToLocal.multiplyPoint(x3, y3, 1.0)
+			x3, y3, _ = sp.worldToLocal.Project(x3, y3, 1.0)
 		}
 		if err != nil {
 			return err
