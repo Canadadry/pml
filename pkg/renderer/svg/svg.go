@@ -37,7 +37,6 @@ type svgNode struct {
 func (sn *svgNode) draw(d Drawer) error {
 
 	for _, cmd := range sn.commands {
-		fmt.Printf("drawing %s, %g, %g\n", string(cmd.kind), cmd.x1, cmd.y2)
 		switch cmd.kind {
 		case 'M':
 			d.MoveTo(cmd.x1, cmd.y1)
