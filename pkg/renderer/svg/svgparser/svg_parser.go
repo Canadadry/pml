@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/xml"
 	"errors"
+	"fmt"
 	"golang.org/x/net/html/charset"
 	"io"
 	"io/ioutil"
@@ -18,7 +19,8 @@ type Element struct {
 	Content    string
 }
 
-var errMissingAttr = errors.New("errMissingAttr")
+var ErrMissingAttr = errors.New("errMissingAttr")
+var ErrParsingAttr = errors.New("ErrParsingAttr")
 
 func Parse(source io.Reader) (*Element, error) {
 	raw, err := ioutil.ReadAll(source)
@@ -106,12 +108,12 @@ func (e *Element) decode(decoder *xml.Decoder) error {
 func (e *Element) ReadAttributeAsFloat(attribute string) (float64, error) {
 	attr, ok := e.Attributes[attribute]
 	if !ok {
-		return 0, errMissingAttr
+		return 0, fmt.Errorf("%w : cannot found %s", ErrMissingAttr, attribute)
 	}
 
 	parsed, err := strconv.ParseFloat(attr, 64)
 	if err != nil {
-		return 0, err
+		return 0, fmt.Errorf("%w : error while parsing %s : %v", ErrParsingAttr, attribute, err)
 	}
 
 	return parsed, nil

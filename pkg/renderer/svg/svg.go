@@ -23,6 +23,10 @@ type command struct {
 	y3   float64
 }
 
+func (c command) ToString() string {
+	return fmt.Sprintf("%s, 1: %g,%g 2: %g,%g 3: %g,%g", string(c.kind), c.x1, c.y1, c.x2, c.y2, c.x3, c.y3)
+}
+
 type svgNode struct {
 	worldToLocal matrix.Matrix
 	commands     []command

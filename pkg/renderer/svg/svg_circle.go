@@ -1,6 +1,7 @@
 package svg
 
 import (
+	"fmt"
 	"math"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
@@ -14,20 +15,23 @@ func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNod
 	}
 
 	cx, err := element.ReadAttributeAsFloat("cx")
+	if err != nil {
+		return nil, fmt.Errorf("error while reading circle arrtibute cx :%w", err)
+	}
 	cy, err := element.ReadAttributeAsFloat("cy")
+	if err != nil {
+		return nil, fmt.Errorf("error while reading circle arrtibute cy :%w", err)
+	}
 	r, err := element.ReadAttributeAsFloat("r")
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("error while reading circle arrtibute r :%w", err)
 	}
 
-	newOriginX, newOriginY, _ := sn.worldToLocal.Project(cx, cy, 1.0)
-	newRadiusX, _, _ := sn.worldToLocal.Project(r, 0, 1.0)
+	cx, cy, _ = sn.worldToLocal.Project(cx, cy, 1.0)
+	r, _, _ = sn.worldToLocal.Project(r, 0, 1.0)
 
-	cx = newOriginX
-	cy = newOriginY
-	r = newRadiusX
-
-	arc := 4 / 3 * (math.Sqrt2 - 1) * r
+	// circle with bezier curve param
+	arc := 4.0 / 3.0 * (math.Sqrt2 - 1) * r
 
 	sn.commands = append(sn.commands,
 		command{'M', cx, cy - r, 0, 0, 0, 0},
