@@ -5,17 +5,17 @@ import (
 	"pml/pkg/renderer/svg/svgparser"
 )
 
-func rectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 
 	sn := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []command{},
 	}
 
-	x, err := readAttributeAsFloat(element, "x")
-	y, err := readAttributeAsFloat(element, "y")
-	w, err := readAttributeAsFloat(element, "width")
-	h, err := readAttributeAsFloat(element, "height")
+	x, err := element.ReadAttributeAsFloat("x")
+	y, err := element.ReadAttributeAsFloat("y")
+	w, err := element.ReadAttributeAsFloat("width")
+	h, err := element.ReadAttributeAsFloat("height")
 	if err != nil {
 		return nil, err
 	}

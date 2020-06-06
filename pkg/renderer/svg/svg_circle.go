@@ -6,16 +6,16 @@ import (
 	"pml/pkg/renderer/svg/svgparser"
 )
 
-func circle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 
 	sn := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []command{},
 	}
 
-	cx, err := readAttributeAsFloat(element, "cx")
-	cy, err := readAttributeAsFloat(element, "cy")
-	r, err := readAttributeAsFloat(element, "r")
+	cx, err := element.ReadAttributeAsFloat("cx")
+	cy, err := element.ReadAttributeAsFloat("cy")
+	r, err := element.ReadAttributeAsFloat("r")
 	if err != nil {
 		return nil, err
 	}

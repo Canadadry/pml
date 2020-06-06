@@ -2,73 +2,70 @@ package svg
 
 import (
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
-	"os"
+	"io"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
-	"strconv"
-	"strings"
 )
 
-func Draw(pdf *gofpdf.Fpdf, svg string, x float64, y float64, w float64, h float64) error {
+type Drawer interface {
+	MoveTo(x float64, y float64)
+	LineTo(x float64, y float64)
+	ClosePath()
+}
 
-	content, err := os.Open(svg)
-	if err != nil {
-		return err
+type command struct {
+	kind byte
+	x1   float64
+	y1   float64
+	x2   float64
+	y2   float64
+	x3   float64
+	y3   float64
+}
+
+type svgNode struct {
+	worldToLocal matrix.Matrix
+	commands     []command
+	children     []*svgNode
+}
+
+func (sn *svgNode) draw(d Drawer) error {
+
+	for _, cmd := range sn.commands {
+		fmt.Printf("drawing %s, %g, %g\n", string(cmd.kind), cmd.x1, cmd.y2)
+		switch cmd.kind {
+		case 'M':
+			d.MoveTo(cmd.x1, cmd.y1)
+		case 'L':
+			d.LineTo(cmd.x1, cmd.y1)
+		case 'C':
+			d.LineTo(cmd.x1, cmd.y1)
+		case 'Z':
+			d.ClosePath()
+		}
 	}
-	element, err := svgparser.Parse(content)
-	if err != nil {
-		return err
+
+	for _, child := range sn.children {
+		err := child.draw(d)
+		if err != nil {
+			return err
+		}
 	}
+	return nil
+}
 
-	viewBoxAttr, ok := element.Attributes["viewBox"]
-	if !ok {
-		return fmt.Errorf("cant find viewBox, dont know what to do")
-	}
+func Draw(d Drawer, svg io.Reader, x float64, y float64, w float64, h float64) error {
 
-	viewBoxParam := strings.Split(viewBoxAttr, " ")
-
-	if len(viewBoxParam) != 4 {
-		return fmt.Errorf("viewBox (%s), dont have 4 part dont know what to do", viewBoxAttr)
-	}
-
-	viewBox := struct {
-		x float64
-		y float64
-		w float64
-		h float64
-	}{0, 0, 0, 0}
-
-	viewBox.x, err = strconv.ParseFloat(viewBoxParam[0], 64)
-	viewBox.y, err = strconv.ParseFloat(viewBoxParam[1], 64)
-	viewBox.w, err = strconv.ParseFloat(viewBoxParam[2], 64)
-	viewBox.h, err = strconv.ParseFloat(viewBoxParam[3], 64)
+	element, err := svgparser.Parse(svg)
 	if err != nil {
 		return err
 	}
 
 	transform := matrix.Identity().Translate(x, y).Scale(w, h)
-	transform = transform.Translate(viewBox.x, viewBox.y)
-	transform = transform.Scale(1/viewBox.w, 1/viewBox.h)
-
-	root, err := group(element, transform)
+	root, err := svgMain(element, transform)
 	if err != nil {
 		return err
 	}
 
-	return root.draw(pdf)
-}
-
-func readAttributeAsFloat(element *svgparser.Element, attribute string) (float64, error) {
-	attr, ok := element.Attributes[attribute]
-	if !ok {
-		return 0, errMissingAttr
-	}
-
-	parsed, err := strconv.ParseFloat(attr, 64)
-	if err != nil {
-		return 0, err
-	}
-
-	return parsed, nil
+	return root.draw(d)
 }

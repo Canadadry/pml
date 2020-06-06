@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func path(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+func svgPath(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 	sp := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []command{},

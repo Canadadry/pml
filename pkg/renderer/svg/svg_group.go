@@ -8,7 +8,16 @@ import (
 	"strings"
 )
 
-func group(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+type svgParserElement func(*svgparser.Element, matrix.Matrix) (*svgNode, error)
+
+func svgGroup(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+	var parserMap map[string]svgParserElement = map[string]svgParserElement{
+		"g":      svgGroup,
+		"path":   svgPath,
+		"rect":   svgRectangle,
+		"circle": svgCircle,
+	}
+
 	sg := &svgNode{
 		worldToLocal: worldToParent,
 		children:     []*svgNode{},
@@ -24,32 +33,16 @@ func group(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, e
 	}
 
 	for _, child := range element.Children {
-		switch child.Name {
-		case "g":
-			child, err := group(child, sg.worldToLocal)
-			if err != nil {
-				return nil, err
-			}
-			sg.children = append(sg.children, child)
-		case "path":
-			child, err := path(child, sg.worldToLocal)
-			if err != nil {
-				return nil, err
-			}
-			sg.children = append(sg.children, child)
-		case "rect":
-			child, err := rectangle(child, sg.worldToLocal)
-			if err != nil {
-				return nil, err
-			}
-			sg.children = append(sg.children, child)
-		case "circle":
-			child, err := group(child, sg.worldToLocal)
-			if err != nil {
-				return nil, err
-			}
-			sg.children = append(sg.children, child)
+		parser, ok := parserMap[child.Name]
+		if !ok {
+			return nil, errCannotParseElement
 		}
+
+		child, err := parser(child, sg.worldToLocal)
+		if err != nil {
+			return nil, err
+		}
+		sg.children = append(sg.children, child)
 	}
 	return sg, nil
 }

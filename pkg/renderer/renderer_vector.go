@@ -3,6 +3,7 @@ package renderer
 import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
+	"os"
 	"pml/pkg/ast"
 	"pml/pkg/renderer/svg"
 	"strconv"
@@ -91,7 +92,13 @@ func (r *renderer) renderVector(pdf *gofpdf.Fpdf, vector *ast.Item) error {
 	if len(properties.file) == 0 {
 		return fmt.Errorf("in vector item, you must specify a property file")
 	}
+	svgFile, err := os.Open(properties.file)
+	if err != nil {
+		return err
+	}
+	defer svgFile.Close()
+
 	pdf.SetDrawColor(0xff, 0x00, 0x00)
 	pdf.SetFillColor(0x99, 0x99, 0x99)
-	return svg.Draw(pdf, properties.file, *properties.x, *properties.y, *properties.width, *properties.height)
+	return svg.Draw(pdf, svgFile, *properties.x, *properties.y, *properties.width, *properties.height)
 }

@@ -3,9 +3,11 @@ package svgparser
 import (
 	"bytes"
 	"encoding/xml"
+	"errors"
 	"golang.org/x/net/html/charset"
 	"io"
 	"io/ioutil"
+	"strconv"
 	"strings"
 )
 
@@ -15,6 +17,8 @@ type Element struct {
 	Children   []*Element
 	Content    string
 }
+
+var errMissingAttr = errors.New("errMissingAttr")
 
 func Parse(source io.Reader) (*Element, error) {
 	raw, err := ioutil.ReadAll(source)
@@ -27,7 +31,6 @@ func Parse(source io.Reader) (*Element, error) {
 	if err != nil {
 		return nil, err
 	}
-	// fmt.Printf("Node: %v\n", element.Name)
 	if err := element.decode(decoder); err != nil && err != io.EOF {
 		return nil, err
 	}
@@ -98,4 +101,18 @@ func (e *Element) decode(decoder *xml.Decoder) error {
 		}
 	}
 	return nil
+}
+
+func (e *Element) ReadAttributeAsFloat(attribute string) (float64, error) {
+	attr, ok := e.Attributes[attribute]
+	if !ok {
+		return 0, errMissingAttr
+	}
+
+	parsed, err := strconv.ParseFloat(attr, 64)
+	if err != nil {
+		return 0, err
+	}
+
+	return parsed, nil
 }
