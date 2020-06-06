@@ -27,8 +27,8 @@ func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNod
 		return nil, fmt.Errorf("error while reading circle arrtibute r :%w", err)
 	}
 
-	cx, cy, _ = sn.worldToLocal.Project(cx, cy, 1.0)
-	r, _, _ = sn.worldToLocal.Project(r, 0, 1.0)
+	cx, cy, _ = sn.worldToLocal.Project(cx, cy, 1)
+	r, _, _ = sn.worldToLocal.Project(r, 0, 0)
 
 	// circle with bezier curve param
 	arc := 4.0 / 3.0 * (math.Sqrt2 - 1) * r
