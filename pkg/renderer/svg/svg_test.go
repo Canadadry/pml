@@ -10,6 +10,11 @@ type drawCallStack struct {
 	callstack []string
 }
 
+func (dcs *drawCallStack) SetStyle(s Style) {
+	dcs.callstack = append(dcs.callstack,
+		fmt.Sprintf("SetStyle %#v", s),
+	)
+}
 func (dcs *drawCallStack) MoveTo(x float64, y float64) {
 	dcs.callstack = append(dcs.callstack,
 		fmt.Sprintf("MoveTo x:%g, y: %g", x, y),
@@ -22,15 +27,15 @@ func (dcs *drawCallStack) LineTo(x float64, y float64) {
 	)
 }
 
-func (dcs *drawCallStack) CurveBezierCubicTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64) {
+func (dcs *drawCallStack) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64) {
 	dcs.callstack = append(dcs.callstack,
-		fmt.Sprintf("CurveBezierCubicTo %g,%g, anchor 1 %g,%g anchor 2 %g,%g", x3, y3, x1, y1, x2, y2),
+		fmt.Sprintf("BezierTo %g,%g, anchor 1 %g,%g anchor 2 %g,%g", x3, y3, x1, y1, x2, y2),
 	)
 }
 
-func (dcs *drawCallStack) ClosePath() {
+func (dcs *drawCallStack) CloseAndDraw() {
 	dcs.callstack = append(dcs.callstack,
-		fmt.Sprintf("ClosePath"),
+		fmt.Sprintf("CloseAndDraw"),
 	)
 }
 
@@ -68,7 +73,27 @@ func TestEndToEnd(t *testing.T) {
 					"LineTo x:132, y: 82",
 					"LineTo x:100, y: 82",
 					"LineTo x:100, y: 50",
-					"ClosePath",
+					"CloseAndDraw",
+				}}
+
+				return dcs
+			}(),
+		},
+		{
+			svg: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 210 297"  style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
+    <rect x="100" y="50" width="32" height="32" style="fill:rgb(51,153,102);fill-rule:nonzero;"/>
+</svg>`,
+			x: 0, y: 0, w: 210, h: 0,
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:100, y: 50",
+					"LineTo x:132, y: 50",
+					"LineTo x:132, y: 82",
+					"LineTo x:100, y: 82",
+					"LineTo x:100, y: 50",
+					"CloseAndDraw",
 				}}
 
 				return dcs

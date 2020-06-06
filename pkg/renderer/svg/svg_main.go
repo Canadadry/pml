@@ -2,57 +2,77 @@ package svg
 
 import (
 	"fmt"
+	"math"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
 	"strconv"
 	"strings"
 )
 
-func svgMain(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
+type viewBox struct {
+	x float64
+	y float64
+	w float64
+	h float64
+}
 
-	worldToParent, err := applyViewBoxAttr(worldToParent, element)
+func svgMain(element *svgparser.Element, targetVb viewBox) (*svgNode, error) {
+	epsilon := 1e-8
+
+	fileVb, err := parseViewBoxAttr(element)
 	if err != nil {
 		return nil, err
 	}
 
-	root, err := svgGroup(element, worldToParent)
+	if math.Abs(targetVb.w) < epsilon {
+		targetVb.w = fileVb.w
+		targetVb.h = fileVb.h
+	}
+	if math.Abs(targetVb.h) < epsilon {
+		targetVb.h = fileVb.h / fileVb.w * targetVb.w
+	}
+
+	transform := matrix.Identity().Translate(targetVb.x, targetVb.y).Scale(targetVb.w, targetVb.h)
+	transform = transform.Translate(fileVb.x, fileVb.y).Scale(1/fileVb.w, 1/fileVb.h)
+
+	root, err := svgGroup(element, transform)
 	if err != nil {
 		return nil, err
 	}
 	return root, nil
 }
 
-func applyViewBoxAttr(transform matrix.Matrix, element *svgparser.Element) (matrix.Matrix, error) {
+func parseViewBoxAttr(element *svgparser.Element) (*viewBox, error) {
 
 	viewBoxAttr, ok := element.Attributes["viewBox"]
 	if !ok {
-		return transform, fmt.Errorf("cant find viewBox, dont know what to do")
+		return nil, fmt.Errorf("cant find viewBox, dont know what to do")
 	}
 
 	viewBoxParam := strings.Split(viewBoxAttr, " ")
 
 	if len(viewBoxParam) != 4 {
-		return transform, fmt.Errorf("viewBox (%s), dont have 4 part dont know what to do", viewBoxAttr)
+		return nil, fmt.Errorf("viewBox (%s), dont have 4 part dont know what to do", viewBoxAttr)
 	}
 
-	viewBox := struct {
-		x float64
-		y float64
-		w float64
-		h float64
-	}{0, 0, 0, 0}
-
+	vb := &viewBox{0, 0, 0, 0}
 	var err error
-	viewBox.x, err = strconv.ParseFloat(viewBoxParam[0], 64)
-	viewBox.y, err = strconv.ParseFloat(viewBoxParam[1], 64)
-	viewBox.w, err = strconv.ParseFloat(viewBoxParam[2], 64)
-	viewBox.h, err = strconv.ParseFloat(viewBoxParam[3], 64)
+	vb.x, err = strconv.ParseFloat(viewBoxParam[0], 64)
 	if err != nil {
-		return transform, err
+		return nil, err
+	}
+	vb.y, err = strconv.ParseFloat(viewBoxParam[1], 64)
+	if err != nil {
+		return nil, err
+	}
+	vb.w, err = strconv.ParseFloat(viewBoxParam[2], 64)
+	if err != nil {
+		return nil, err
+	}
+	vb.h, err = strconv.ParseFloat(viewBoxParam[3], 64)
+	if err != nil {
+		return nil, err
 	}
 
-	transform = transform.Translate(viewBox.x, viewBox.y)
-	transform = transform.Scale(1/viewBox.w, 1/viewBox.h)
-
-	return transform, nil
+	return vb, nil
 }

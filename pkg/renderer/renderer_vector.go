@@ -98,7 +98,40 @@ func (r *renderer) renderVector(pdf *gofpdf.Fpdf, vector *ast.Item) error {
 	}
 	defer svgFile.Close()
 
-	pdf.SetDrawColor(0xff, 0x00, 0x00)
-	pdf.SetFillColor(0x99, 0x99, 0x99)
-	return svg.Draw(pdf, svgFile, *properties.x, *properties.y, *properties.width, *properties.height)
+	return svg.Draw(NewSvgToPdf(pdf), svgFile, *properties.x, *properties.y, *properties.width, *properties.height)
+}
+
+type svgToPdf struct {
+	pdf *gofpdf.Fpdf
+}
+
+func NewSvgToPdf(pdf *gofpdf.Fpdf) *svgToPdf {
+	return &svgToPdf{
+		pdf: pdf,
+	}
+}
+
+func (s2p *svgToPdf) SetStyle(s svg.Style) {
+	s2p.pdf.SetDrawColor(0xff, 0x00, 0x00)
+	s2p.pdf.SetFillColor(0x99, 0x99, 0x99)
+}
+
+func (s2p *svgToPdf) MoveTo(x float64, y float64) {
+	s2p.pdf.MoveTo(x, y)
+}
+
+func (s2p *svgToPdf) LineTo(x float64, y float64) {
+	s2p.pdf.LineTo(x, y)
+}
+
+func (s2p *svgToPdf) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64) {
+
+	s2p.pdf.CurveBezierCubicTo(x1, y1, x2, y2, x3, y3)
+}
+
+func (s2p *svgToPdf) CloseAndDraw() {
+	s2p.pdf.ClosePath()
+	s2p.pdf.SetFillColor(200, 200, 200)
+	s2p.pdf.SetLineWidth(3)
+	s2p.pdf.DrawPath("DF")
 }

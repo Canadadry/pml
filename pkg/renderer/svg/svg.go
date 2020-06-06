@@ -2,16 +2,25 @@ package svg
 
 import (
 	"fmt"
+	"image/color"
 	"io"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
 )
 
+type Style struct {
+	Fill        bool
+	FillColor   color.RGBA
+	BorderSize  int
+	BorderColor color.RGBA
+}
+
 type Drawer interface {
+	SetStyle(s Style)
 	MoveTo(x float64, y float64)
 	LineTo(x float64, y float64)
-	CurveBezierCubicTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64)
-	ClosePath()
+	BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64)
+	CloseAndDraw()
 }
 
 type command struct {
@@ -43,9 +52,9 @@ func (sn *svgNode) draw(d Drawer) error {
 		case 'L':
 			d.LineTo(cmd.x1, cmd.y1)
 		case 'C':
-			d.CurveBezierCubicTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x3, cmd.y3)
+			d.BezierTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x3, cmd.y3)
 		case 'Z':
-			d.ClosePath()
+			d.CloseAndDraw()
 		}
 	}
 
@@ -65,8 +74,7 @@ func Draw(d Drawer, svg io.Reader, x float64, y float64, w float64, h float64) e
 		return err
 	}
 
-	transform := matrix.Identity().Translate(x, y).Scale(w, h)
-	root, err := svgMain(element, transform)
+	root, err := svgMain(element, viewBox{x, y, w, h})
 	if err != nil {
 		return err
 	}
