@@ -19,7 +19,7 @@ type viewBox struct {
 func svgMain(element *svgparser.Element, targetVb viewBox) (*svgNode, error) {
 	epsilon := 1e-8
 
-	fileVb, err := parseViewBoxAttr(element)
+	fileVb, err := parseSvgAttribute(element)
 	if err != nil {
 		return nil, err
 	}
@@ -42,11 +42,21 @@ func svgMain(element *svgparser.Element, targetVb viewBox) (*svgNode, error) {
 	return root, nil
 }
 
-func parseViewBoxAttr(element *svgparser.Element) (*viewBox, error) {
+func parseSvgAttribute(element *svgparser.Element) (*viewBox, error) {
+
+	vb := &viewBox{0, 0, 0, 0}
+
+	var err, errWidth, errHeight error
+	vb.w, errWidth = element.ReadAttributeAsFloat("width")
+	vb.h, errHeight = element.ReadAttributeAsFloat("height")
+	if errWidth != nil || errHeight != nil {
+		vb.w = 1
+		vb.h = 1
+	}
 
 	viewBoxAttr, ok := element.Attributes["viewBox"]
 	if !ok {
-		return nil, fmt.Errorf("cant find viewBox, dont know what to do")
+		return vb, nil
 	}
 
 	viewBoxParam := strings.Split(viewBoxAttr, " ")
@@ -55,8 +65,6 @@ func parseViewBoxAttr(element *svgparser.Element) (*viewBox, error) {
 		return nil, fmt.Errorf("viewBox (%s), dont have 4 part dont know what to do", viewBoxAttr)
 	}
 
-	vb := &viewBox{0, 0, 0, 0}
-	var err error
 	vb.x, err = strconv.ParseFloat(viewBoxParam[0], 64)
 	if err != nil {
 		return nil, err
