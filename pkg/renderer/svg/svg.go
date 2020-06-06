@@ -10,6 +10,7 @@ import (
 type Drawer interface {
 	MoveTo(x float64, y float64)
 	LineTo(x float64, y float64)
+	CurveBezierCubicTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64)
 	ClosePath()
 }
 
@@ -43,7 +44,7 @@ func (sn *svgNode) draw(d Drawer) error {
 		case 'L':
 			d.LineTo(cmd.x1, cmd.y1)
 		case 'C':
-			d.LineTo(cmd.x1, cmd.y1)
+			d.CurveBezierCubicTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x3, cmd.y3)
 		case 'Z':
 			d.ClosePath()
 		}

@@ -22,6 +22,12 @@ func (dcs *drawCallStack) LineTo(x float64, y float64) {
 	)
 }
 
+func (dcs *drawCallStack) CurveBezierCubicTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64) {
+	dcs.callstack = append(dcs.callstack,
+		fmt.Sprintf("CurveBezierCubicTo %g,%g, anchor 1 %g,%g anchor 2 %g,%g", x3, y3, x1, y1, x2, y2),
+	)
+}
+
 func (dcs *drawCallStack) ClosePath() {
 	dcs.callstack = append(dcs.callstack,
 		fmt.Sprintf("ClosePath"),
