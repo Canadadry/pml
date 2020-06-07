@@ -1,37 +1,36 @@
 package svg
 
 import (
-	"math"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 	"testing"
 )
 
 func TestPathParsing(t *testing.T) {
-	epsilon := 1e-6
 
 	tests := []struct {
 		path     string
 		tranform matrix.Matrix
-		expected []command
+		expected []svgpath.Command
 	}{
 		{
 			path:     "M148,148C148,88.448 196.449,40 256,40C315.551,40 364,88.448 364,148L10,12.33 21,23Z",
 			tranform: matrix.Identity(),
-			expected: []command{
-				{'M', 148, 148, 0, 0, 0, 0},
-				{'C', 148, 88.448, 196.449, 40, 256, 40},
-				{'C', 315.551, 40, 364, 88.448, 364, 148},
-				{'L', 10, 12.33, 21, 23, 0, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			expected: []svgpath.Command{
+				{'M', []svgpath.Point{{148, 148}}},
+				{'C', []svgpath.Point{{148, 88.448}, {196.449, 40}, {256, 40}}},
+				{'C', []svgpath.Point{{315.551, 40}, {364, 88.448}, {364, 148}}},
+				{'L', []svgpath.Point{{10, 12.33}, {21, 23}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 		{
 			path:     "M123,456Z",
 			tranform: matrix.Identity().Scale(2, 3),
-			expected: []command{
-				{'M', 246, 1368, 0, 0, 0, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			expected: []svgpath.Command{
+				{'M', []svgpath.Point{{246, 1368}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 	}
@@ -54,30 +53,10 @@ func TestPathParsing(t *testing.T) {
 			t.Fatalf("[%d] result path has not the right number of commands exp=%d got=%d", i, len(tt.expected), len(result.commands))
 		}
 
-		for j, gotCmd := range result.commands {
-			expCmd := tt.expected[j]
-			if expCmd.kind != gotCmd.kind {
-				t.Fatalf("[%d] cmd %d not the right kind exp=%s got=%s", i, j, string(expCmd.kind), string(gotCmd.kind))
-			}
-			if math.Abs(expCmd.x1-gotCmd.x1) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right x1 exp=%g got=%g", i, j, expCmd.x1, gotCmd.x1)
-			}
-			if math.Abs(expCmd.y1-gotCmd.y1) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right y1 exp=%g got=%g", i, j, expCmd.y1, gotCmd.y1)
-			}
-			if math.Abs(expCmd.x2-gotCmd.x2) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right x2 exp=%g got=%g", i, j, expCmd.x2, gotCmd.x2)
-			}
-			if math.Abs(expCmd.y2-gotCmd.y2) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right y2 exp=%g got=%g", i, j, expCmd.y2, gotCmd.y2)
-			}
-			if math.Abs(expCmd.x3-gotCmd.x3) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right x3 exp=%g got=%g", i, j, expCmd.x3, gotCmd.x3)
-			}
-			if math.Abs(expCmd.y3-gotCmd.y3) > epsilon {
-				t.Fatalf("[%d] cmd %d not the right y3 exp=%g got=%g", i, j, expCmd.y3, gotCmd.y3)
+		for j := range tt.expected {
+			if tt.expected[j].ToString() != result.commands[j].ToString() {
+				t.Fatalf("[%d] command %d got %s exp %s", i, j, result.commands[j].ToString(), tt.expected[j].ToString())
 			}
 		}
 	}
-
 }

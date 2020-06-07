@@ -4,6 +4,7 @@ import (
 	"errors"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 	"testing"
 )
 
@@ -109,7 +110,7 @@ func TestSvgRectangleCommands(t *testing.T) {
 	tests := []struct {
 		elem      *svgparser.Element
 		transform matrix.Matrix
-		commands  []command
+		commands  []svgpath.Command
 	}{
 		{
 			elem: &svgparser.Element{
@@ -121,13 +122,13 @@ func TestSvgRectangleCommands(t *testing.T) {
 				},
 			},
 			transform: matrix.Identity(),
-			commands: []command{
-				{'M', 0, 0, 0, 0, 0, 0},
-				{'L', 1, 0, 0, 0, 0, 0},
-				{'L', 1, 1, 0, 0, 0, 0},
-				{'L', 0, 1, 0, 0, 0, 0},
-				{'L', 0, 0, 0, 0, 0, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			commands: []svgpath.Command{
+				{'M', []svgpath.Point{{0, 0}}},
+				{'L', []svgpath.Point{{1, 0}}},
+				{'L', []svgpath.Point{{1, 1}}},
+				{'L', []svgpath.Point{{0, 1}}},
+				{'L', []svgpath.Point{{0, 0}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 		{
@@ -140,13 +141,13 @@ func TestSvgRectangleCommands(t *testing.T) {
 				},
 			},
 			transform: matrix.Identity(),
-			commands: []command{
-				{'M', 0, 0, 0, 0, 0, 0},
-				{'L', 25, 0, 0, 0, 0, 0},
-				{'L', 25, 10, 0, 0, 0, 0},
-				{'L', 0, 10, 0, 0, 0, 0},
-				{'L', 0, 0, 0, 0, 0, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			commands: []svgpath.Command{
+				{'M', []svgpath.Point{{0, 0}}},
+				{'L', []svgpath.Point{{25, 0}}},
+				{'L', []svgpath.Point{{25, 10}}},
+				{'L', []svgpath.Point{{0, 10}}},
+				{'L', []svgpath.Point{{0, 0}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 		{
@@ -159,13 +160,13 @@ func TestSvgRectangleCommands(t *testing.T) {
 				},
 			},
 			transform: matrix.Identity().Translate(5, 12),
-			commands: []command{
-				{'M', 5, 12, 0, 0, 0, 0},
-				{'L', 30, 12, 0, 0, 0, 0},
-				{'L', 30, 22, 0, 0, 0, 0},
-				{'L', 5, 22, 0, 0, 0, 0},
-				{'L', 5, 12, 0, 0, 0, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			commands: []svgpath.Command{
+				{'M', []svgpath.Point{{5, 12}}},
+				{'L', []svgpath.Point{{30, 12}}},
+				{'L', []svgpath.Point{{30, 22}}},
+				{'L', []svgpath.Point{{5, 22}}},
+				{'L', []svgpath.Point{{5, 12}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 	}

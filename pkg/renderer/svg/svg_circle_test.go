@@ -4,6 +4,7 @@ import (
 	"errors"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 	"testing"
 )
 
@@ -87,7 +88,7 @@ func TestSvgCircleCommands(t *testing.T) {
 	tests := []struct {
 		elem      *svgparser.Element
 		transform matrix.Matrix
-		commands  []command
+		commands  []svgpath.Command
 	}{
 		{
 			elem: &svgparser.Element{
@@ -100,13 +101,13 @@ func TestSvgCircleCommands(t *testing.T) {
 			transform: matrix.Identity(),
 			// circle with bezier curve param : 2.761423749153967
 			//     r (5) - bezier curve param : 2.238576250846033
-			commands: []command{
-				{'M', 5, 0, 0, 0, 0, 0},
-				{'C', 7.761423749153967, 0, 10, 2.238576250846033, 10, 5},
-				{'C', 10, 7.761423749153967, 7.761423749153967, 10, 5, 10},
-				{'C', 2.238576250846033, 10, 0, 7.761423749153967, 0, 5},
-				{'C', 0, 2.238576250846033, 2.238576250846033, 0, 5, 0},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			commands: []svgpath.Command{
+				{'M', []svgpath.Point{{5, 0}}},
+				{'C', []svgpath.Point{{7.761423749153967, 0}, {10, 2.238576250846033}, {10, 5}}},
+				{'C', []svgpath.Point{{10, 7.761423749153967}, {7.761423749153967, 10}, {5, 10}}},
+				{'C', []svgpath.Point{{2.238576250846033, 10}, {0, 7.761423749153967}, {0, 5}}},
+				{'C', []svgpath.Point{{0, 2.238576250846033}, {2.238576250846033, 0}, {5, 0}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 		{
@@ -120,13 +121,13 @@ func TestSvgCircleCommands(t *testing.T) {
 			transform: matrix.Identity().Translate(5, 10),
 			// circle with bezier curve param : 2.761423749153967
 			//     r (5) - bezier curve param : 2.238576250846033
-			commands: []command{
-				{'M', 10, 10, 0, 0, 0, 0},
-				{'C', 12.761423749153967, 10, 15, 12.238576250846033, 15, 15},
-				{'C', 15, 17.761423749153967, 12.761423749153967, 20, 10, 20},
-				{'C', 7.238576250846033, 20, 5, 17.761423749153967, 5, 15},
-				{'C', 5, 12.238576250846033, 7.238576250846033, 10, 10, 10},
-				{'Z', 0, 0, 0, 0, 0, 0},
+			commands: []svgpath.Command{
+				{'M', []svgpath.Point{{10, 10}}},
+				{'C', []svgpath.Point{{12.761423749153967, 10}, {15, 12.238576250846033}, {15, 15}}},
+				{'C', []svgpath.Point{{15, 17.761423749153967}, {12.761423749153967, 20}, {10, 20}}},
+				{'C', []svgpath.Point{{7.238576250846033, 20}, {5, 17.761423749153967}, {5, 15}}},
+				{'C', []svgpath.Point{{5, 12.238576250846033}, {7.238576250846033, 10}, {10, 10}}},
+				{'Z', []svgpath.Point{}},
 			},
 		},
 	}

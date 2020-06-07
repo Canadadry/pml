@@ -1,11 +1,11 @@
 package svg
 
 import (
-	"fmt"
 	"image/color"
 	"io"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 )
 
 type Style struct {
@@ -23,36 +23,22 @@ type Drawer interface {
 	CloseAndDraw()
 }
 
-type command struct {
-	kind byte
-	x1   float64
-	y1   float64
-	x2   float64
-	y2   float64
-	x3   float64
-	y3   float64
-}
-
-func (c command) ToString() string {
-	return fmt.Sprintf("%s, 1: %g,%g 2: %g,%g 3: %g,%g", string(c.kind), c.x1, c.y1, c.x2, c.y2, c.x3, c.y3)
-}
-
 type svgNode struct {
 	worldToLocal matrix.Matrix
-	commands     []command
+	commands     []svgpath.Command
 	children     []*svgNode
 }
 
 func (sn *svgNode) draw(d Drawer) error {
 
 	for _, cmd := range sn.commands {
-		switch cmd.kind {
+		switch cmd.Kind {
 		case 'M':
-			d.MoveTo(cmd.x1, cmd.y1)
+			d.MoveTo(cmd.Points[0].X, cmd.Points[0].Y)
 		case 'L':
-			d.LineTo(cmd.x1, cmd.y1)
+			d.LineTo(cmd.Points[0].X, cmd.Points[0].Y)
 		case 'C':
-			d.BezierTo(cmd.x1, cmd.y1, cmd.x2, cmd.y2, cmd.x3, cmd.y3)
+			d.BezierTo(cmd.Points[0].X, cmd.Points[0].Y, cmd.Points[1].X, cmd.Points[1].Y, cmd.Points[2].X, cmd.Points[2].Y)
 		case 'Z':
 			d.CloseAndDraw()
 		}

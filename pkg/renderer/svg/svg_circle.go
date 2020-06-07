@@ -5,13 +5,14 @@ import (
 	"math"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 )
 
 func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 
 	sn := &svgNode{
 		worldToLocal: worldToParent,
-		commands:     []command{},
+		commands:     []svgpath.Command{},
 	}
 
 	cx, err := element.ReadAttributeAsFloat("cx")
@@ -34,12 +35,12 @@ func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNod
 	arc := 4.0 / 3.0 * (math.Sqrt2 - 1) * r
 
 	sn.commands = append(sn.commands,
-		command{'M', cx, cy - r, 0, 0, 0, 0},
-		command{'C', cx + arc, cy - r, cx + r, cy - arc, cx + r, cy},
-		command{'C', cx + r, cy + arc, cx + arc, cy + r, cx, cy + r},
-		command{'C', cx - arc, cy + r, cx - r, cy + arc, cx - r, cy},
-		command{'C', cx - r, cy - arc, cx - arc, cy - r, cx, cy - r},
-		command{'Z', 0, 0, 0, 0, 0, 0},
+		svgpath.Command{'M', []svgpath.Point{{cx, cy - r}}},
+		svgpath.Command{'C', []svgpath.Point{{cx + arc, cy - r}, {cx + r, cy - arc}, {cx + r, cy}}},
+		svgpath.Command{'C', []svgpath.Point{{cx + r, cy + arc}, {cx + arc, cy + r}, {cx, cy + r}}},
+		svgpath.Command{'C', []svgpath.Point{{cx - arc, cy + r}, {cx - r, cy + arc}, {cx - r, cy}}},
+		svgpath.Command{'C', []svgpath.Point{{cx - r, cy - arc}, {cx - arc, cy - r}, {cx, cy - r}}},
+		svgpath.Command{'Z', []svgpath.Point{}},
 	)
 	return sn, nil
 }

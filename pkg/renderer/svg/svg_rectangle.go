@@ -4,13 +4,14 @@ import (
 	"fmt"
 	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
+	"pml/pkg/renderer/svg/svgpath"
 )
 
 func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 
 	sn := &svgNode{
 		worldToLocal: worldToParent,
-		commands:     []command{},
+		commands:     []svgpath.Command{},
 	}
 
 	x, err := element.ReadAttributeAsFloat("x")
@@ -34,12 +35,12 @@ func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svg
 	right, bottom, _ := sn.worldToLocal.Project(x+w, y+h, 1.0)
 
 	sn.commands = append(sn.commands,
-		command{'M', left, top, 0, 0, 0, 0},
-		command{'L', right, top, 0, 0, 0, 0},
-		command{'L', right, bottom, 0, 0, 0, 0},
-		command{'L', left, bottom, 0, 0, 0, 0},
-		command{'L', left, top, 0, 0, 0, 0},
-		command{'Z', 0, 0, 0, 0, 0, 0},
+		svgpath.Command{'M', []svgpath.Point{{left, top}}},
+		svgpath.Command{'L', []svgpath.Point{{right, top}}},
+		svgpath.Command{'L', []svgpath.Point{{right, bottom}}},
+		svgpath.Command{'L', []svgpath.Point{{left, bottom}}},
+		svgpath.Command{'L', []svgpath.Point{{left, top}}},
+		svgpath.Command{'Z', []svgpath.Point{}},
 	)
 	return sn, nil
 }
