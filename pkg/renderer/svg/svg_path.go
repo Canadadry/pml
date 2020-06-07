@@ -10,6 +10,7 @@ import (
 func svgPath(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
 	sp := &svgNode{
 		worldToLocal: worldToParent,
+		style:        parseStyleAttribute(element),
 	}
 
 	d, ok := element.Attributes["d"]

@@ -11,21 +11,21 @@ import (
 type Style struct {
 	Fill        bool
 	FillColor   color.RGBA
-	BorderSize  int
+	BorderSize  float64
 	BorderColor color.RGBA
 }
 
 type Drawer interface {
-	SetStyle(s Style)
 	MoveTo(x float64, y float64)
 	LineTo(x float64, y float64)
 	BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float64, y3 float64)
-	CloseAndDraw()
+	CloseAndDraw(s Style)
 }
 
 type svgNode struct {
 	worldToLocal matrix.Matrix
 	commands     []svgpath.Command
+	style        Style
 	children     []*svgNode
 }
 

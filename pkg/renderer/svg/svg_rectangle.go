@@ -12,6 +12,7 @@ func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svg
 	sn := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []svgpath.Command{},
+		style:        parseStyleAttribute(element),
 	}
 
 	x, err := element.ReadAttributeAsFloat("x")
