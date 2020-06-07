@@ -105,6 +105,7 @@ Where `Item` and `Child` are one of the following :
  - `Rectangle` : to draw a rectangle
  - `Text` : to write text
  - `Image` : to draw an image
+ - `Vector` : to draw a svg image
 
 
  ### Properties
