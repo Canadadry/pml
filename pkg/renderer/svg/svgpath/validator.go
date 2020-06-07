@@ -19,6 +19,10 @@ func validateCommand(cmd Command) bool {
 		return len(cmd.Points)%3 == 0 && len(cmd.Points) > 0
 	case 'C':
 		return len(cmd.Points)%3 == 0 && len(cmd.Points) > 0
+	case 'q':
+		return len(cmd.Points)%2 == 0 && len(cmd.Points) > 0
+	case 'Q':
+		return len(cmd.Points)%2 == 0 && len(cmd.Points) > 0
 	case 'H':
 		if len(cmd.Points) != 1 {
 			return false
