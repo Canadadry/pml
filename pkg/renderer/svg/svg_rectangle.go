@@ -31,15 +31,12 @@ func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svg
 		return nil, fmt.Errorf("error while reading rectangle arrtibute height :%w", err)
 	}
 
-	left, top, _ := sn.worldToLocal.Project(x, y, 1.0)
-	right, bottom, _ := sn.worldToLocal.Project(x+w, y+h, 1.0)
-
 	sn.commands = append(sn.commands,
-		svgpath.Command{'M', []svgpath.Point{{left, top}}},
-		svgpath.Command{'L', []svgpath.Point{{right, top}}},
-		svgpath.Command{'L', []svgpath.Point{{right, bottom}}},
-		svgpath.Command{'L', []svgpath.Point{{left, bottom}}},
-		svgpath.Command{'L', []svgpath.Point{{left, top}}},
+		svgpath.Command{'M', []svgpath.Point{{x, y}}},
+		svgpath.Command{'h', []svgpath.Point{{w, 0}}},
+		svgpath.Command{'v', []svgpath.Point{{h, 0}}},
+		svgpath.Command{'h', []svgpath.Point{{-w, 0}}},
+		svgpath.Command{'v', []svgpath.Point{{-h, 0}}},
 		svgpath.Command{'Z', []svgpath.Point{}},
 	)
 	return sn, nil

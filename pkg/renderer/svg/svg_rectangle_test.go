@@ -108,9 +108,8 @@ func TestSvgRectangleErrors(t *testing.T) {
 
 func TestSvgRectangleCommands(t *testing.T) {
 	tests := []struct {
-		elem      *svgparser.Element
-		transform matrix.Matrix
-		commands  []svgpath.Command
+		elem     *svgparser.Element
+		commands []svgpath.Command
 	}{
 		{
 			elem: &svgparser.Element{
@@ -121,13 +120,12 @@ func TestSvgRectangleCommands(t *testing.T) {
 					"height": "1.0",
 				},
 			},
-			transform: matrix.Identity(),
 			commands: []svgpath.Command{
 				{'M', []svgpath.Point{{0, 0}}},
-				{'L', []svgpath.Point{{1, 0}}},
-				{'L', []svgpath.Point{{1, 1}}},
-				{'L', []svgpath.Point{{0, 1}}},
-				{'L', []svgpath.Point{{0, 0}}},
+				{'h', []svgpath.Point{{1, 0}}},
+				{'v', []svgpath.Point{{1, 0}}},
+				{'h', []svgpath.Point{{-1, 0}}},
+				{'v', []svgpath.Point{{-1, 0}}},
 				{'Z', []svgpath.Point{}},
 			},
 		},
@@ -140,39 +138,19 @@ func TestSvgRectangleCommands(t *testing.T) {
 					"height": "10.0",
 				},
 			},
-			transform: matrix.Identity(),
 			commands: []svgpath.Command{
 				{'M', []svgpath.Point{{0, 0}}},
-				{'L', []svgpath.Point{{25, 0}}},
-				{'L', []svgpath.Point{{25, 10}}},
-				{'L', []svgpath.Point{{0, 10}}},
-				{'L', []svgpath.Point{{0, 0}}},
-				{'Z', []svgpath.Point{}},
-			},
-		},
-		{
-			elem: &svgparser.Element{
-				Attributes: map[string]string{
-					"x":      "0.0",
-					"y":      "0.0",
-					"width":  "25.0",
-					"height": "10.0",
-				},
-			},
-			transform: matrix.Identity().Translate(5, 12),
-			commands: []svgpath.Command{
-				{'M', []svgpath.Point{{5, 12}}},
-				{'L', []svgpath.Point{{30, 12}}},
-				{'L', []svgpath.Point{{30, 22}}},
-				{'L', []svgpath.Point{{5, 22}}},
-				{'L', []svgpath.Point{{5, 12}}},
+				{'h', []svgpath.Point{{25, 0}}},
+				{'v', []svgpath.Point{{10, 0}}},
+				{'h', []svgpath.Point{{-25, 0}}},
+				{'v', []svgpath.Point{{0 - 10, 0}}},
 				{'Z', []svgpath.Point{}},
 			},
 		},
 	}
 
 	for i, tt := range tests {
-		node, err := svgRectangle(tt.elem, tt.transform)
+		node, err := svgRectangle(tt.elem, matrix.Identity())
 
 		if err != nil {
 			t.Fatalf("[%d] failed : %v", i, err)

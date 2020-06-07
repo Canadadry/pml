@@ -53,6 +53,11 @@ func (m Matrix) Project(x float64, y float64, z float64) (float64, float64, floa
 	return m.n11*x + m.n12*y + m.n13*z, m.n21*x + m.n22*y + m.n23*z, m.n31*x + m.n32*y + m.n33*z
 }
 
+func (m Matrix) ProjectPoint(x float64, y float64) (float64, float64) {
+	z := 1.0
+	return m.n11*x + m.n12*y + m.n13*z, m.n21*x + m.n22*y + m.n23*z
+}
+
 func (m Matrix) Scale(sx float64, sy float64) Matrix {
 	scaleMatrix := New(
 		sx, 0, 0,

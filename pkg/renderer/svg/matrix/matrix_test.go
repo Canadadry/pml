@@ -125,6 +125,32 @@ func TestProject(t *testing.T) {
 	}
 }
 
+func TestProjectPoint(t *testing.T) {
+	tests := []struct {
+		mat    Matrix
+		points []float64
+		result []float64
+	}{
+		{
+			mat:    New(1, 2, 3, 4, 5, 6, 0, 0, 1),
+			points: []float64{9, 8},
+			result: []float64{28, 82},
+		},
+	}
+
+	for _, tt := range tests {
+
+		x, y := tt.mat.ProjectPoint(tt.points[0], tt.points[1])
+
+		if x != tt.result[0] {
+			t.Fatalf("invalid x got %g, exp %g", x, tt.result[0])
+		}
+		if y != tt.result[1] {
+			t.Fatalf("invalid y got %g, exp %g", y, tt.result[1])
+		}
+	}
+}
+
 func TestScale(t *testing.T) {
 	tests := []struct {
 		mat    Matrix

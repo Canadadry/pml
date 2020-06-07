@@ -86,9 +86,8 @@ func TestSvgCircleErrors(t *testing.T) {
 
 func TestSvgCircleCommands(t *testing.T) {
 	tests := []struct {
-		elem      *svgparser.Element
-		transform matrix.Matrix
-		commands  []svgpath.Command
+		elem     *svgparser.Element
+		commands []svgpath.Command
 	}{
 		{
 			elem: &svgparser.Element{
@@ -98,7 +97,6 @@ func TestSvgCircleCommands(t *testing.T) {
 					"r":  "5.0",
 				},
 			},
-			transform: matrix.Identity(),
 			// circle with bezier curve param : 2.761423749153967
 			//     r (5) - bezier curve param : 2.238576250846033
 			commands: []svgpath.Command{
@@ -110,30 +108,10 @@ func TestSvgCircleCommands(t *testing.T) {
 				{'Z', []svgpath.Point{}},
 			},
 		},
-		{
-			elem: &svgparser.Element{
-				Attributes: map[string]string{
-					"cx": "5.0",
-					"cy": "5.0",
-					"r":  "5.0",
-				},
-			},
-			transform: matrix.Identity().Translate(5, 10),
-			// circle with bezier curve param : 2.761423749153967
-			//     r (5) - bezier curve param : 2.238576250846033
-			commands: []svgpath.Command{
-				{'M', []svgpath.Point{{10, 10}}},
-				{'C', []svgpath.Point{{12.761423749153967, 10}, {15, 12.238576250846033}, {15, 15}}},
-				{'C', []svgpath.Point{{15, 17.761423749153967}, {12.761423749153967, 20}, {10, 20}}},
-				{'C', []svgpath.Point{{7.238576250846033, 20}, {5, 17.761423749153967}, {5, 15}}},
-				{'C', []svgpath.Point{{5, 12.238576250846033}, {7.238576250846033, 10}, {10, 10}}},
-				{'Z', []svgpath.Point{}},
-			},
-		},
 	}
 
 	for i, tt := range tests {
-		node, err := svgCircle(tt.elem, tt.transform)
+		node, err := svgCircle(tt.elem, matrix.Identity())
 
 		if err != nil {
 			t.Fatalf("[%d] failed : %v", i, err)
