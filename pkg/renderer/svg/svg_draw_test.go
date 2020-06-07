@@ -76,6 +76,54 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2H3Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:3, y:2",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2V3Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:1, y:3",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2h3Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:4, y:2",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2v3Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:1, y:5",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2L3,4Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
@@ -101,7 +149,7 @@ func TestSvgNodeDraw(t *testing.T) {
 		},
 	}
 
-	for i, tt := range tests {
+	for _, tt := range tests {
 		pathElement := &svgparser.Element{
 			Name: "Path",
 			Attributes: map[string]string{
@@ -111,7 +159,7 @@ func TestSvgNodeDraw(t *testing.T) {
 
 		node, err := svgPath(pathElement, tt.transform)
 		if err != nil {
-			t.Fatalf("[%d] failed : %v", i, err)
+			t.Fatalf("[%s] failed : %v", tt.path, err)
 		}
 
 		result := &drawCallStack{callstack: []string{}}
@@ -119,16 +167,16 @@ func TestSvgNodeDraw(t *testing.T) {
 		err = node.draw(result)
 
 		if err != nil {
-			t.Fatalf("[%d] failed : %v", i, err)
+			t.Fatalf("[%s] failed : %v", tt.path, err)
 		}
 		if len(result.callstack) != len(tt.expected.callstack) {
 			t.Errorf("expected stack %#v", tt.expected.callstack)
 			t.Errorf("  result stack %#v", result.callstack)
-			t.Fatalf("[%d] callstack wrong size got %d exp %d", i, len(result.callstack), len(tt.expected.callstack))
+			t.Fatalf("[%s] callstack wrong size got %d exp %d", tt.path, len(result.callstack), len(tt.expected.callstack))
 		}
 		for j := range tt.expected.callstack {
 			if tt.expected.callstack[j] != result.callstack[j] {
-				t.Fatalf("[%d] call %d got %s exp %s", i, j, result.callstack[j], tt.expected.callstack[j])
+				t.Fatalf("[%s] call %d got %s exp %s", tt.path, j, result.callstack[j], tt.expected.callstack[j])
 			}
 		}
 	}

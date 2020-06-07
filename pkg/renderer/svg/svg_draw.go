@@ -22,6 +22,18 @@ func (sn *svgNode) draw(d Drawer) error {
 			position.X = cmd.Points[0].X
 			position.Y = cmd.Points[0].Y
 			d.LineTo(position.X, position.Y)
+		case 'H':
+			position.X = cmd.Points[0].X
+			d.LineTo(position.X, position.Y)
+		case 'h':
+			position.X += cmd.Points[0].X
+			d.LineTo(position.X, position.Y)
+		case 'V':
+			position.Y = cmd.Points[0].X
+			d.LineTo(position.X, position.Y)
+		case 'v':
+			position.Y += cmd.Points[0].X
+			d.LineTo(position.X, position.Y)
 		case 'l':
 			position.X += cmd.Points[0].X
 			position.Y += cmd.Points[0].Y
