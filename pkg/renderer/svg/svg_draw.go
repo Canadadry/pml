@@ -13,31 +13,39 @@ func (sn *svgNode) draw(d Drawer) error {
 		case 'M':
 			position.X = cmd.Points[0].X
 			position.Y = cmd.Points[0].Y
-			d.MoveTo(position.X, position.Y)
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.MoveTo(x, y)
 		case 'm':
 			position.X += cmd.Points[0].X
 			position.Y += cmd.Points[0].Y
-			d.MoveTo(position.X, position.Y)
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.MoveTo(x, y)
 		case 'L':
 			position.X = cmd.Points[0].X
 			position.Y = cmd.Points[0].Y
-			d.LineTo(position.X, position.Y)
-		case 'H':
-			position.X = cmd.Points[0].X
-			d.LineTo(position.X, position.Y)
-		case 'h':
-			position.X += cmd.Points[0].X
-			d.LineTo(position.X, position.Y)
-		case 'V':
-			position.Y = cmd.Points[0].X
-			d.LineTo(position.X, position.Y)
-		case 'v':
-			position.Y += cmd.Points[0].X
-			d.LineTo(position.X, position.Y)
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
 		case 'l':
 			position.X += cmd.Points[0].X
 			position.Y += cmd.Points[0].Y
-			d.LineTo(position.X, position.Y)
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
+		case 'H':
+			position.X = cmd.Points[0].X
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
+		case 'h':
+			position.X += cmd.Points[0].X
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
+		case 'V':
+			position.Y = cmd.Points[0].X
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
+		case 'v':
+			position.Y += cmd.Points[0].X
+			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
+			d.LineTo(x, y)
 		case 'Q':
 			position.X = cmd.Points[1].X
 			position.Y = cmd.Points[1].Y

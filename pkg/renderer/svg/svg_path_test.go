@@ -33,7 +33,7 @@ func TestPathParsing(t *testing.T) {
 			},
 		}
 
-		result, err := svgPath(pathElement, matrix.Identity())
+		result, err := svgPath(pathElement, matrix.Identity().Scale(1, 2))
 
 		if err != nil {
 			t.Fatalf("[%s] should not failed but got %v", tt.path, err)
