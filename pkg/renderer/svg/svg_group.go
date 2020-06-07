@@ -69,10 +69,10 @@ func matrixFromGAttributes(transformAttr string) (matrix.Matrix, error) {
 	}
 
 	n11, err := strconv.ParseFloat(coef[0], 64)
-	n12, err := strconv.ParseFloat(coef[1], 64)
-	n13, err := strconv.ParseFloat(coef[2], 64)
-	n21, err := strconv.ParseFloat(coef[3], 64)
-	n22, err := strconv.ParseFloat(coef[4], 64)
+	n21, err := strconv.ParseFloat(coef[1], 64)
+	n12, err := strconv.ParseFloat(coef[2], 64)
+	n22, err := strconv.ParseFloat(coef[3], 64)
+	n13, err := strconv.ParseFloat(coef[4], 64)
 	n23, err := strconv.ParseFloat(coef[5], 64)
 
 	if err != nil {
