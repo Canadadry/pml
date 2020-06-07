@@ -1,5 +1,10 @@
 package svgpath
 
+import (
+	"fmt"
+	"strings"
+)
+
 type Point struct {
 	X float64
 	Y float64
@@ -11,5 +16,12 @@ type Command struct {
 }
 
 func (c Command) ToString() string {
-	return "test" //fmt.Sprintf("%s, 1: %g,%g 2: %g,%g 3: %g,%g", string(c.kind), c.x1, c.y1, c.x2, c.y2, c.x3, c.y3)
+
+	points := []string{}
+
+	for i, p := range c.Points {
+		points = append(points, fmt.Sprintf("%d : (%g,%g)", i, p.X, p.Y))
+	}
+
+	return string(c.Kind) + " " + strings.Join(points, ", ")
 }

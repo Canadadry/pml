@@ -35,11 +35,17 @@ func (lexer *Lexer) GetNextToken() Token {
 		tok.Type = EOF
 		tok.Literal = ""
 		lexer.readChar()
+	case '-':
+		lexer.readChar()
+		literal, tokenType := lexer.readNumeric()
+		tok.Literal = "-" + literal
+		tok.Type = tokenType
 	default:
 		switch {
 		case isLetter(lexer.ch):
 			tok.Type = COMMAND
 			tok.Literal = string(lexer.ch)
+			lexer.readChar()
 		case isNumeric(lexer.ch):
 			literal, tokenType := lexer.readNumeric()
 			tok.Literal = literal
@@ -79,21 +85,10 @@ func (lexer *Lexer) readNumeric() (string, TokenType) {
 		lexer.readChar()
 	}
 
-	switch true {
-	case isLetter(lexer.ch):
-		{
-			for isLetter(lexer.ch) || isNumeric(lexer.ch) {
-				lexer.readChar()
-			}
-			return lexer.source[start:lexer.current], ILLEGAL
-		}
-	case isDot(lexer.ch):
-		{
+	if isDot(lexer.ch) {
+		lexer.readChar()
+		for isNumeric(lexer.ch) {
 			lexer.readChar()
-			for isNumeric(lexer.ch) {
-				lexer.readChar()
-			}
-			return lexer.source[start:lexer.current], NUMBER
 		}
 	}
 
