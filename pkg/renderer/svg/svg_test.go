@@ -10,11 +10,6 @@ type drawCallStack struct {
 	callstack []string
 }
 
-func (dcs *drawCallStack) SetStyle(s Style) {
-	dcs.callstack = append(dcs.callstack,
-		fmt.Sprintf("SetStyle %#v", s),
-	)
-}
 func (dcs *drawCallStack) MoveTo(x float64, y float64) {
 	dcs.callstack = append(dcs.callstack,
 		fmt.Sprintf("MoveTo x:%g, y:%g", x, y),
@@ -33,7 +28,7 @@ func (dcs *drawCallStack) BezierTo(x1 float64, y1 float64, x2 float64, y2 float6
 	)
 }
 
-func (dcs *drawCallStack) CloseAndDraw() {
+func (dcs *drawCallStack) CloseAndDraw(s Style) {
 	dcs.callstack = append(dcs.callstack,
 		fmt.Sprintf("CloseAndDraw"),
 	)
@@ -85,30 +80,6 @@ func TestEndToEnd(t *testing.T) {
 <svg width="100%" height="100%" viewBox="0 0 210 297"  style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:1.41421;">
     <rect x="100" y="50" width="32" height="32" style="fill:rgb(51,153,102);fill-rule:nonzero;"/>
 </svg>`,
-			x: 0, y: 0, w: 210, h: 0,
-			expected: func() *drawCallStack {
-				dcs := &drawCallStack{callstack: []string{
-					"MoveTo x:100, y:50",
-					"LineTo x:132, y:50",
-					"LineTo x:132, y:82",
-					"LineTo x:100, y:82",
-					"LineTo x:100, y:50",
-					"CloseAndDraw",
-				}}
-
-				return dcs
-			}(),
-		},
-		{
-			svg: `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg width="100%" height="100%" viewBox="0 0 256 256" version="1.1" xmlns="http://www.w3.org/2000/svg" >
-    <circle cx="128" cy="128" r="128" style="fill:rgb(235,235,235);"/>
-    <g transform="matrix(1,0,0,1,7.00433,7.00433)">
-        <circle cx="120.996" cy="120.996" r="120.996" style="fill:rgb(0,81,200);"/>
-    </g>
-</svg>
-`,
 			x: 0, y: 0, w: 210, h: 0,
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{

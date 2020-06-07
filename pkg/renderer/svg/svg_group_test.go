@@ -12,12 +12,12 @@ func TestMatrixFromGAttributes(t *testing.T) {
 		expected  matrix.Matrix
 	}{
 		{
-			attribute: "matrix(1,0,0,0,1,0)",
+			attribute: "matrix(1,0,0,1,0,0)",
 			expected:  matrix.New(1, 0, 0, 0, 1, 0, 0, 0, 1),
 		},
 		{
 			attribute: "matrix(3.04349,0,0,3.04349,54.9563,54.9563)",
-			expected:  matrix.New(3.04349, 0, 0, 3.04349, 54.9563, 54.9563, 0, 0, 1),
+			expected:  matrix.New(3.04349, 0, 54.9563, 0, 3.04349, 54.9563, 0, 0, 1),
 		},
 	}
 

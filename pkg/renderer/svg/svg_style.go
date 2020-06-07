@@ -3,12 +3,13 @@ package svg
 import (
 	"errors"
 	"image/color"
+	"pml/pkg/renderer/svg/matrix"
 	"pml/pkg/renderer/svg/svgparser"
 	"strconv"
 	"strings"
 )
 
-func parseStyleAttribute(element *svgparser.Element) Style {
+func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) Style {
 	s := Style{
 		Fill:        false,
 		FillColor:   color.RGBA{0, 0, 0, 0},
@@ -44,7 +45,15 @@ func parseStyleAttribute(element *svgparser.Element) Style {
 			s.BorderColor = c
 			s.BorderSize = 0.1
 		case "stroke-width":
-			s.BorderSize = 0.1
+
+			if arg[1][len(arg[1])-2:] == "px" {
+				width, err := strconv.ParseFloat(arg[1][:len(arg[1])-2], 64)
+				if err != nil {
+					continue
+				}
+				newWidth, _ := transform.ProjectPoint(width, 0)
+				s.BorderSize = newWidth
+			}
 		}
 	}
 

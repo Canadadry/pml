@@ -13,7 +13,7 @@ func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNod
 	sn := &svgNode{
 		worldToLocal: worldToParent,
 		commands:     []svgpath.Command{},
-		style:        parseStyleAttribute(element),
+		style:        parseStyleAttribute(element, worldToParent),
 	}
 
 	cx, err := element.ReadAttributeAsFloat("cx")
