@@ -133,6 +133,14 @@ Where `Item` and `Child` are one of the following :
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
  - `file` : full path from working dir to image file
 
+ `Vector` properties :
+
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `width` : width of the image must be a float value in millimeter
+ - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `file` : full path from working dir to svg image file (partial support)
+
  `Text` properties :
 
  - `x` : left coordinate must be a float value in millimeter absolute position in the `Page`
@@ -149,10 +157,9 @@ Where `Item` and `Child` are one of the following :
 
 There is still important missing feature to concidere this stable
 
- - `Vector` to draw svg
  - `Paragraphe` to allow styling only a part of the text
  - `Path`to draw custom form
- - more options per Item, like relative position
+ - more options per Item, like relative position or maybe an `Anchor`
  - ...
 
 
