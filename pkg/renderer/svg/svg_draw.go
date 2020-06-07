@@ -47,31 +47,39 @@ func (sn *svgNode) draw(d Drawer) error {
 			x, y := sn.worldToLocal.ProjectPoint(position.X, position.Y)
 			d.LineTo(x, y)
 		case 'Q':
-			cx, cy := sn.worldToLocal.ProjectPoint(cmd.Points[0].X, cmd.Points[0].Y)
-			x, y := sn.worldToLocal.ProjectPoint(cmd.Points[1].X, cmd.Points[1].Y)
-			d.BezierTo(cx, cy, cx, cy, x, y)
-			position.X = cmd.Points[1].X
-			position.Y = cmd.Points[1].Y
+			for i := 0; i < len(cmd.Points); i += 2 {
+				cx, cy := sn.worldToLocal.ProjectPoint(cmd.Points[i+0].X, cmd.Points[i+0].Y)
+				x, y := sn.worldToLocal.ProjectPoint(cmd.Points[i+1].X, cmd.Points[i+1].Y)
+				d.BezierTo(cx, cy, cx, cy, x, y)
+				position.X = cmd.Points[i+1].X
+				position.Y = cmd.Points[i+1].Y
+			}
 		case 'q':
-			cx, cy := sn.worldToLocal.ProjectPoint(cmd.Points[0].X+position.X, cmd.Points[0].Y+position.Y)
-			x, y := sn.worldToLocal.ProjectPoint(cmd.Points[1].X+position.X, cmd.Points[1].Y+position.Y)
-			d.BezierTo(cx, cy, cx, cy, x, y)
-			position.X += cmd.Points[1].X
-			position.Y += cmd.Points[1].Y
+			for i := 0; i < len(cmd.Points); i += 2 {
+				cx, cy := sn.worldToLocal.ProjectPoint(cmd.Points[i+0].X+position.X, cmd.Points[i+0].Y+position.Y)
+				x, y := sn.worldToLocal.ProjectPoint(cmd.Points[i+1].X+position.X, cmd.Points[i+1].Y+position.Y)
+				d.BezierTo(cx, cy, cx, cy, x, y)
+				position.X += cmd.Points[i+1].X
+				position.Y += cmd.Points[i+1].Y
+			}
 		case 'C':
-			c1x, c1y := sn.worldToLocal.ProjectPoint(cmd.Points[0].X, cmd.Points[0].Y)
-			c2x, c2y := sn.worldToLocal.ProjectPoint(cmd.Points[1].X, cmd.Points[1].Y)
-			x, y := sn.worldToLocal.ProjectPoint(cmd.Points[2].X, cmd.Points[2].Y)
-			d.BezierTo(c1x, c1y, c2x, c2y, x, y)
-			position.X = cmd.Points[2].X
-			position.Y = cmd.Points[2].Y
+			for i := 0; i < len(cmd.Points); i += 3 {
+				c1x, c1y := sn.worldToLocal.ProjectPoint(cmd.Points[i+0].X, cmd.Points[i+0].Y)
+				c2x, c2y := sn.worldToLocal.ProjectPoint(cmd.Points[i+1].X, cmd.Points[i+1].Y)
+				x, y := sn.worldToLocal.ProjectPoint(cmd.Points[i+2].X, cmd.Points[i+2].Y)
+				d.BezierTo(c1x, c1y, c2x, c2y, x, y)
+				position.X = cmd.Points[i+2].X
+				position.Y = cmd.Points[i+2].Y
+			}
 		case 'c':
-			c1x, c1y := sn.worldToLocal.ProjectPoint(cmd.Points[0].X+position.X, cmd.Points[0].Y+position.Y)
-			c2x, c2y := sn.worldToLocal.ProjectPoint(cmd.Points[1].X+position.X, cmd.Points[1].Y+position.Y)
-			x, y := sn.worldToLocal.ProjectPoint(cmd.Points[2].X+position.X, cmd.Points[2].Y+position.Y)
-			d.BezierTo(c1x, c1y, c2x, c2y, x, y)
-			position.X += cmd.Points[2].X
-			position.Y += cmd.Points[2].Y
+			for i := 0; i < len(cmd.Points); i += 3 {
+				c1x, c1y := sn.worldToLocal.ProjectPoint(cmd.Points[i+0].X+position.X, cmd.Points[i+0].Y+position.Y)
+				c2x, c2y := sn.worldToLocal.ProjectPoint(cmd.Points[i+1].X+position.X, cmd.Points[i+1].Y+position.Y)
+				x, y := sn.worldToLocal.ProjectPoint(cmd.Points[i+2].X+position.X, cmd.Points[i+2].Y+position.Y)
+				d.BezierTo(c1x, c1y, c2x, c2y, x, y)
+				position.X += cmd.Points[i+2].X
+				position.Y += cmd.Points[i+2].Y
+			}
 		case 'Z':
 			d.CloseAndDraw()
 		case 'z':

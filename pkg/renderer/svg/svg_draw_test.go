@@ -251,6 +251,19 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2C3,4 5,6 7,8 9,10 11,12 13,14Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 7,8, anchor 1 3,4 anchor 2 5,6",
+					"BezierTo 13,14, anchor 1 9,10 anchor 2 11,12",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2C3,4 5,6 7,8Z",
 			transform: matrix.Identity().Translate(10, 10),
 			expected: func() *drawCallStack {
@@ -269,6 +282,19 @@ func TestSvgNodeDraw(t *testing.T) {
 				dcs := &drawCallStack{callstack: []string{
 					"MoveTo x:1, y:2",
 					"BezierTo 8,10, anchor 1 4,6 anchor 2 6,8",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2c3,4 5,6 7,8 9,10 11,12 13,14Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 8,10, anchor 1 4,6 anchor 2 6,8",
+					"BezierTo 21,24, anchor 1 17,20 anchor 2 19,22",
 					"CloseAndDraw",
 				}}
 				return dcs
@@ -299,6 +325,19 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2Q3,4 5,6 7,8 9,10Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 5,6, anchor 1 3,4 anchor 2 3,4",
+					"BezierTo 9,10, anchor 1 7,8 anchor 2 7,8",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2Q3,4 5,6Z",
 			transform: matrix.Identity().Translate(10, 10),
 			expected: func() *drawCallStack {
@@ -317,6 +356,19 @@ func TestSvgNodeDraw(t *testing.T) {
 				dcs := &drawCallStack{callstack: []string{
 					"MoveTo x:1, y:2",
 					"BezierTo 6,8, anchor 1 4,6 anchor 2 4,6",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2q3,4 5,6 7,8 9,10Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 6,8, anchor 1 4,6 anchor 2 4,6",
+					"BezierTo 15,18, anchor 1 13,16 anchor 2 13,16",
 					"CloseAndDraw",
 				}}
 				return dcs
