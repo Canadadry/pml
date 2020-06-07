@@ -17,13 +17,13 @@ func (dcs *drawCallStack) SetStyle(s Style) {
 }
 func (dcs *drawCallStack) MoveTo(x float64, y float64) {
 	dcs.callstack = append(dcs.callstack,
-		fmt.Sprintf("MoveTo x:%g, y: %g", x, y),
+		fmt.Sprintf("MoveTo x:%g, y:%g", x, y),
 	)
 }
 
 func (dcs *drawCallStack) LineTo(x float64, y float64) {
 	dcs.callstack = append(dcs.callstack,
-		fmt.Sprintf("LineTo x:%g, y: %g", x, y),
+		fmt.Sprintf("LineTo x:%g, y:%g", x, y),
 	)
 }
 
@@ -68,11 +68,11 @@ func TestEndToEnd(t *testing.T) {
 			x: 0, y: 0, w: 210, h: 297,
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{
-					"MoveTo x:100, y: 50",
-					"LineTo x:132, y: 50",
-					"LineTo x:132, y: 82",
-					"LineTo x:100, y: 82",
-					"LineTo x:100, y: 50",
+					"MoveTo x:100, y:50",
+					"LineTo x:132, y:50",
+					"LineTo x:132, y:82",
+					"LineTo x:100, y:82",
+					"LineTo x:100, y:50",
 					"CloseAndDraw",
 				}}
 
@@ -88,11 +88,11 @@ func TestEndToEnd(t *testing.T) {
 			x: 0, y: 0, w: 210, h: 0,
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{
-					"MoveTo x:100, y: 50",
-					"LineTo x:132, y: 50",
-					"LineTo x:132, y: 82",
-					"LineTo x:100, y: 82",
-					"LineTo x:100, y: 50",
+					"MoveTo x:100, y:50",
+					"LineTo x:132, y:50",
+					"LineTo x:132, y:82",
+					"LineTo x:100, y:82",
+					"LineTo x:100, y:50",
 					"CloseAndDraw",
 				}}
 

@@ -13,10 +13,65 @@ func TestSvgNodeDraw(t *testing.T) {
 		expected  *drawCallStack
 	}{
 		{
+			path:      "",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{"CloseAndDraw"}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2M1,2Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"MoveTo x:1, y:2",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2L3,4Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:3, y:4",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2C3,4 5,6 7,8Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 7,8, anchor 1 3,4 anchor 2 5,6",
+					"CloseAndDraw",
+				}}
 				return dcs
 			}(),
 		},
