@@ -20,10 +20,10 @@ func TestParser(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		l := NewLexer(tt.program)
-		parser := NewParser(l)
+		l := newLexer(tt.program)
+		parser := newParser(l)
 
-		result, err := parser.Parse()
+		result, err := parser.parse()
 		if err != nil {
 			t.Fatalf("[%d] Failed with error : %v", i, err)
 		}
@@ -59,10 +59,10 @@ func TestParserErrors(t *testing.T) {
 		}}
 
 	for i, tt := range tests {
-		l := NewLexer(tt.program)
-		parser := NewParser(l)
+		l := newLexer(tt.program)
+		parser := newParser(l)
 
-		_, err := parser.Parse()
+		_, err := parser.parse()
 		if !errors.Is(err, tt.expected) {
 			t.Fatalf("[%d] error was not the one expected got %s, exp %s", i, err, tt.expected)
 		}

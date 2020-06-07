@@ -27,10 +27,10 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: EOF, Literal: ""},
 	}
 
-	lexer := NewLexer(testedString)
+	lexer := newLexer(testedString)
 
 	for _, expectedToken := range expectedTokens {
-		actualToken := lexer.GetNextToken()
+		actualToken := lexer.getNextToken()
 
 		testToken(t, actualToken, expectedToken)
 

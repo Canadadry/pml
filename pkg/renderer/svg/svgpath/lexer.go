@@ -7,7 +7,7 @@ type Lexer struct {
 	ch      byte
 }
 
-func NewLexer(source string) *Lexer {
+func newLexer(source string) *Lexer {
 	l := &Lexer{
 		source:  source,
 		current: 0,
@@ -18,7 +18,7 @@ func NewLexer(source string) *Lexer {
 	return l
 }
 
-func (lexer *Lexer) GetNextToken() Token {
+func (lexer *Lexer) getNextToken() Token {
 	for isWhiteSpace(lexer.ch) {
 		lexer.readChar()
 	}

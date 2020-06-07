@@ -17,10 +17,7 @@ func svgPath(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode,
 		return nil, fmt.Errorf("No attribute 'd' found")
 	}
 
-	l := svgpath.NewLexer(d)
-	p := svgpath.NewParser(l)
-
-	cmd, err := p.Parse()
+	cmd, err := svgpath.Parse(d)
 	if err != nil {
 		return nil, err
 	}

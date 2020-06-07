@@ -15,15 +15,15 @@ type parser struct {
 	lexer   *Lexer
 }
 
-func NewParser(l *Lexer) parser {
+func newParser(l *Lexer) parser {
 	return parser{
-		current: l.GetNextToken(),
-		next:    l.GetNextToken(),
+		current: l.getNextToken(),
+		next:    l.getNextToken(),
 		lexer:   l,
 	}
 }
 
-func (p *parser) Parse() ([]Command, error) {
+func (p *parser) parse() ([]Command, error) {
 	cmds := []Command{}
 
 	for !p.isCurrentTokenA(EOF) {
@@ -72,7 +72,7 @@ func (p *parser) parseCommand() (Command, error) {
 
 func (p *parser) goToNextToken() {
 	p.current = p.next
-	p.next = p.lexer.GetNextToken()
+	p.next = p.lexer.getNextToken()
 }
 
 func (p *parser) isCurrentTokenA(t TokenType) bool {
