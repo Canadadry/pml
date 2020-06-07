@@ -52,6 +52,30 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2m1,2Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"MoveTo x:2, y:4",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2l2,2Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:3, y:4",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2L3,4Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
