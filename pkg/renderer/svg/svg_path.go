@@ -27,5 +27,13 @@ func svgPath(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode,
 
 	sp.commands = cmd
 
+	for i, c := range sp.commands {
+		for j, pt := range c.Points {
+			x, y, _ := worldToParent.Project(pt.X, pt.Y, 1)
+			sp.commands[i].Points[j].X = x
+			sp.commands[i].Points[j].Y = y
+		}
+	}
+
 	return sp, nil
 }
