@@ -57,13 +57,10 @@ func TestParserErrors(t *testing.T) {
 			ErrExpectedCommandToken,
 		},
 		{
-			"m234.43804,",
+			"m10,12 234.43804,",
 			ErrExpectedFloatToken,
 		},
-		{
-			"m234.43804,12 10m",
-			ErrExpectedComaToken,
-		}}
+	}
 
 	for i, tt := range tests {
 		l := newLexer(tt.program)

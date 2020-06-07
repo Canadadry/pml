@@ -7,7 +7,6 @@ import (
 
 var ErrExpectedCommandToken = errors.New("ErrExpectedCommandToken")
 var ErrExpectedFloatToken = errors.New("ErrExpectedFloatToken")
-var ErrExpectedComaToken = errors.New("ErrExpectedComaToken")
 
 type parser struct {
 	current Token
@@ -53,7 +52,7 @@ func (p *parser) parseCommand() (Command, error) {
 			if len(cmd.Points) != 0 {
 				return cmd, err
 			}
-			if !errors.Is(err, ErrExpectedComaToken) {
+			if !errors.Is(err, ErrExpectedFloatToken) {
 				return cmd, err
 			}
 		}
@@ -68,10 +67,9 @@ func (p *parser) parsePoint() (Point, error) {
 	point.X, _ = strconv.ParseFloat(p.current.Literal, 64)
 	p.goToNextToken()
 
-	if !p.isCurrentTokenA(COMA) {
-		return point, ErrExpectedComaToken
+	if p.isCurrentTokenA(COMA) {
+		p.goToNextToken()
 	}
-	p.goToNextToken()
 
 	if !p.isCurrentTokenA(NUMBER) {
 		return point, ErrExpectedFloatToken
