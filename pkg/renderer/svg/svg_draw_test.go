@@ -251,12 +251,36 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2C3,4 5,6 7,8Z",
+			transform: matrix.Identity().Translate(10, 10),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:11, y:12",
+					"BezierTo 17,18, anchor 1 13,14 anchor 2 15,16",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2c3,4 5,6 7,8Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{
 					"MoveTo x:1, y:2",
 					"BezierTo 8,10, anchor 1 4,6 anchor 2 6,8",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2c3,4 5,6 7,8Z",
+			transform: matrix.Identity().Translate(10, 10),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:11, y:12",
+					"BezierTo 18,20, anchor 1 14,16 anchor 2 16,18",
 					"CloseAndDraw",
 				}}
 				return dcs
@@ -275,12 +299,36 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "M1,2Q3,4 5,6Z",
+			transform: matrix.Identity().Translate(10, 10),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:11, y:12",
+					"BezierTo 15,16, anchor 1 13,14 anchor 2 13,14",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2q3,4 5,6Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
 				dcs := &drawCallStack{callstack: []string{
 					"MoveTo x:1, y:2",
 					"BezierTo 6,8, anchor 1 4,6 anchor 2 4,6",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2q3,4 5,6Z",
+			transform: matrix.Identity().Translate(10, 10),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:11, y:12",
+					"BezierTo 16,18, anchor 1 14,16 anchor 2 14,16",
 					"CloseAndDraw",
 				}}
 				return dcs
