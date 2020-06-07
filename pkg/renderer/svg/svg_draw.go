@@ -42,6 +42,14 @@ func (sn *svgNode) draw(d Drawer) error {
 			position.X = cmd.Points[2].X
 			position.Y = cmd.Points[2].Y
 			d.BezierTo(cmd.Points[0].X, cmd.Points[0].Y, cmd.Points[1].X, cmd.Points[1].Y, cmd.Points[2].X, cmd.Points[2].Y)
+		case 'c':
+			d.BezierTo(
+				cmd.Points[0].X+position.X, cmd.Points[0].Y+position.Y,
+				cmd.Points[1].X+position.X, cmd.Points[1].Y+position.Y,
+				cmd.Points[2].X+position.X, cmd.Points[2].Y+position.Y,
+			)
+			position.X += cmd.Points[2].X
+			position.Y += cmd.Points[2].Y
 		case 'Z':
 			d.CloseAndDraw()
 		}

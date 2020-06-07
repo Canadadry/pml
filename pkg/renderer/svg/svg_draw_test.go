@@ -147,6 +147,18 @@ func TestSvgNodeDraw(t *testing.T) {
 				return dcs
 			}(),
 		},
+		{
+			path:      "M1,2c3,4 5,6 7,8Z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{
+					"MoveTo x:1, y:2",
+					"BezierTo 8,10, anchor 1 4,6 anchor 2 6,8",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
