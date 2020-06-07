@@ -17,6 +17,13 @@ func TestParser(t *testing.T) {
 				{'c', []Point{{50.21866, 26.50627}, {126.75595, -3.87395}, {151.46369, -35.941621}}},
 			},
 		},
+		{
+			"m 10,12h 234.43804",
+			[]Command{
+				{'m', []Point{{10, 12}}},
+				{'h', []Point{{234.43804, 0}}},
+			},
+		},
 	}
 
 	for i, tt := range tests {
@@ -54,7 +61,7 @@ func TestParserErrors(t *testing.T) {
 			ErrExpectedFloatToken,
 		},
 		{
-			"m234.43804m",
+			"m234.43804,12 10m",
 			ErrExpectedComaToken,
 		}}
 

@@ -48,26 +48,39 @@ func (p *parser) parseCommand() (Command, error) {
 	p.goToNextToken()
 
 	for p.isCurrentTokenA(NUMBER) {
-		point := Point{}
-
-		point.X, _ = strconv.ParseFloat(p.current.Literal, 64)
-		p.goToNextToken()
-
-		if !p.isCurrentTokenA(COMA) {
-			return cmd, ErrExpectedComaToken
+		point, err := p.parsePoint()
+		if err != nil {
+			if len(cmd.Points) != 0 {
+				return cmd, err
+			}
+			if !errors.Is(err, ErrExpectedComaToken) {
+				return cmd, err
+			}
 		}
-		p.goToNextToken()
-
-		if !p.isCurrentTokenA(NUMBER) {
-			return cmd, ErrExpectedFloatToken
-		}
-		point.Y, _ = strconv.ParseFloat(p.current.Literal, 64)
-
-		p.goToNextToken()
-
 		cmd.Points = append(cmd.Points, point)
 	}
 	return cmd, nil
+}
+
+func (p *parser) parsePoint() (Point, error) {
+	point := Point{}
+
+	point.X, _ = strconv.ParseFloat(p.current.Literal, 64)
+	p.goToNextToken()
+
+	if !p.isCurrentTokenA(COMA) {
+		return point, ErrExpectedComaToken
+	}
+	p.goToNextToken()
+
+	if !p.isCurrentTokenA(NUMBER) {
+		return point, ErrExpectedFloatToken
+	}
+	point.Y, _ = strconv.ParseFloat(p.current.Literal, 64)
+
+	p.goToNextToken()
+
+	return point, nil
 }
 
 func (p *parser) goToNextToken() {

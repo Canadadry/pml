@@ -6,7 +6,7 @@ import (
 
 func TestNextToken_SingleCharToken(t *testing.T) {
 
-	testedString := "m 234.43804,111.69821 c 50.21866,26.50627 126.75595,-3.87395 151.46369,-35.941621#"
+	testedString := "m 234.43804,111.69821 c 50.21866,26.50627 126.75595,-3.87395 151.46369,-35.941621 h12#"
 
 	expectedTokens := []Token{
 		{Type: COMMAND, Literal: "m"},
@@ -23,6 +23,8 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: NUMBER, Literal: "151.46369"},
 		{Type: COMA, Literal: ","},
 		{Type: NUMBER, Literal: "-35.941621"},
+		{Type: COMMAND, Literal: "h"},
+		{Type: NUMBER, Literal: "12"},
 		{Type: ILLEGAL, Literal: "#"},
 		{Type: EOF, Literal: ""},
 	}
