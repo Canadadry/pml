@@ -52,6 +52,8 @@ func (sn *svgNode) draw(d Drawer) error {
 			position.Y += cmd.Points[2].Y
 		case 'Z':
 			d.CloseAndDraw()
+		case 'z':
+			d.CloseAndDraw()
 		}
 	}
 

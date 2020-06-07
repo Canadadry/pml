@@ -29,6 +29,14 @@ func TestSvgNodeDraw(t *testing.T) {
 			}(),
 		},
 		{
+			path:      "z",
+			transform: matrix.Identity(),
+			expected: func() *drawCallStack {
+				dcs := &drawCallStack{callstack: []string{"CloseAndDraw"}}
+				return dcs
+			}(),
+		},
+		{
 			path:      "M1,2Z",
 			transform: matrix.Identity(),
 			expected: func() *drawCallStack {
