@@ -15,13 +15,13 @@ func TestPathParsing(t *testing.T) {
 		expected []svgpath.Command
 	}{
 		{
-			path:     "M148,148C148,88.448 196.449,40 256,40C315.551,40 364,88.448 364,148L10,12.33 21,23Z",
+			path:     "M148,148C148,88.448 196.449,40 256,40C315.551,40 364,88.448 364,148L10,12.33Z",
 			tranform: matrix.Identity(),
 			expected: []svgpath.Command{
 				{'M', []svgpath.Point{{148, 148}}},
 				{'C', []svgpath.Point{{148, 88.448}, {196.449, 40}, {256, 40}}},
 				{'C', []svgpath.Point{{315.551, 40}, {364, 88.448}, {364, 148}}},
-				{'L', []svgpath.Point{{10, 12.33}, {21, 23}}},
+				{'L', []svgpath.Point{{10, 12.33}}},
 				{'Z', []svgpath.Point{}},
 			},
 		},
@@ -46,7 +46,7 @@ func TestPathParsing(t *testing.T) {
 		result, err := svgPath(pathElement, tt.tranform)
 
 		if err != nil {
-			t.Fatalf("[%d] should not failed but got %v", i, err)
+			t.Fatalf("[%s] should not failed but got %v", tt.path, err)
 		}
 
 		if len(result.commands) != len(tt.expected) {
