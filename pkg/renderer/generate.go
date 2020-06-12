@@ -249,7 +249,7 @@ func (nt *NodeText) initFrom(item *ast.Item) error {
 	if err != nil {
 		return err
 	}
-	nt.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 20)
+	nt.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 6)
 	if err != nil {
 		return err
 	}
@@ -347,11 +347,12 @@ func (nv *NodeVector) initFrom(item *ast.Item) error {
 }
 
 type NodeParagraph struct {
-	children []Node
-	x        float64
-	y        float64
-	width    float64
-	height   float64
+	children   []Node
+	x          float64
+	y          float64
+	width      float64
+	height     float64
+	lineHeight float64
 }
 
 func (np *NodeParagraph) Chilrend() []Node { return np.children }
@@ -391,6 +392,10 @@ func (np *NodeParagraph) initFrom(item *ast.Item) error {
 		return err
 	}
 	np.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
+	if err != nil {
+		return err
+	}
+	np.lineHeight, err = item.GetPropertyAsFloatWithDefault("lineHeight", 6)
 	if err != nil {
 		return err
 	}

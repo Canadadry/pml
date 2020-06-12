@@ -11,6 +11,8 @@ import (
 	"strings"
 )
 
+const ptToMm = 25.4 / 72.0
+
 var alignPossibleValue = map[string]string{
 	alingTopLeft:        "TL",
 	alingTopCenter:      "TC",
@@ -48,6 +50,7 @@ func (r *renderer) Render(tree *ast.Item) error {
 func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 
 	initialized := false
+	renderChild := true
 
 	switch n := node.(type) {
 	case *NodeDocument:
@@ -66,7 +69,8 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 		if len(n.fontName) == 0 {
 			n.fontName = "Arial"
 		}
-		pdf.SetFont(n.fontName, "", n.fontSize)
+		fontSizePt := n.fontSize / ptToMm
+		pdf.SetFont(n.fontName, "", fontSizePt)
 		pdf.SetTextColor(int(n.color.R), int(n.color.G), int(n.color.B))
 		pdf.SetXY(n.x, n.y)
 		pdf.CellFormat(n.width, n.height, n.text, "", 0, align, false, 0, "")
@@ -111,14 +115,53 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 
 		svg.Draw(NewSvgToPdf(pdf), svgFile, n.x, n.y, n.width, n.height)
 	case *NodeParagraph:
+		renderChild = false
+		x := 0.0
+		y := 0.0
+
+		for _, child := range node.Chilrend() {
+			offset := 0
+			textChild, ok := child.(*NodeText)
+			if !ok {
+				return fmt.Errorf("Unexpected node in paragraph")
+			}
+			if len(textChild.fontName) == 0 {
+				textChild.fontName = "Arial"
+			}
+
+			fontSizePt := textChild.fontSize / ptToMm
+			pdf.SetFont(textChild.fontName, "", fontSizePt)
+			pdf.SetTextColor(int(textChild.color.R), int(textChild.color.G), int(textChild.color.B))
+
+			fmt.Println("new child ", textChild.text)
+			for offset < len(textChild.text) {
+				maxSize, textWidth := getTextMaxLength(pdf, textChild.text[offset:], n.width-x)
+				fmt.Println(maxSize, textWidth)
+				fmt.Println("daw at", n.x+x, n.y+y, textChild.text[offset:offset+maxSize])
+				pdf.SetXY(n.x+x, n.y+y)
+				text := textChild.text[offset : offset+maxSize]
+				align := "TL"
+				pdf.CellFormat(n.width, n.height, text, "", 0, align, false, 0, "")
+				offset = offset + maxSize
+				x = x + textWidth
+				if x > n.width {
+					x = 0
+					y = y + n.lineHeight
+				}
+			}
+
+		}
+
 	default:
 		return fmt.Errorf("cannot render node type")
 	}
 
-	for _, child := range node.Chilrend() {
-		err := r.draw(child, pdf)
-		if err != nil {
-			return err
+	if renderChild {
+		for _, child := range node.Chilrend() {
+			err := r.draw(child, pdf)
+			if err != nil {
+				return err
+			}
 		}
 	}
 
@@ -127,6 +170,20 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 	}
 
 	return nil
+}
+
+func getTextMaxLength(pdf *gofpdf.Fpdf, text string, maxWidth float64) (int, float64) {
+	splitted := strings.Split(text, " ")
+	tmp := ""
+	textWidth := 0.0
+	for _, part := range splitted {
+		textWidth = pdf.GetStringWidth(tmp + part + " ")
+		if textWidth > maxWidth {
+			return len(tmp), textWidth
+		}
+		tmp = tmp + part
+	}
+	return len(text), textWidth
 }
 
 func fileExists(filename string) bool {
