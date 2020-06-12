@@ -15,6 +15,7 @@ const (
 	itemFont      = "Font"
 	itemImage     = "Image"
 	itemVector    = "Vector"
+	itemParagraph = "Paragraph"
 )
 
 const (
@@ -90,6 +91,8 @@ func createNodeFrom(item *ast.Item) (Node, error) {
 		return &NodeImage{}, nil
 	case itemVector:
 		return &NodeVector{}, nil
+	case itemParagraph:
+		return &NodeParagraph{}, nil
 	}
 	return nil, errItemNotFound
 }
@@ -112,6 +115,8 @@ func (nd *NodeDocument) addChild(child Node) error {
 	case *NodeImage:
 		return errChildrenNotAllowed
 	case *NodeVector:
+		return errChildrenNotAllowed
+	case *NodeParagraph:
 		return errChildrenNotAllowed
 	}
 	nd.children = append(nd.children, child)
@@ -136,6 +141,7 @@ func (np *NodePage) addChild(child Node) error {
 		return errChildrenNotAllowed
 	case *NodeImage:
 	case *NodeVector:
+	case *NodeParagraph:
 	}
 	np.children = append(np.children, child)
 	return nil
@@ -164,6 +170,7 @@ func (nr *NodeRectangle) addChild(child Node) error {
 		return errChildrenNotAllowed
 	case *NodeImage:
 	case *NodeVector:
+	case *NodeParagraph:
 	}
 	nr.children = append(nr.children, child)
 	return nil
@@ -333,6 +340,57 @@ func (nv *NodeVector) initFrom(item *ast.Item) error {
 		return err
 	}
 	nv.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type NodeParagraph struct {
+	children []Node
+	x        float64
+	y        float64
+	width    float64
+	height   float64
+}
+
+func (np *NodeParagraph) Chilrend() []Node { return np.children }
+func (np *NodeParagraph) addChild(child Node) error {
+	switch child.(type) {
+	case *NodeDocument:
+		return errChildrenNotAllowed
+	case *NodePage:
+		return errChildrenNotAllowed
+	case *NodeRectangle:
+		return errChildrenNotAllowed
+	case *NodeText:
+	case *NodeFont:
+		return errChildrenNotAllowed
+	case *NodeImage:
+		return errChildrenNotAllowed
+	case *NodeVector:
+		return errChildrenNotAllowed
+	case *NodeParagraph:
+		return errChildrenNotAllowed
+	}
+	np.children = append(np.children, child)
+	return nil
+}
+func (np *NodeParagraph) initFrom(item *ast.Item) error {
+	var err error
+	np.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
+	if err != nil {
+		return err
+	}
+	np.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
+	if err != nil {
+		return err
+	}
+	np.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
+	if err != nil {
+		return err
+	}
+	np.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
 	if err != nil {
 		return err
 	}

@@ -110,6 +110,7 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 		defer svgFile.Close()
 
 		svg.Draw(NewSvgToPdf(pdf), svgFile, n.x, n.y, n.width, n.height)
+	case *NodeParagraph:
 	default:
 		return fmt.Errorf("cannot render node type")
 	}
