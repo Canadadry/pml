@@ -3,8 +3,8 @@ package renderer
 import (
 	"errors"
 	"fmt"
+	"github.com/canadadry/pml/pkg/ast"
 	"image/color"
-	"pml/pkg/ast"
 )
 
 const (

@@ -3,11 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/canadadry/pml/pkg/lexer"
+	"github.com/canadadry/pml/pkg/parser"
+	"github.com/canadadry/pml/pkg/renderer"
+	"github.com/canadadry/pml/pkg/template"
 	"io"
-	"pml/pkg/lexer"
-	"pml/pkg/parser"
-	"pml/pkg/renderer"
-	"pml/pkg/template"
 )
 
 func Full(input string, output io.Writer, param []byte) error {

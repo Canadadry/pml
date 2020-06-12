@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"pml/pkg/lexer"
-	"pml/pkg/token"
+	"github.com/canadadry/pml/pkg/lexer"
+	"github.com/canadadry/pml/pkg/token"
 )
 
 func Lexer(input string) {

@@ -2,9 +2,9 @@ package svg
 
 import (
 	"errors"
+	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
 	"image/color"
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
 	"strconv"
 	"strings"
 )

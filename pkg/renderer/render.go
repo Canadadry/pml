@@ -2,12 +2,12 @@ package renderer
 
 import (
 	"fmt"
+	"github.com/canadadry/pml/pkg/ast"
+	"github.com/canadadry/pml/pkg/renderer/svg"
 	"github.com/jung-kurt/gofpdf"
 	"io"
 	"os"
 	"path/filepath"
-	"pml/pkg/ast"
-	"pml/pkg/renderer/svg"
 	"strings"
 )
 

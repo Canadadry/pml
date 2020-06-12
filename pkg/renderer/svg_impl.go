@@ -1,9 +1,8 @@
 package renderer
 
 import (
+	"github.com/canadadry/pml/pkg/renderer/svg"
 	"github.com/jung-kurt/gofpdf"
-
-	"pml/pkg/renderer/svg"
 )
 
 type svgToPdf struct {

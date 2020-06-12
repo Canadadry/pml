@@ -2,9 +2,9 @@ package svg
 
 import (
 	"fmt"
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
-	"pml/pkg/renderer/svg/svgpath"
+	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
 )
 
 func svgRectangle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {

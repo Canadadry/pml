@@ -3,8 +3,8 @@ package ast
 import (
 	"errors"
 	"fmt"
+	"github.com/canadadry/pml/pkg/token"
 	"image/color"
-	"pml/pkg/token"
 	"strconv"
 )
 

@@ -1,11 +1,11 @@
 package svg
 
 import (
+	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
 	"image/color"
 	"io"
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
-	"pml/pkg/renderer/svg/svgpath"
 )
 
 type Style struct {

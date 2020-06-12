@@ -2,9 +2,9 @@ package parser
 
 import (
 	"fmt"
-	"pml/pkg/ast"
-	"pml/pkg/lexer"
-	"pml/pkg/token"
+	"github.com/canadadry/pml/pkg/ast"
+	"github.com/canadadry/pml/pkg/lexer"
+	"github.com/canadadry/pml/pkg/token"
 )
 
 type parser struct {

@@ -2,10 +2,10 @@ package svg
 
 import (
 	"fmt"
+	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
 	"math"
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
-	"pml/pkg/renderer/svg/svgpath"
 )
 
 func svgCircle(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {

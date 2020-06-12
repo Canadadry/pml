@@ -1,7 +1,7 @@
 package svg
 
 import (
-	"pml/pkg/renderer/svg/svgpath"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
 )
 
 func (sn *svgNode) draw(d Drawer) error {

@@ -2,10 +2,10 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/canadadry/pml/pkg/lexer"
+	"github.com/canadadry/pml/pkg/parser"
+	"github.com/canadadry/pml/pkg/renderer"
 	"io"
-	"pml/pkg/lexer"
-	"pml/pkg/parser"
-	"pml/pkg/renderer"
 )
 
 func Renderer(file string, output io.Writer) error {

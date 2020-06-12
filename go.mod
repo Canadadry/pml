@@ -1,4 +1,4 @@
-module pml
+module github.com/canadadry/pml
 
 go 1.14
 

@@ -2,8 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"pml/pkg/lexer"
-	"pml/pkg/parser"
+	"github.com/canadadry/pml/pkg/lexer"
+	"github.com/canadadry/pml/pkg/parser"
 )
 
 func Parser(file string) error {

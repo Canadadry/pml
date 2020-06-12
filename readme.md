@@ -11,9 +11,8 @@ It aim to depend only a basic interface, in which you can implement the way you 
 ## Usage
 
 ```
-git clone https://github.com/canadadry/pml
-cd pml
-go run main.go -in example/ -mode api &
+go get https://github.com/canadadry/pml
+pml -in example/ -mode api &
 
 curl --request GET \
   --url http://localhost:8080/template \

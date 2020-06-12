@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/canadadry/pml/cmd"
 	"io/ioutil"
 	"os"
-	"pml/cmd"
 )
 
 func main() {
