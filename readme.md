@@ -154,11 +154,21 @@ Where `Item` and `Child` are one of the following :
  - `fontSize` : define the size of the rendering font must be a float value in millimeter
  - `fontName` : select the font to draw text must be one of the registerer fonts see item `Font`
 
+ `Paragraph` properties :
+
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `width` : width of the rectangle must be a float value in millimeter
+ - `height` : height of the rectangle must be a float value in millimeter
+ - `lineHeight` : height of the line must be a float value in millimeter
+
+Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh` and `align` properties. 
+
+
 ## Next step 
 
 There is still important missing feature to concidere this stable
 
- - `Paragraphe` to allow styling only a part of the text
  - `Path`to draw custom form
  - more options per Item, like relative position or maybe an `Anchor`
  - ...
