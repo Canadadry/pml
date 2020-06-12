@@ -133,11 +133,8 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 			pdf.SetFont(textChild.fontName, "", fontSizePt)
 			pdf.SetTextColor(int(textChild.color.R), int(textChild.color.G), int(textChild.color.B))
 
-			fmt.Println("new child ", textChild.text)
 			for offset < len(textChild.text) {
 				maxSize, textWidth := getTextMaxLength(pdf, textChild.text[offset:], n.width-x)
-				fmt.Println(maxSize, textWidth, len(textChild.text))
-				fmt.Println("daw at", n.x+x, n.y+y, textChild.text[offset:offset+maxSize])
 				pdf.SetXY(n.x+x, n.y+y)
 				text := textChild.text[offset : offset+maxSize]
 				align := "TL"
