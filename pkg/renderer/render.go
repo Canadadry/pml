@@ -137,8 +137,8 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 				maxSize, textWidth := getTextMaxLength(pdf, textChild.text[offset:], n.width-x)
 				pdf.SetXY(n.x+x, n.y+y)
 				text := textChild.text[offset : offset+maxSize]
-				align := "TL"
-				pdf.CellFormat(n.width, n.height, text, "", 0, align, false, 0, "")
+				align := "AL"
+				pdf.CellFormat(n.width, n.lineHeight, text, "", 0, align, false, 0, "")
 				offset = offset + maxSize
 				x = x + textWidth
 				if x > n.width {
