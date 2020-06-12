@@ -100,6 +100,20 @@ type NodeDocument struct {
 
 func (nd *NodeDocument) Chilrend() []Node { return nd.children }
 func (nd *NodeDocument) addChild(child Node) error {
+	switch child.(type) {
+	case *NodeDocument:
+		return errChildrenNotAllowed
+	case *NodePage:
+	case *NodeRectangle:
+		return errChildrenNotAllowed
+	case *NodeText:
+		return errChildrenNotAllowed
+	case *NodeFont:
+	case *NodeImage:
+		return errChildrenNotAllowed
+	case *NodeVector:
+		return errChildrenNotAllowed
+	}
 	nd.children = append(nd.children, child)
 	return nil
 }
@@ -111,6 +125,18 @@ type NodePage struct {
 
 func (np *NodePage) Chilrend() []Node { return np.children }
 func (np *NodePage) addChild(child Node) error {
+	switch child.(type) {
+	case *NodeDocument:
+		return errChildrenNotAllowed
+	case *NodePage:
+		return errChildrenNotAllowed
+	case *NodeRectangle:
+	case *NodeText:
+	case *NodeFont:
+		return errChildrenNotAllowed
+	case *NodeImage:
+	case *NodeVector:
+	}
 	np.children = append(np.children, child)
 	return nil
 }
@@ -127,6 +153,18 @@ type NodeRectangle struct {
 
 func (nr *NodeRectangle) Chilrend() []Node { return nr.children }
 func (nr *NodeRectangle) addChild(child Node) error {
+	switch child.(type) {
+	case *NodeDocument:
+		return errChildrenNotAllowed
+	case *NodePage:
+		return errChildrenNotAllowed
+	case *NodeRectangle:
+	case *NodeText:
+	case *NodeFont:
+		return errChildrenNotAllowed
+	case *NodeImage:
+	case *NodeVector:
+	}
 	nr.children = append(nr.children, child)
 	return nil
 }
