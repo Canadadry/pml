@@ -63,6 +63,9 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 		if !ok {
 			return fmt.Errorf("%s is not a valid value for align property of text", n.align)
 		}
+		if len(n.fontName) == 0 {
+			n.fontName = "Arial"
+		}
 		pdf.SetFont(n.fontName, "", n.fontSize)
 		pdf.SetTextColor(int(n.color.R), int(n.color.G), int(n.color.B))
 		pdf.SetXY(n.x, n.y)

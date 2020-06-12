@@ -29,6 +29,7 @@ Document{
 		}
 		Vector{
 			y:100.0
+			width:110.0
 			file:"example/image/test.svg"
 		}
 	}

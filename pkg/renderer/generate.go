@@ -62,7 +62,7 @@ func generateFrom(item *ast.Item) (Node, error) {
 		return nil, err
 	}
 	for _, c := range item.Children {
-		child, err := GenerateFrom(&c)
+		child, err := generateFrom(&c)
 		if err != nil {
 			return nil, err
 		}
