@@ -1,8 +1,11 @@
 package ast
 
 import (
+	"errors"
+	"fmt"
 	"image/color"
 	"pml/pkg/token"
+	"strconv"
 )
 
 var (
@@ -67,7 +70,7 @@ func (i *Item) GetPropertyAsFloatWithDefault(name string, defaultValue float64) 
 
 	value, err := strconv.ParseFloat(v.Token().Literal, 64)
 	if err != nil {
-		return nil, err
+		return defaultValue, err
 	}
 	return value, nil
 }

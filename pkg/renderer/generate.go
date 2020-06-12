@@ -1,8 +1,10 @@
 package renderer
 
 import (
+	"errors"
+	"fmt"
+	"image/color"
 	"pml/pkg/ast"
-	"pml/pkg/token"
 )
 
 const (
@@ -33,6 +35,7 @@ const (
 var (
 	errItemNotFound        = errors.New("errItemNotFound")
 	rootMustBeDocumentItem = errors.New("rootMustBeDocumentItem")
+	errChildrenNotAllowed  = errors.New("errChildrenNotAllowed")
 )
 
 type Node interface {
@@ -54,12 +57,12 @@ func generateFrom(item *ast.Item) (Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	err := n.initFrom(item)
+	err = n.initFrom(item)
 	if err != nil {
 		return nil, err
 	}
 	for _, c := range item.Children {
-		child, err := GenerateFrom(c)
+		child, err := GenerateFrom(&c)
 		if err != nil {
 			return nil, err
 		}
@@ -74,19 +77,19 @@ func generateFrom(item *ast.Item) (Node, error) {
 func createNodeFrom(item *ast.Item) (Node, error) {
 	switch item.TokenType.Literal {
 	case itemDocument:
-		return NodeDocument{children: []Node{}}, nil
+		return &NodeDocument{children: []Node{}}, nil
 	case itemPage:
-		return NodePage{children: []Node{}}, nil
+		return &NodePage{children: []Node{}}, nil
 	case itemRectangle:
-		return NodeRectangle{children: []Node{}}, nil
+		return &NodeRectangle{children: []Node{}}, nil
 	case itemText:
-		return NodeText{}, nil
+		return &NodeText{}, nil
 	case itemFont:
-		return NodeFont{}, nil
+		return &NodeFont{}, nil
 	case itemImage:
-		return NodeImage{}, nil
+		return &NodeImage{}, nil
 	case itemVector:
-		return NodeVector{}, nil
+		return &NodeVector{}, nil
 	}
 	return nil, errItemNotFound
 }
@@ -103,7 +106,7 @@ func (nd *NodeDocument) addChild(child Node) error {
 func (nd *NodeDocument) initFrom(*ast.Item) error { return nil }
 
 type NodePage struct {
-	child []Node
+	children []Node
 }
 
 func (np *NodePage) Chilrend() []Node { return np.children }
@@ -127,7 +130,7 @@ func (nr *NodeRectangle) addChild(child Node) error {
 	nr.children = append(nr.children, child)
 	return nil
 }
-func (nr *NodeRectangle) initFrom(*ast.Item) error {
+func (nr *NodeRectangle) initFrom(item *ast.Item) error {
 	var err error
 
 	nr.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
@@ -167,7 +170,7 @@ type NodeText struct {
 
 func (nt *NodeText) Chilrend() []Node          { return nil }
 func (nt *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
-func (nt *NodeText) initFrom(*ast.Item) error {
+func (nt *NodeText) initFrom(item *ast.Item) error {
 	var err error
 	nt.text, err = item.GetPropertyAsStringWithDefault("text", "")
 	if err != nil {
@@ -238,7 +241,7 @@ type NodeImage struct {
 
 func (ni *NodeImage) Chilrend() []Node          { return nil }
 func (ni *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
-func (ni *NodeImage) initFrom(*ast.Item) error {
+func (ni *NodeImage) initFrom(item *ast.Item) error {
 	var err error
 	ni.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
@@ -273,7 +276,7 @@ type NodeVector struct {
 
 func (nv *NodeVector) Chilrend() []Node          { return nil }
 func (nv *NodeVector) addChild(child Node) error { return errChildrenNotAllowed }
-func (nv *NodeVector) initFrom(*ast.Item) error {
+func (nv *NodeVector) initFrom(item *ast.Item) error {
 	var err error
 	nv.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {

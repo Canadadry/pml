@@ -4,23 +4,26 @@ import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
 	"io"
+	"os"
+	"path/filepath"
 	"pml/pkg/ast"
-	"pml/pkg/renderer/renderertree"
+	"pml/pkg/renderer/svg"
+	"strings"
 )
 
 var alignPossibleValue = map[string]string{
-	alignTopLeft:        "TL",
-	alignTopCenter:      "TC",
-	alignTopRight:       "TR",
-	alignMiddleLeft:     "LM",
-	alignMiddleCenter:   "CM",
-	alignMiddleRight:    "RM",
-	alignBottomLeft:     "BL",
-	alignBottomCenter:   "BC",
-	alignBottomRight:    "BR",
-	alignBaselineLeft:   "AL",
-	alignBaselineCenter: "AC",
-	alignBaselineRight:  "AR",
+	alingTopLeft:        "TL",
+	alingTopCenter:      "TC",
+	alingTopRight:       "TR",
+	alingMiddleLeft:     "LM",
+	alingMiddleCenter:   "CM",
+	alingMiddleRight:    "RM",
+	alingBottomLeft:     "BL",
+	alingBottomCenter:   "BC",
+	alingBottomRight:    "BR",
+	alingBaselineLeft:   "AL",
+	alingBaselineCenter: "AC",
+	alingBaselineRight:  "AR",
 }
 
 type renderer struct {
@@ -39,7 +42,7 @@ func (r *renderer) Render(tree *ast.Item) error {
 	if err != nil {
 		return err
 	}
-	return draw(rt)
+	return r.draw(rt, nil)
 }
 
 func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
@@ -47,15 +50,15 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 	initialized := false
 
 	switch n := node.(type) {
-	case NodeDocument:
+	case *NodeDocument:
 		initialized = true
 		pdf = gofpdf.New("P", "mm", "A4", "")
-	case NodePage:
+	case *NodePage:
 		pdf.AddPage()
-	case NodeRectangle:
+	case *NodeRectangle:
 		pdf.SetFillColor(int(n.color.R), int(n.color.G), int(n.color.B))
 		pdf.Rect(n.x, n.y, n.width, n.height, "F")
-	case NodeText:
+	case *NodeText:
 		align, ok := alignPossibleValue[n.align]
 		if !ok {
 			return fmt.Errorf("%s is not a valid value for align property of text", n.align)
@@ -64,20 +67,20 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 		pdf.SetTextColor(int(n.color.R), int(n.color.G), int(n.color.B))
 		pdf.SetXY(n.x, n.y)
 		pdf.CellFormat(n.width, n.height, n.text, "", 0, align, false, 0, "")
-	case NodeFont:
+	case *NodeFont:
 		dir := filepath.Dir(n.file)
 		base := filepath.Base(n.file)
 		namePart := strings.Split(base, ".")
 		name := strings.Join(namePart[:len(namePart)-1], ".")
 
 		if !fileExists(dir + "/" + name + ".json") {
-			err = gofpdf.MakeFont(n.file, dir+"/cp1258.map", dir, os.Stdout, true)
+			err := gofpdf.MakeFont(n.file, dir+"/cp1258.map", dir, os.Stdout, true)
 			if err != nil {
 				return err
 			}
 		}
 		pdf.AddUTF8Font(n.name, "", n.file)
-	case NodeImage:
+	case *NodeImage:
 
 		if len(n.file) == 0 {
 			return fmt.Errorf("in image item, you must specify a property file")
@@ -93,7 +96,7 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 			0,
 			"",
 		)
-	case NodeVector:
+	case *NodeVector:
 		if len(n.file) == 0 {
 			return fmt.Errorf("in vector item, you must specify a property file")
 		}
@@ -120,4 +123,12 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 	}
 
 	return nil
+}
+
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
 }
