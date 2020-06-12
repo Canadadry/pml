@@ -11,9 +11,9 @@ import (
 func main() {
 
 	mode := flag.String("mode", "full", "mode : lexer|parser|renderer|template|full|api")
-	filename := flag.String("in", "", "entry pml filename")
-	paramfile := flag.String("param", "", "param for pml filename")
-	output := flag.String("out", "out.pdf", "pdf output for renderer mode")
+	filename := flag.String("in", "", "entry pml filename or folder if in api mode")
+	paramfile := flag.String("param", "", "param for pml filename (unused in api mode)")
+	output := flag.String("out", "out.pdf", "pdf output for renderer mode  (unused in api mode)")
 
 	flag.Parse()
 
