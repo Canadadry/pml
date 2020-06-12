@@ -10,8 +10,8 @@ Document{
 		Rectangle{
 			x:0.0
 			y:0.0
-			width:100.0
-			height:100.0
+			width:110.0
+			height:110.0
 			color:#ffaa00
 		}
 		Paragraph{

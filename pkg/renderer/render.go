@@ -136,7 +136,7 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 			fmt.Println("new child ", textChild.text)
 			for offset < len(textChild.text) {
 				maxSize, textWidth := getTextMaxLength(pdf, textChild.text[offset:], n.width-x)
-				fmt.Println(maxSize, textWidth)
+				fmt.Println(maxSize, textWidth, len(textChild.text))
 				fmt.Println("daw at", n.x+x, n.y+y, textChild.text[offset:offset+maxSize])
 				pdf.SetXY(n.x+x, n.y+y)
 				text := textChild.text[offset : offset+maxSize]
@@ -181,7 +181,7 @@ func getTextMaxLength(pdf *gofpdf.Fpdf, text string, maxWidth float64) (int, flo
 		if textWidth > maxWidth {
 			return len(tmp), textWidth
 		}
-		tmp = tmp + part
+		tmp = tmp + part + " "
 	}
 	return len(text), textWidth
 }
