@@ -105,6 +105,7 @@ Where `Item` and `Child` are one of the following :
  - `Text` : to write text
  - `Image` : to draw an image
  - `Vector` : to draw a svg image
+ - `Paragraph` : to draw a pragraph of text. Which feature multiple style text (changing color and font) and cariage return
 
 
  ### Properties
@@ -163,13 +164,59 @@ Where `Item` and `Child` are one of the following :
 
 Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh` and `align` properties. 
 
+### Using Variable 
+
+To Allow dynamic content you must provide a data file (json) to the `param` cli option or post it in api mode. 
+When writing your pml file just follow the golang template language : [cheat sheet](https://curtisvermeeren.github.io/2017/09/14/Golang-Templates-Cheatsheet)
+
+Example : 
+```pml
+Document{
+    Page{
+        Rectangle{
+            x:0.0
+            y:0.0
+            width:210.0
+            height:297.0
+            color:{{ .bgcolor }}
+        }
+        Text{
+            text:"{{ .title }}"
+            x:{{ .x }}
+            y:{{ .y }}
+            width:100.0
+            height:100.0
+            color:#000000
+            align: {{ .align }}
+        }
+    }
+}
+```
+
+Can be customised with this json file : 
+
+```json
+{   
+    "title":"titre",
+    "x":"10.0",
+    "y":"10.0",
+    "bgcolor":"#ff0000",
+    "align":"TopLeft"
+}
+```
+
+### Api Mode
+
+There are two routes : 
+
+ - `/` : list all pml file in the `in` folder. 
+ - `/pmlFileName` : to render the file `pmlFileName.pml` in the `in` folder. Param json file must be provided in request body with at least an empty json `{}`
 
 ## Next step 
 
-There is still important missing feature to concidere this stable
+There is still important missing feature to concidere this stable : 
 
- - `Path`to draw custom form
- - more options per Item, like relative position or maybe an `Anchor`
- - ...
-
+ - Import of external pml file
+ - Relative positionning te be able to design a struct and move it
+ - be able to validate a param file with a template without generating it and falling to render it
 
