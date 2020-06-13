@@ -13,7 +13,6 @@ const (
 	ILLEGAL     TokenType = "ILLEGAL"
 	EOF                   = "EOF"
 	IDENTIFIER            = "IDENTIFIER"
-	INTEGER               = "INTEGER"
 	FLOAT                 = "FLOAT"
 	STRING                = "STRING"
 	COLOR                 = "COLOR"
