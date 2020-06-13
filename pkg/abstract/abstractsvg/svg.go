@@ -1,4 +1,4 @@
-package abstract
+package abstractsvg
 
 import (
 	"image/color"

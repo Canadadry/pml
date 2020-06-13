@@ -1,7 +1,7 @@
 package renderer
 
 import (
-	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"github.com/jung-kurt/gofpdf"
 )
 
@@ -28,7 +28,7 @@ func (s2p *svgToPdf) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3
 	s2p.pdf.CurveBezierCubicTo(x1, y1, x2, y2, x3, y3)
 }
 
-func (s2p *svgToPdf) CloseAndDraw(s abstract.Style) {
+func (s2p *svgToPdf) CloseAndDraw(s abstractsvg.Style) {
 	s2p.pdf.ClosePath()
 
 	s2p.pdf.SetDrawColor(int(s.BorderColor.R), int(s.BorderColor.G), int(s.BorderColor.B))

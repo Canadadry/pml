@@ -2,7 +2,7 @@ package svg
 
 import (
 	"errors"
-	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"github.com/canadadry/pml/pkg/adapter/svg/matrix"
 	"github.com/canadadry/pml/pkg/adapter/svg/svgparser"
 	"image/color"
@@ -10,8 +10,8 @@ import (
 	"strings"
 )
 
-func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) abstract.Style {
-	s := abstract.Style{
+func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) abstractsvg.Style {
+	s := abstractsvg.Style{
 		Fill:        false,
 		FillColor:   color.RGBA{0, 0, 0, 0},
 		BorderSize:  0,

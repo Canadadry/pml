@@ -1,7 +1,7 @@
 package svg
 
 import (
-	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"github.com/canadadry/pml/pkg/adapter/svg/matrix"
 	"github.com/canadadry/pml/pkg/adapter/svg/svgparser"
 	"github.com/canadadry/pml/pkg/adapter/svg/svgpath"
@@ -11,7 +11,7 @@ import (
 type svgNode struct {
 	worldToLocal matrix.Matrix
 	commands     []svgpath.Command
-	style        abstract.Style
+	style        abstractsvg.Style
 	children     []*svgNode
 }
 
@@ -21,7 +21,7 @@ func New() *svgDrawer {
 	return &svgDrawer{}
 }
 
-func (sd *svgDrawer) Draw(d abstract.Drawer, svg io.Reader, x float64, y float64, w float64, h float64) error {
+func (sd *svgDrawer) Draw(d abstractsvg.Drawer, svg io.Reader, x float64, y float64, w float64, h float64) error {
 
 	element, err := svgparser.Parse(svg)
 	if err != nil {

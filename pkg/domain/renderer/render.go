@@ -2,7 +2,7 @@ package renderer
 
 import (
 	"fmt"
-	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"github.com/canadadry/pml/pkg/domain/ast"
 	"github.com/jung-kurt/gofpdf"
 	"io"
@@ -30,10 +30,10 @@ var alignPossibleValue = map[string]string{
 
 type renderer struct {
 	output      io.Writer
-	svgRenderer abstract.Svg
+	svgRenderer abstractsvg.Svg
 }
 
-func New(output io.Writer, svg abstract.Svg) renderer {
+func New(output io.Writer, svg abstractsvg.Svg) renderer {
 	return renderer{
 		output:      output,
 		svgRenderer: svg,
