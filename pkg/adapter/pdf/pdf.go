@@ -7,6 +7,7 @@ import (
 	"github.com/jung-kurt/gofpdf"
 	"image/color"
 	"io"
+	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
@@ -104,12 +105,17 @@ func (p *pdf) GetStringWidth(text string) float64 {
 	return p.gopdf.GetStringWidth(text)
 }
 
-func (p *pdf) Image(image io.Reader, x float64, y float64, width float64, height float64) {
+func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, height float64) {
+
+	mimetype := getFileContentType(image)
+	imageType := p.gopdf.ImageTypeFromMime(mimetype)
+
+	image.Seek(0, 0)
 
 	imageRef := fmt.Sprintf("image%d", p.imageCount)
 	p.imageCount = p.imageCount + 1
 
-	_ = p.gopdf.RegisterImageOptionsReader(imageRef, gofpdf.ImageOptions{}, image)
+	_ = p.gopdf.RegisterImageOptionsReader(imageRef, gofpdf.ImageOptions{ImageType: imageType}, image)
 
 	p.gopdf.ImageOptions(
 		imageRef,
@@ -170,4 +176,11 @@ func fileExists(filename string) bool {
 		return false
 	}
 	return !info.IsDir()
+}
+
+func getFileContentType(file io.Reader) string {
+	buf := make([]byte, 512, 512)
+	file.Read(buf)
+	contentType := http.DetectContentType(buf)
+	return contentType
 }
