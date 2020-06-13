@@ -18,21 +18,6 @@ const (
 	itemParagraph = "Paragraph"
 )
 
-const (
-	alingTopLeft        = "TopLeft"
-	alingTopCenter      = "TopCenter"
-	alingTopRight       = "TopRight"
-	alingMiddleLeft     = "MiddleLeft"
-	alingMiddleCenter   = "MiddleCenter"
-	alingMiddleRight    = "MiddleRight"
-	alingBottomLeft     = "BottomLeft"
-	alingBottomCenter   = "BottomCenter"
-	alingBottomRight    = "BottomRight"
-	alingBaselineLeft   = "BaselineLeft"
-	alingBaselineCenter = "BaselineCenter"
-	alingBaselineRight  = "BaselineRight"
-)
-
 var (
 	errItemNotFound        = errors.New("errItemNotFound")
 	rootMustBeDocumentItem = errors.New("rootMustBeDocumentItem")

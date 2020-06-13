@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"github.com/canadadry/pml/pkg/adapter/pdf"
 	"github.com/canadadry/pml/pkg/adapter/svg"
 	"github.com/canadadry/pml/pkg/domain/lexer"
 	"github.com/canadadry/pml/pkg/domain/parser"
@@ -13,7 +14,7 @@ func Renderer(file string, output io.Writer) error {
 
 	l := lexer.New(string(file))
 	p := parser.New(l)
-	r := renderer.New(output, svg.New())
+	r := renderer.New(output, pdf.New(svg.New()))
 
 	item, err := p.Parse()
 	if err != nil {
