@@ -25,13 +25,10 @@ curl --request GET \
 
 ### CLI Options
 
-`in` : input file to render
-`out`: where to render the file
-`param` : when using go template on top of the renderer you must specify a json parameter file
-`mode` : you have several mode to play with, but most of the time the default value should be what you're looking for
-
- - `direct` : default mode, apply template then rendre the output into a pdf file
- - `api` : launch a web server allow to render every pml file in the `in` folder, for template pass parmater with a `POST` request
+ - `in` : input file to render
+ - `out`: where to render the file
+ - `param` : when using go template on top of the renderer you must specify a json parameter file
+ - `mode` : either `direct`to render pdf of api mode to launch a webserver which render and server pml file
 
 ## Example 
 
