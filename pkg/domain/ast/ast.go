@@ -3,7 +3,7 @@ package ast
 import (
 	"errors"
 	"fmt"
-	"github.com/canadadry/pml/pkg/token"
+	"github.com/canadadry/pml/pkg/domain/token"
 	"image/color"
 	"strconv"
 )

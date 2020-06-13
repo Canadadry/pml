@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/canadadry/pml/pkg/token"
+	"github.com/canadadry/pml/pkg/domain/token"
 )
 
 type Lexer struct {
@@ -132,11 +132,10 @@ func (lexer *Lexer) readNumeric() (string, token.TokenType) {
 			for isNumeric(lexer.ch) {
 				lexer.readChar()
 			}
-			return lexer.source[start:lexer.current], token.FLOAT
 		}
 	}
 
-	return lexer.source[start:lexer.current], token.INTEGER
+	return lexer.source[start:lexer.current], token.FLOAT
 }
 
 func isWhiteSpace(ch byte) bool {

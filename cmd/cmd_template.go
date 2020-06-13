@@ -3,7 +3,7 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/canadadry/pml/pkg/template"
+	"github.com/canadadry/pml/pkg/domain/template"
 )
 
 func Template(input string, param []byte) error {

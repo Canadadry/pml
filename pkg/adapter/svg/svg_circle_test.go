@@ -2,13 +2,13 @@ package svg
 
 import (
 	"errors"
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
-	"pml/pkg/renderer/svg/svgpath"
+	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
+	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
 	"testing"
 )
 
-func TestSvgRectangleErrors(t *testing.T) {
+func TestSvgCircleErrors(t *testing.T) {
 	tests := []struct {
 		elem *svgparser.Element
 		err  error
@@ -22,7 +22,7 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x": "0.0",
+					"cx": "0.0",
 				},
 			},
 			err: svgparser.ErrMissingAttr,
@@ -30,7 +30,7 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x": "a",
+					"cx": "a",
 				},
 			},
 			err: svgparser.ErrParsingAttr,
@@ -38,8 +38,8 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x": "0.0",
-					"y": "0.0",
+					"cx": "0.0",
+					"cy": "0.0",
 				},
 			},
 			err: svgparser.ErrMissingAttr,
@@ -47,8 +47,8 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x": "0.0",
-					"y": "a",
+					"cx": "0.0",
+					"cy": "a",
 				},
 			},
 			err: svgparser.ErrParsingAttr,
@@ -56,30 +56,9 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x":     "0.0",
-					"y":     "0.0",
-					"width": "1.0",
-				},
-			},
-			err: svgparser.ErrMissingAttr,
-		},
-		{
-			elem: &svgparser.Element{
-				Attributes: map[string]string{
-					"x":     "0.0",
-					"y":     "0.0",
-					"width": "a",
-				},
-			},
-			err: svgparser.ErrParsingAttr,
-		},
-		{
-			elem: &svgparser.Element{
-				Attributes: map[string]string{
-					"x":      "0.0",
-					"y":      "0.0",
-					"width":  "1.0",
-					"height": "1.0",
+					"cx": "0.0",
+					"cy": "0.0",
+					"r":  "1.0",
 				},
 			},
 			err: nil,
@@ -87,10 +66,9 @@ func TestSvgRectangleErrors(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x":      "0.0",
-					"y":      "0.0",
-					"width":  "1.0",
-					"height": "a",
+					"cx": "0.0",
+					"cy": "0.0",
+					"r":  "a",
 				},
 			},
 			err: svgparser.ErrParsingAttr,
@@ -98,7 +76,7 @@ func TestSvgRectangleErrors(t *testing.T) {
 	}
 
 	for i, tt := range tests {
-		_, err := svgRectangle(tt.elem, matrix.Identity())
+		_, err := svgCircle(tt.elem, matrix.Identity())
 
 		if !errors.Is(err, tt.err) {
 			t.Fatalf("[%d] wrong err returned got %v, exp %v", i, err, tt.err)
@@ -106,7 +84,7 @@ func TestSvgRectangleErrors(t *testing.T) {
 	}
 }
 
-func TestSvgRectangleCommands(t *testing.T) {
+func TestSvgCircleCommands(t *testing.T) {
 	tests := []struct {
 		elem     *svgparser.Element
 		commands []svgpath.Command
@@ -114,43 +92,26 @@ func TestSvgRectangleCommands(t *testing.T) {
 		{
 			elem: &svgparser.Element{
 				Attributes: map[string]string{
-					"x":      "0.0",
-					"y":      "0.0",
-					"width":  "1.0",
-					"height": "1.0",
+					"cx": "5.0",
+					"cy": "5.0",
+					"r":  "5.0",
 				},
 			},
+			// circle with bezier curve param : 2.761423749153967
+			//     r (5) - bezier curve param : 2.238576250846033
 			commands: []svgpath.Command{
-				{'M', []svgpath.Point{{0, 0}}},
-				{'h', []svgpath.Point{{1, 0}}},
-				{'v', []svgpath.Point{{1, 0}}},
-				{'h', []svgpath.Point{{-1, 0}}},
-				{'v', []svgpath.Point{{-1, 0}}},
-				{'Z', []svgpath.Point{}},
-			},
-		},
-		{
-			elem: &svgparser.Element{
-				Attributes: map[string]string{
-					"x":      "0.0",
-					"y":      "0.0",
-					"width":  "25.0",
-					"height": "10.0",
-				},
-			},
-			commands: []svgpath.Command{
-				{'M', []svgpath.Point{{0, 0}}},
-				{'h', []svgpath.Point{{25, 0}}},
-				{'v', []svgpath.Point{{10, 0}}},
-				{'h', []svgpath.Point{{-25, 0}}},
-				{'v', []svgpath.Point{{0 - 10, 0}}},
+				{'M', []svgpath.Point{{5, 0}}},
+				{'C', []svgpath.Point{{7.761423749153967, 0}, {10, 2.238576250846033}, {10, 5}}},
+				{'C', []svgpath.Point{{10, 7.761423749153967}, {7.761423749153967, 10}, {5, 10}}},
+				{'C', []svgpath.Point{{2.238576250846033, 10}, {0, 7.761423749153967}, {0, 5}}},
+				{'C', []svgpath.Point{{0, 2.238576250846033}, {2.238576250846033, 0}, {5, 0}}},
 				{'Z', []svgpath.Point{}},
 			},
 		},
 	}
 
 	for i, tt := range tests {
-		node, err := svgRectangle(tt.elem, matrix.Identity())
+		node, err := svgCircle(tt.elem, matrix.Identity())
 
 		if err != nil {
 			t.Fatalf("[%d] failed : %v", i, err)

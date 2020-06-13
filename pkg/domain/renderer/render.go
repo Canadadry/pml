@@ -2,8 +2,8 @@ package renderer
 
 import (
 	"fmt"
-	"github.com/canadadry/pml/pkg/ast"
-	"github.com/canadadry/pml/pkg/renderer/svg"
+	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/domain/ast"
 	"github.com/jung-kurt/gofpdf"
 	"io"
 	"os"
@@ -29,12 +29,14 @@ var alignPossibleValue = map[string]string{
 }
 
 type renderer struct {
-	output io.Writer
+	output      io.Writer
+	svgRenderer abstract.Svg
 }
 
-func New(output io.Writer) renderer {
+func New(output io.Writer, svg abstract.Svg) renderer {
 	return renderer{
-		output: output,
+		output:      output,
+		svgRenderer: svg,
 	}
 }
 
@@ -113,7 +115,7 @@ func (r *renderer) draw(node Node, pdf *gofpdf.Fpdf) error {
 		}
 		defer svgFile.Close()
 
-		svg.Draw(NewSvgToPdf(pdf), svgFile, n.x, n.y, n.width, n.height)
+		r.svgRenderer.Draw(NewSvgToPdf(pdf), svgFile, n.x, n.y, n.width, n.height)
 	case *NodeParagraph:
 		renderChild = false
 		x := 0.0

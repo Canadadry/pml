@@ -2,8 +2,8 @@ package parser
 
 import (
 	"fmt"
-	"github.com/canadadry/pml/pkg/ast"
-	"github.com/canadadry/pml/pkg/token"
+	"github.com/canadadry/pml/pkg/domain/ast"
+	"github.com/canadadry/pml/pkg/domain/token"
 )
 
 func (p *parser) parseItem() (*ast.Item, error) {
@@ -73,8 +73,6 @@ func (p *parser) parseValue() (*ast.Value, error) {
 
 	switch p.current.Type {
 	case token.IDENTIFIER:
-		return v, nil
-	case token.INTEGER:
 		return v, nil
 	case token.FLOAT:
 		return v, nil

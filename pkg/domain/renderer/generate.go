@@ -3,7 +3,7 @@ package renderer
 import (
 	"errors"
 	"fmt"
-	"github.com/canadadry/pml/pkg/ast"
+	"github.com/canadadry/pml/pkg/domain/ast"
 	"image/color"
 )
 

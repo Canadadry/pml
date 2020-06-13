@@ -1,7 +1,7 @@
 package lexer
 
 import (
-	"github.com/canadadry/pml/pkg/token"
+	"github.com/canadadry/pml/pkg/domain/token"
 	"testing"
 )
 
@@ -30,7 +30,7 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: token.STRING, Literal: "helevetica", Line: 3, Column: 10},
 		{Type: token.IDENTIFIER, Literal: "size", Line: 4, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 4, Column: 6},
-		{Type: token.INTEGER, Literal: "12", Line: 4, Column: 7},
+		{Type: token.FLOAT, Literal: "12", Line: 4, Column: 7},
 		{Type: token.IDENTIFIER, Literal: "weight", Line: 5, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 5, Column: 8},
 		{Type: token.FLOAT, Literal: "3.3", Line: 5, Column: 9},

@@ -1,8 +1,8 @@
 package svg
 
 import (
-	"pml/pkg/renderer/svg/matrix"
-	"pml/pkg/renderer/svg/svgparser"
+	"github.com/canadadry/pml/pkg/adapter/svg/matrix"
+	"github.com/canadadry/pml/pkg/adapter/svg/svgparser"
 	"testing"
 )
 

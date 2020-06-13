@@ -2,7 +2,7 @@ package svg
 
 import (
 	"errors"
-	"pml/pkg/renderer/svg/matrix"
+	"github.com/canadadry/pml/pkg/adapter/svg/matrix"
 	"testing"
 )
 

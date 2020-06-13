@@ -1,10 +1,11 @@
 package svg
 
 import (
-	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
+	"github.com/canadadry/pml/pkg/abstract"
+	"github.com/canadadry/pml/pkg/adapter/svg/svgpath"
 )
 
-func (sn *svgNode) draw(d Drawer) error {
+func (sn *svgNode) draw(d abstract.Drawer) error {
 
 	position := svgpath.Point{}
 

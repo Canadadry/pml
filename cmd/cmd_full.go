@@ -3,10 +3,11 @@ package cmd
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/canadadry/pml/pkg/lexer"
-	"github.com/canadadry/pml/pkg/parser"
-	"github.com/canadadry/pml/pkg/renderer"
-	"github.com/canadadry/pml/pkg/template"
+	"github.com/canadadry/pml/pkg/adapter/svg"
+	"github.com/canadadry/pml/pkg/domain/lexer"
+	"github.com/canadadry/pml/pkg/domain/parser"
+	"github.com/canadadry/pml/pkg/domain/renderer"
+	"github.com/canadadry/pml/pkg/domain/template"
 	"io"
 )
 
@@ -23,7 +24,7 @@ func Full(input string, output io.Writer, param []byte) error {
 
 	l := lexer.New(out)
 	p := parser.New(l)
-	r := renderer.New(output)
+	r := renderer.New(output, svg.New())
 
 	item, err := p.Parse()
 	if err != nil {

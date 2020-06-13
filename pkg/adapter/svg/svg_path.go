@@ -2,9 +2,9 @@ package svg
 
 import (
 	"fmt"
-	"github.com/canadadry/pml/pkg/renderer/svg/matrix"
-	"github.com/canadadry/pml/pkg/renderer/svg/svgparser"
-	"github.com/canadadry/pml/pkg/renderer/svg/svgpath"
+	"github.com/canadadry/pml/pkg/adapter/svg/matrix"
+	"github.com/canadadry/pml/pkg/adapter/svg/svgparser"
+	"github.com/canadadry/pml/pkg/adapter/svg/svgpath"
 )
 
 func svgPath(element *svgparser.Element, worldToParent matrix.Matrix) (*svgNode, error) {
