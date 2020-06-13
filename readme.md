@@ -30,14 +30,8 @@ curl --request GET \
 `param` : when using go template on top of the renderer you must specify a json parameter file
 `mode` : you have several mode to play with, but most of the time the default value should be what you're looking for
 
- - `lexer` : only apply lexer on the pml file. No templating possible. Used for debugging pml app
- - `parser` : convert the file into an ast. No templating possible. Used for debugging pml app
- - `render` : render a file without templateing
- - `template` : no rendering done just template apply. Resulting out is a pml file. Used for debugging pml app
- - `full` : default mode, apply template then rendre the output into a pdf file
+ - `direct` : default mode, apply template then rendre the output into a pdf file
  - `api` : launch a web server allow to render every pml file in the `in` folder, for template pass parmater with a `POST` request
-
- Why is there so many mode ? Because it is usefull when developping this tool. I will remove them when stable 
 
 ## Example 
 
