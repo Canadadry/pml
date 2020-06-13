@@ -4,9 +4,7 @@
 ## Purpose
 
 Main purpose of this language is to have a dedicated language to describe pdf content. 
-This tool aim to convert pml to go code that build the pdf. For now it just use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf) to render a pdf
-
-It aim to depend only a basic interface, in which you can implement the way you want. 
+Rendering use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf). Made to be easy to fork and change implementation
 
 ## Usage
 
@@ -32,10 +30,10 @@ curl --request GET \
 `param` : when using go template on top of the renderer you must specify a json parameter file
 `mode` : you have several mode to play with, but most of the time the default value should be what you're looking for
 
- - `lexer` : only apply lexer on the pml file. No templating possible
- - `parser` : convert the file into an ast. No templating possible
+ - `lexer` : only apply lexer on the pml file. No templating possible. Used for debugging pml app
+ - `parser` : convert the file into an ast. No templating possible. Used for debugging pml app
  - `render` : render a file without templateing
- - `template` : no rendering done just template apply. resulting out is a pml file
+ - `template` : no rendering done just template apply. Resulting out is a pml file. Used for debugging pml app
  - `full` : default mode, apply template then rendre the output into a pdf file
  - `api` : launch a web server allow to render every pml file in the `in` folder, for template pass parmater with a `POST` request
 
@@ -76,7 +74,7 @@ Document{
 
 Which produce the following  ![GitHub Logo](/example/helloworld.png)
 
-more in [example folder](/example)
+More in [example folder](/example)
 
 ## Documentation 
 
@@ -113,7 +111,7 @@ Where `Item` and `Child` are one of the following :
  `Document` has no property
 
  `Font` proterties : 
- - `file` : full path from working dir to ttf file. (must have `cp12__.map` file along side to work)
+ - `file` : full path from working dir to ttf file. (must have `cp12__.map` file along side to work) go [here](https://github.com/jung-kurt/gofpdf/tree/master/font) to find them 
  - `name` : registered name, will be use by `Text` item
 
  `Page` has no property
@@ -217,6 +215,7 @@ There are two routes :
 There is still important missing feature to concidere this stable : 
 
  - Import of external pml file
+ - Allow base64 image content
  - Relative positionning te be able to design a struct and move it
  - be able to validate a param file with a template without generating it and falling to render it
 
