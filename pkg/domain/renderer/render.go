@@ -5,6 +5,7 @@ import (
 	"github.com/canadadry/pml/pkg/abstract/abstractpdf"
 	"github.com/canadadry/pml/pkg/domain/ast"
 	"io"
+	"os"
 	"strings"
 )
 
@@ -53,16 +54,23 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 	case *NodeFont:
 		pdf.LoadFont(n.name, n.file)
 	case *NodeImage:
-
 		if len(n.file) == 0 {
 			return fmt.Errorf("in image item, you must specify a property file")
 		}
-		pdf.Image(n.file, n.x, n.y, n.width, n.height)
+		file, err := os.Open(n.file)
+		if err != nil {
+			return err
+		}
+		pdf.Image(file, n.x, n.y, n.width, n.height)
 	case *NodeVector:
 		if len(n.file) == 0 {
 			return fmt.Errorf("in vector item, you must specify a property file")
 		}
-		pdf.Vector(n.file, n.x, n.y, n.width, n.height)
+		file, err := os.Open(n.file)
+		if err != nil {
+			return err
+		}
+		pdf.Vector(file, n.x, n.y, n.width, n.height)
 	case *NodeParagraph:
 		renderChild = false
 		x := 0.0

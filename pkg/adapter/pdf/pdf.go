@@ -1,6 +1,7 @@
 package pdf
 
 import (
+	"fmt"
 	"github.com/canadadry/pml/pkg/abstract/abstractpdf"
 	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"github.com/jung-kurt/gofpdf"
@@ -35,6 +36,7 @@ type pdfbuilder struct {
 type pdf struct {
 	gopdf       *gofpdf.Fpdf
 	svgRenderer abstractsvg.Svg
+	imageCount  int
 }
 
 func New(svgRenderer abstractsvg.Svg) abstractpdf.Pdf {
@@ -47,6 +49,7 @@ func (pb *pdfbuilder) Init() abstractpdf.Drawer {
 	return &pdf{
 		gopdf:       gofpdf.New("P", "mm", "A4", ""),
 		svgRenderer: pb.svgRenderer,
+		imageCount:  0,
 	}
 }
 
@@ -101,9 +104,15 @@ func (p *pdf) GetStringWidth(text string) float64 {
 	return p.gopdf.GetStringWidth(text)
 }
 
-func (p *pdf) Image(imagePath string, x float64, y float64, width float64, height float64) {
+func (p *pdf) Image(image io.Reader, x float64, y float64, width float64, height float64) {
+
+	imageRef := fmt.Sprintf("image%d", p.imageCount)
+	p.imageCount = p.imageCount + 1
+
+	_ = p.gopdf.RegisterImageOptionsReader(imageRef, gofpdf.ImageOptions{}, image)
+
 	p.gopdf.ImageOptions(
-		imagePath,
+		imageRef,
 		x,
 		y,
 		width,
@@ -115,14 +124,8 @@ func (p *pdf) Image(imagePath string, x float64, y float64, width float64, heigh
 	)
 }
 
-func (p *pdf) Vector(vectorPath string, x float64, y float64, width float64, height float64) error {
-	svgfile, err := os.Open(vectorPath)
-	if err != nil {
-		return err
-	}
-
-	p.svgRenderer.Draw(p, svgfile, x, y, width, height)
-	return nil
+func (p *pdf) Vector(vector io.Reader, x float64, y float64, width float64, height float64) {
+	p.svgRenderer.Draw(p, vector, x, y, width, height)
 }
 
 func (p *pdf) Output(out io.Writer) error {
