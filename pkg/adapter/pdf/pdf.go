@@ -88,6 +88,10 @@ func (p *pdf) SetFont(fontName string, fontSizeMm float64) {
 	p.gopdf.SetFont(fontName, "", fontSizePt)
 }
 
+func (p *pdf) GetDefaultFontName() string {
+	return "Arial"
+}
+
 func (p *pdf) SetTextColor(c color.RGBA) {
 	p.gopdf.SetTextColor(int(c.R), int(c.G), int(c.B))
 }

@@ -45,7 +45,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 		pdf.Rect(n.x, n.y, n.width, n.height)
 	case *NodeText:
 		if len(n.fontName) == 0 {
-			n.fontName = "Arial"
+			n.fontName = pdf.GetDefaultFontName()
 		}
 		pdf.SetFont(n.fontName, n.fontSize)
 		pdf.SetTextColor(n.color)
@@ -60,6 +60,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 		if err != nil {
 			return err
 		}
+		defer file.Close()
 		pdf.Image(file, n.x, n.y, n.width, n.height)
 	case *NodeVector:
 		if len(n.file) == 0 {
@@ -69,6 +70,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 		if err != nil {
 			return err
 		}
+		defer file.Close()
 		pdf.Vector(file, n.x, n.y, n.width, n.height)
 	case *NodeParagraph:
 		renderChild = false
@@ -82,7 +84,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 				return fmt.Errorf("Unexpected node in paragraph")
 			}
 			if len(textChild.fontName) == 0 {
-				textChild.fontName = "Arial"
+				textChild.fontName = pdf.GetDefaultFontName()
 			}
 
 			pdf.SetFont(textChild.fontName, textChild.fontSize)

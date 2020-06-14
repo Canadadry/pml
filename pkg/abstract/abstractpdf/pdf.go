@@ -34,6 +34,7 @@ type Drawer interface {
 	Rect(x float64, y float64, width float64, height float64)
 	LoadFont(fontName string, fontFilePath string) error
 	SetFont(fontName string, fontSizeMm float64)
+	GetDefaultFontName() string
 	SetTextColor(c color.RGBA)
 	Text(text string, x float64, y float64, width float64, height float64, align TextAlign)
 	GetTextMaxLength(text string, maxWidth float64) (int, float64)
