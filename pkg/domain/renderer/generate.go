@@ -16,6 +16,7 @@ const (
 	itemImage     = "Image"
 	itemVector    = "Vector"
 	itemParagraph = "Paragraph"
+	itemContainer = "Container"
 )
 
 var (
@@ -78,6 +79,8 @@ func createNodeFrom(item *ast.Item) (Node, error) {
 		return &NodeVector{}, nil
 	case itemParagraph:
 		return &NodeParagraph{}, nil
+	case itemContainer:
+		return &NodeContainer{}, nil
 	}
 	return nil, errItemNotFound
 }
@@ -103,6 +106,8 @@ func (nd *NodeDocument) addChild(child Node) error {
 		return errChildrenNotAllowed
 	case *NodeParagraph:
 		return errChildrenNotAllowed
+	case *NodeContainer:
+		return errChildrenNotAllowed
 	}
 	nd.children = append(nd.children, child)
 	return nil
@@ -127,6 +132,7 @@ func (np *NodePage) addChild(child Node) error {
 	case *NodeImage:
 	case *NodeVector:
 	case *NodeParagraph:
+	case *NodeContainer:
 	}
 	np.children = append(np.children, child)
 	return nil
@@ -156,6 +162,8 @@ func (nr *NodeRectangle) addChild(child Node) error {
 	case *NodeImage:
 	case *NodeVector:
 	case *NodeParagraph:
+	case *NodeContainer:
+		return errChildrenNotAllowed
 	}
 	nr.children = append(nr.children, child)
 	return nil
@@ -358,6 +366,8 @@ func (np *NodeParagraph) addChild(child Node) error {
 		return errChildrenNotAllowed
 	case *NodeParagraph:
 		return errChildrenNotAllowed
+	case *NodeContainer:
+		return errChildrenNotAllowed
 	}
 	np.children = append(np.children, child)
 	return nil
@@ -381,6 +391,44 @@ func (np *NodeParagraph) initFrom(item *ast.Item) error {
 		return err
 	}
 	np.lineHeight, err = item.GetPropertyAsFloatWithDefault("lineHeight", 6)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+type NodeContainer struct {
+	children []Node
+	x        float64
+	y        float64
+}
+
+func (nc *NodeContainer) Chilrend() []Node { return nc.children }
+func (nc *NodeContainer) addChild(child Node) error {
+	switch child.(type) {
+	case *NodeDocument:
+		return errChildrenNotAllowed
+	case *NodePage:
+		return errChildrenNotAllowed
+	case *NodeRectangle:
+	case *NodeText:
+	case *NodeFont:
+		return errChildrenNotAllowed
+	case *NodeImage:
+	case *NodeVector:
+	case *NodeParagraph:
+	case *NodeContainer:
+	}
+	nc.children = append(nc.children, child)
+	return nil
+}
+func (nc *NodeContainer) initFrom(item *ast.Item) error {
+	var err error
+	nc.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
+	if err != nil {
+		return err
+	}
+	nc.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
 	if err != nil {
 		return err
 	}

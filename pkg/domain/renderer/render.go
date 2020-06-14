@@ -26,10 +26,10 @@ func (r *renderer) Render(tree *ast.Item) error {
 	if err != nil {
 		return err
 	}
-	return r.draw(rt, nil)
+	return r.draw(rt, nil, 0, 0)
 }
 
-func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
+func (r *renderer) draw(node Node, pdf abstractpdf.Drawer, xOrigin float64, yOrigin float64) error {
 
 	initialized := false
 	renderChild := true
@@ -42,14 +42,14 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 		pdf.AddPage()
 	case *NodeRectangle:
 		pdf.SetFillColor(n.color)
-		pdf.Rect(n.x, n.y, n.width, n.height)
+		pdf.Rect(n.x+xOrigin, n.y+yOrigin, n.width, n.height)
 	case *NodeText:
 		if len(n.fontName) == 0 {
 			n.fontName = pdf.GetDefaultFontName()
 		}
 		pdf.SetFont(n.fontName, n.fontSize)
 		pdf.SetTextColor(n.color)
-		pdf.Text(n.text, n.x, n.y, n.width, n.height, abstractpdf.TextAlign(n.align))
+		pdf.Text(n.text, n.x+xOrigin, n.y+yOrigin, n.width, n.height, abstractpdf.TextAlign(n.align))
 	case *NodeFont:
 		pdf.LoadFont(n.name, n.file)
 	case *NodeImage:
@@ -61,7 +61,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 			return err
 		}
 		defer file.Close()
-		pdf.Image(file, n.x, n.y, n.width, n.height)
+		pdf.Image(file, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
 	case *NodeVector:
 		if len(n.file) == 0 {
 			return fmt.Errorf("in vector item, you must specify a property file")
@@ -71,7 +71,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 			return err
 		}
 		defer file.Close()
-		pdf.Vector(file, n.x, n.y, n.width, n.height)
+		pdf.Vector(file, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
 	case *NodeParagraph:
 		renderChild = false
 		x := 0.0
@@ -93,7 +93,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 			for offset < len(textChild.text) {
 				maxSize, textWidth := pdf.GetTextMaxLength(textChild.text[offset:], n.width-x)
 				text := textChild.text[offset : offset+maxSize]
-				pdf.Text(text, n.x+x, n.y+y, n.width, n.lineHeight, "BaselineLeft")
+				pdf.Text(text, n.x+x+xOrigin, n.y+y+yOrigin, n.width, n.lineHeight, "BaselineLeft")
 				offset = offset + maxSize
 				x = x + textWidth
 				if x > n.width {
@@ -101,16 +101,17 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 					y = y + n.lineHeight
 				}
 			}
-
 		}
-
+	case *NodeContainer:
+		xOrigin = xOrigin + n.x
+		yOrigin = yOrigin + n.y
 	default:
 		return fmt.Errorf("cannot render node type")
 	}
 
 	if renderChild {
 		for _, child := range node.Chilrend() {
-			err := r.draw(child, pdf)
+			err := r.draw(child, pdf, xOrigin, yOrigin)
 			if err != nil {
 				return err
 			}
