@@ -95,7 +95,7 @@ Where `Item` and `Child` are one of the following :
  - `Image` : to draw an image
  - `Vector` : to draw a svg image
  - `Paragraph` : to draw a pragraph of text. Which feature multiple style text (changing color and font) and cariage return
-
+ - `Container` : draw content relatively to his position
 
  ### Properties
 
@@ -109,32 +109,32 @@ Where `Item` and `Child` are one of the following :
 
  `Rectangle` properties :
 
- - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
- - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
 
  `Image` properties :
 
- - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
- - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
  - `file` : full path from working dir to image file
 
  `Vector` properties :
 
- - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` 
- - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
  - `file` : full path from working dir to svg image file (partial support)
 
  `Text` properties :
 
- - `x` : left coordinate must be a float value in millimeter absolute position in the `Page`
- - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
@@ -145,13 +145,18 @@ Where `Item` and `Child` are one of the following :
 
  `Paragraph` properties :
 
- - `x` : left coordinate must be a float value in millimeter absolute position in the `Page`
- - `y` : left coordinate must be a float value in millimeter absolute position in the `Page`
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
  - `lineHeight` : height of the line must be a float value in millimeter
 
 Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh` and `align` properties. 
+
+ `Container` properties :
+
+ - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
+ - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
 
 ### Using Variable 
 
