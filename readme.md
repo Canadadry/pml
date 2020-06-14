@@ -212,6 +212,5 @@ There is still important missing feature to concidere this stable :
 
  - Import of external pml file
  - Allow base64 image content
- - Relative positionning te be able to design a struct and move it
  - be able to validate a param file with a template without generating it and falling to render it
 
