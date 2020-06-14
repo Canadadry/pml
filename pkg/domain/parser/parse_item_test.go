@@ -34,7 +34,7 @@ func TestParser(t *testing.T) {
 				TokenType: tokenIdentifier("Doc"),
 				Properties: map[string]ast.Expression{
 					"prop": &ast.Value{
-						PmlToken: tokenInteger("1"),
+						PmlToken: tokenFloat("1"),
 					},
 				},
 			},
@@ -204,13 +204,6 @@ func testProperty(t *testing.T, index int, property string, actual *ast.Item, ex
 func tokenIdentifier(literal string) token.Token {
 	return token.Token{
 		Type:    token.IDENTIFIER,
-		Literal: literal,
-	}
-}
-
-func tokenInteger(literal string) token.Token {
-	return token.Token{
-		Type:    token.INTEGER,
 		Literal: literal,
 	}
 }

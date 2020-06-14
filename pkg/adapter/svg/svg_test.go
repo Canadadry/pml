@@ -2,6 +2,7 @@ package svg
 
 import (
 	"fmt"
+	"github.com/canadadry/pml/pkg/abstract/abstractsvg"
 	"strings"
 	"testing"
 )
@@ -28,7 +29,7 @@ func (dcs *drawCallStack) BezierTo(x1 float64, y1 float64, x2 float64, y2 float6
 	)
 }
 
-func (dcs *drawCallStack) CloseAndDraw(s Style) {
+func (dcs *drawCallStack) CloseAndDraw(s abstractsvg.Style) {
 	dcs.callstack = append(dcs.callstack,
 		fmt.Sprintf("CloseAndDraw"),
 	)
@@ -98,7 +99,7 @@ func TestEndToEnd(t *testing.T) {
 
 	for i, tt := range tests {
 		result := &drawCallStack{callstack: []string{}}
-		err := Draw(result, strings.NewReader(tt.svg), tt.x, tt.y, tt.w, tt.h)
+		err := New().Draw(result, strings.NewReader(tt.svg), tt.x, tt.y, tt.w, tt.h)
 		if err != nil {
 			t.Fatalf("[%d] failed : %v", i, err)
 		}
