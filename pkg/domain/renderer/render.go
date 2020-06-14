@@ -6,7 +6,6 @@ import (
 	"github.com/canadadry/pml/pkg/domain/ast"
 	"io"
 	"os"
-	"strings"
 )
 
 type renderer struct {
@@ -90,7 +89,7 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 			pdf.SetTextColor(textChild.color)
 
 			for offset < len(textChild.text) {
-				maxSize, textWidth := getTextMaxLength(pdf, textChild.text[offset:], n.width-x)
+				maxSize, textWidth := pdf.GetTextMaxLength(textChild.text[offset:], n.width-x)
 				text := textChild.text[offset : offset+maxSize]
 				pdf.Text(text, n.x+x, n.y+y, n.width, n.lineHeight, "BaselineLeft")
 				offset = offset + maxSize
@@ -121,18 +120,4 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer) error {
 	}
 
 	return nil
-}
-
-func getTextMaxLength(pdf abstractpdf.Drawer, text string, maxWidth float64) (int, float64) {
-	splitted := strings.Split(text, " ")
-	tmp := ""
-	textWidth := 0.0
-	for _, part := range splitted {
-		textWidth = pdf.GetStringWidth(tmp + part + " ")
-		if textWidth > maxWidth {
-			return len(tmp), textWidth
-		}
-		tmp = tmp + part + " "
-	}
-	return len(text), textWidth
 }

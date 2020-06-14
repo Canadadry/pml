@@ -36,7 +36,7 @@ type Drawer interface {
 	SetFont(fontName string, fontSizeMm float64)
 	SetTextColor(c color.RGBA)
 	Text(text string, x float64, y float64, width float64, height float64, align TextAlign)
-	GetStringWidth(text string) float64
+	GetTextMaxLength(text string, maxWidth float64) (int, float64)
 	Image(image io.ReadSeeker, x float64, y float64, width float64, height float64)
 	Vector(image io.Reader, x float64, y float64, width float64, height float64)
 	Output(out io.Writer) error
