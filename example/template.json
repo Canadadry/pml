@@ -1,6 +1,18 @@
 {	
-	"title":"titre",
-	"x":"10.0",
-	"y":"10.0",
-	"bgcolor":"#ff0000"
+	"page":[
+		{
+			"title":"page 1",
+			"x":"10.0",
+			"y":"10.0",
+			"bgcolor":"#ff0000",
+			"align":"BaselineRight"
+		},
+		{
+			"title":"page 2",
+			"x":"30.0",
+			"y":"30.0",
+			"bgcolor":"#00ff00",
+			"align":"BaselineLeft"
+		}
+	]
 }
