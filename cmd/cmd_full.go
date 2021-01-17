@@ -29,7 +29,7 @@ func Full(input string, output io.Writer, param []byte) error {
 
 	item, err := p.Parse()
 	if err != nil {
-		return fmt.Errorf("parsing failed : %w", err)
+		return fmt.Errorf("parsing failed : %w on : \n%s", err, out)
 	}
 	err = r.Render(item)
 	if err != nil {
