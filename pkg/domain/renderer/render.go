@@ -1,11 +1,18 @@
 package renderer
 
 import (
+	"bytes"
+	"encoding/base64"
 	"fmt"
 	"github.com/canadadry/pml/pkg/abstract/abstractpdf"
 	"github.com/canadadry/pml/pkg/domain/ast"
 	"io"
 	"os"
+)
+
+const (
+	ImgModeFile = "file"
+	ImgModeB64  = "b64"
 )
 
 type renderer struct {
@@ -56,12 +63,22 @@ func (r *renderer) draw(node Node, pdf abstractpdf.Drawer, xOrigin float64, yOri
 		if len(n.file) == 0 {
 			return fmt.Errorf("in image item, you must specify a property file")
 		}
-		file, err := os.Open(n.file)
-		if err != nil {
-			return err
+		var rs io.ReadSeeker
+		if n.mode == ImgModeFile {
+			file, err := os.Open(n.file)
+			if err != nil {
+				return err
+			}
+			defer file.Close()
+			rs = file
+		} else {
+			decoded, err := base64.StdEncoding.DecodeString(n.file)
+			if err != nil {
+				return err
+			}
+			rs = bytes.NewReader(decoded)
 		}
-		defer file.Close()
-		pdf.Image(file, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
+		pdf.Image(rs, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
 	case *NodeVector:
 		if len(n.file) == 0 {
 			return fmt.Errorf("in vector item, you must specify a property file")

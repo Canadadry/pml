@@ -271,6 +271,7 @@ func (nf *NodeFont) initFrom(item *ast.Item) error {
 
 type NodeImage struct {
 	file   string
+	mode   string
 	x      float64
 	y      float64
 	width  float64
@@ -282,6 +283,10 @@ func (ni *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
 func (ni *NodeImage) initFrom(item *ast.Item) error {
 	var err error
 	ni.file, err = item.GetPropertyAsStringWithDefault("file", "")
+	if err != nil {
+		return err
+	}
+	ni.mode, err = item.GetPropertyAsIdentifierWithDefault("mode", ImgModeFile)
 	if err != nil {
 		return err
 	}

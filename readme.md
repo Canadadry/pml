@@ -8,7 +8,7 @@ Rendering use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf). Made to be easy t
 
 ## Usage
 
-```
+```bash
 go get https://github.com/canadadry/pml
 pml -in example/ -mode api &
 
@@ -23,6 +23,11 @@ curl --request GET \
 }'
 ```
 
+or simply 
+
+```bash
+pml -in example/template.pml -param example/template.json -out example/template.pdf
+```
 ### CLI Options
 
  - `in` : input file to render
@@ -121,7 +126,8 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
- - `file` : full path from working dir to image file
+ - `file` : full path from working dir to image file or base64 content to display
+ - `mode`:  default `file` if property `file` contain a valid path or `b64` if property `file` contain a valid b64 string with image data
 
  `Vector` properties :
 
@@ -206,11 +212,4 @@ There are two routes :
  - `/` : list all pml file in the `in` folder. 
  - `/pmlFileName` : to render the file `pmlFileName.pml` in the `in` folder. Param json file must be provided in request body with at least an empty json `{}`
 
-## Next step 
-
-There is still important missing feature to concidere this stable : 
-
- - Import of external pml file
- - Allow base64 image content
- - be able to validate a param file with a template without generating it and falling to render it
 
