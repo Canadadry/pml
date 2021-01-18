@@ -10,30 +10,13 @@ Rendering use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf). Made to be easy t
 
 ```bash
 go get https://github.com/canadadry/pml
-pml -in example/ -mode api &
-
-curl --request GET \
-  --url http://localhost:8080/template \
-  --header 'content-type: application/json' \
-  --data '{
-    "title":"titre",
-    "x":"10.0",
-    "y":"10.0",
-    "bgcolor":"#ff0000"
-}'
-```
-
-or simply 
-
-```bash
 pml -in example/template.pml -param example/template.json -out example/template.pdf
 ```
 ### CLI Options
 
  - `in` : input file to render
  - `out`: where to render the file
- - `param` : when using go template on top of the renderer you must specify a json parameter file
- - `mode` : either `direct`to render pdf of api mode to launch a webserver which render and server pml file
+ - `param` : when using go template on top of the renderer you must specify a json parameter file (default : out.pdf)
 
 ## Example 
 
@@ -204,12 +187,3 @@ Can be customised with this json file :
     "align":"TopLeft"
 }
 ```
-
-### Api Mode
-
-There are two routes : 
-
- - `/` : list all pml file in the `in` folder. 
- - `/pmlFileName` : to render the file `pmlFileName.pml` in the `in` folder. Param json file must be provided in request body with at least an empty json `{}`
-
-

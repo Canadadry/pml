@@ -1,7 +1,6 @@
-package cmd
+package domain
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/canadadry/pml/pkg/adapter/pdf"
 	"github.com/canadadry/pml/pkg/adapter/svg"
@@ -10,17 +9,24 @@ import (
 	"github.com/canadadry/pml/pkg/domain/renderer"
 	"github.com/canadadry/pml/pkg/domain/template"
 	"io"
+	"io/ioutil"
 )
 
-func Full(input string, output io.Writer, param []byte) error {
+func Run(input io.Reader, output io.Writer, param io.Reader) error {
 
-	var dat interface{}
-	if err := json.Unmarshal(param, &dat); err != nil {
-		return fmt.Errorf("Cannot unmarshall json file : %w\n", err)
-	}
-	out, err := template.Apply(input, dat)
-	if err != nil {
-		return fmt.Errorf("failed to transform template : %w\n", err)
+	var out string
+	var err error
+	if param != nil {
+		out, err = template.Apply(input, param)
+		if err != nil {
+			return fmt.Errorf("failed to transform template : %w\n", err)
+		}
+	} else {
+		outByte, err := ioutil.ReadAll(input)
+		if err != nil {
+			return fmt.Errorf("failed to read input : %w\n", err)
+		}
+		out = string(outByte)
 	}
 
 	l := lexer.New(out)

@@ -3,60 +3,46 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/canadadry/pml/cmd"
-	"io/ioutil"
+	"github.com/canadadry/pml/pkg/domain"
 	"os"
 )
 
 func main() {
+	if err := run(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
+}
 
-	mode := flag.String("mode", "direct", "mode : direct|api")
-	filename := flag.String("in", "", "entry pml filename or folder if in api mode")
-	paramfile := flag.String("param", "", "param for pml filename (unused in api mode)")
-	output := flag.String("out", "out.pdf", "pdf output for renderer mode  (unused in api mode)")
+func run() error {
+
+	filename := flag.String("in", "", "entry pml filename")
+	paramfile := flag.String("param", "", "param for pml filename")
+	output := flag.String("out", "out.pdf", "pdf output for renderer mode")
 
 	flag.Parse()
 
-	switch *mode {
-	case "direct":
-		if len(*filename) == 0 {
-			flag.PrintDefaults()
-			return
-		}
-
-		file, err := ioutil.ReadFile(*filename)
-		if err != nil {
-			fmt.Println("Cannot find file " + *filename)
-			return
-		}
-		param := []byte("{}")
-		if len(*paramfile) > 0 {
-			param, err = ioutil.ReadFile(*paramfile)
-			if err != nil {
-				fmt.Println("Cannot find file " + *paramfile)
-				return
-			}
-		}
-
-		fOut, err := os.Create(*output)
-		if err != nil {
-			fmt.Println("Cannot create file " + *output)
-			return
-		}
-		defer fOut.Close()
-		err = cmd.Full(string(file), fOut, param)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	case "api":
-		err := cmd.Api(*filename)
-		if err != nil {
-			fmt.Println(err)
-			return
-		}
-	default:
-		fmt.Printf("Mode not handle : " + *mode)
+	if len(*filename) == 0 {
 		flag.PrintDefaults()
+		return nil
 	}
+
+	fIn, err := os.Open(*filename)
+	if err != nil {
+		return fmt.Errorf("Cannot find file " + *filename)
+	}
+	defer fIn.Close()
+
+	fParam, _ := os.Open(*paramfile)
+	if fParam != nil {
+		defer fParam.Close()
+	}
+
+	fOut, err := os.Create(*output)
+	if err != nil {
+		return fmt.Errorf("Cannot create output file " + *output)
+	}
+	defer fOut.Close()
+
+	return domain.Run(fIn, fOut, fParam)
 }
