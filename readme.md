@@ -9,7 +9,7 @@ Rendering use [jung-kurt/gofpdf](github.com/jung-kurt/gofpdf). Made to be easy t
 ## Usage
 
 ```bash
-go get https://github.com/canadadry/pml
+go get github.com/canadadry/pml
 pml -in example/template.pml -param example/template.json -out example/template.pdf
 ```
 ### CLI Options
