@@ -3,7 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/canadadry/pml/pkg/domain"
+	"github.com/canadadry/pml/language"
 	"os"
 )
 
@@ -44,5 +44,5 @@ func run() error {
 	}
 	defer fOut.Close()
 
-	return domain.Run(fIn, fOut, fParam)
+	return language.Run(fIn, fOut, fParam)
 }
