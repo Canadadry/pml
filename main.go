@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/canadadry/pml/language"
+	"io"
 	"os"
 )
 
@@ -29,12 +30,15 @@ func run() error {
 
 	fIn, err := os.Open(*filename)
 	if err != nil {
-		return fmt.Errorf("Cannot find file " + *filename)
+		return fmt.Errorf("Cannot find file '%s' : %w", *filename, err)
 	}
 	defer fIn.Close()
 
-	fParam, _ := os.Open(*paramfile)
-	if fParam != nil {
+	var fParam io.ReadCloser
+	fParam, err = os.Open(*paramfile)
+	if err != nil {
+		fParam = nil
+	} else {
 		defer fParam.Close()
 	}
 

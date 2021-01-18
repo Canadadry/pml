@@ -9,10 +9,13 @@ import (
 	"text/template"
 )
 
-func Apply(in io.Reader, param io.Reader) (string, error) {
+func ApplyJson(in io.Reader, param io.Reader) (string, error) {
 	templateContent, err := ioutil.ReadAll(in)
 	if err != nil {
 		return "", fmt.Errorf("Cannot read input")
+	}
+	if param == nil {
+		return string(templateContent), nil
 	}
 
 	var data interface{}
