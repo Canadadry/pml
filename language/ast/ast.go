@@ -9,7 +9,7 @@ import (
 )
 
 var (
-	invalidTypeForProperty        = errors.New("invalidTypeForProperty")
+	ErrInvalidTypeForProperty     = errors.New("invalidTypeForProperty")
 	errPropertyDefinitionNotFound = errors.New("errPropertyDefinitionNotFound")
 )
 
@@ -39,7 +39,7 @@ func (i *Item) GetPropertyAsColorWithDefault(name string, defaultValue color.RGB
 	}
 
 	if v.Token().Type != token.COLOR {
-		return defaultValue, invalidTypeForProperty
+		return defaultValue, ErrInvalidTypeForProperty
 	}
 	s := v.Token().Literal
 
@@ -65,7 +65,7 @@ func (i *Item) GetPropertyAsFloatWithDefault(name string, defaultValue float64) 
 	}
 
 	if v.Token().Type != token.FLOAT {
-		return defaultValue, invalidTypeForProperty
+		return defaultValue, ErrInvalidTypeForProperty
 	}
 
 	value, err := strconv.ParseFloat(v.Token().Literal, 64)
@@ -82,7 +82,7 @@ func (i *Item) GetPropertyAsStringWithDefault(name string, defaultValue string) 
 	}
 
 	if v.Token().Type != token.STRING {
-		return defaultValue, invalidTypeForProperty
+		return defaultValue, ErrInvalidTypeForProperty
 	}
 	return v.Token().Literal, nil
 }
@@ -94,7 +94,7 @@ func (i *Item) GetPropertyAsIdentifierWithDefault(name string, defaultValue stri
 	}
 
 	if v.Token().Type != token.IDENTIFIER {
-		return defaultValue, invalidTypeForProperty
+		return defaultValue, ErrInvalidTypeForProperty
 	}
 	return v.Token().Literal, nil
 }
