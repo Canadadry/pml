@@ -187,3 +187,12 @@ Can be customised with this json file :
     "align":"TopLeft"
 }
 ```
+
+
+## TODO
+
+- line return in text
+- justifing text or paragraph
+- item layout (centerIn, fill parent, ...)
+
+

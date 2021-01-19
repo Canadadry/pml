@@ -26,7 +26,7 @@ var (
 )
 
 type Node interface {
-	Chilrend() []Node
+	Children() []Node
 	addChild(child Node) error
 	initFrom(*ast.Item) error
 }
@@ -89,7 +89,7 @@ type NodeDocument struct {
 	children []Node
 }
 
-func (nd *NodeDocument) Chilrend() []Node { return nd.children }
+func (nd *NodeDocument) Children() []Node { return nd.children }
 func (nd *NodeDocument) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
@@ -118,7 +118,7 @@ type NodePage struct {
 	children []Node
 }
 
-func (np *NodePage) Chilrend() []Node { return np.children }
+func (np *NodePage) Children() []Node { return np.children }
 func (np *NodePage) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
@@ -148,7 +148,7 @@ type NodeRectangle struct {
 	color    color.RGBA
 }
 
-func (nr *NodeRectangle) Chilrend() []Node { return nr.children }
+func (nr *NodeRectangle) Children() []Node { return nr.children }
 func (nr *NodeRectangle) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
@@ -206,7 +206,7 @@ type NodeText struct {
 	fontSize float64
 }
 
-func (nt *NodeText) Chilrend() []Node          { return nil }
+func (nt *NodeText) Children() []Node          { return nil }
 func (nt *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
 func (nt *NodeText) initFrom(item *ast.Item) error {
 	var err error
@@ -254,7 +254,7 @@ type NodeFont struct {
 	name string
 }
 
-func (nf *NodeFont) Chilrend() []Node          { return nil }
+func (nf *NodeFont) Children() []Node          { return nil }
 func (nf *NodeFont) addChild(child Node) error { return errChildrenNotAllowed }
 func (nf *NodeFont) initFrom(item *ast.Item) error {
 	var err error
@@ -278,7 +278,7 @@ type NodeImage struct {
 	height float64
 }
 
-func (ni *NodeImage) Chilrend() []Node          { return nil }
+func (ni *NodeImage) Children() []Node          { return nil }
 func (ni *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
 func (ni *NodeImage) initFrom(item *ast.Item) error {
 	var err error
@@ -317,7 +317,7 @@ type NodeVector struct {
 	height float64
 }
 
-func (nv *NodeVector) Chilrend() []Node          { return nil }
+func (nv *NodeVector) Children() []Node          { return nil }
 func (nv *NodeVector) addChild(child Node) error { return errChildrenNotAllowed }
 func (nv *NodeVector) initFrom(item *ast.Item) error {
 	var err error
@@ -353,7 +353,7 @@ type NodeParagraph struct {
 	lineHeight float64
 }
 
-func (np *NodeParagraph) Chilrend() []Node { return np.children }
+func (np *NodeParagraph) Children() []Node { return np.children }
 func (np *NodeParagraph) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
@@ -408,7 +408,7 @@ type NodeContainer struct {
 	y        float64
 }
 
-func (nc *NodeContainer) Chilrend() []Node { return nc.children }
+func (nc *NodeContainer) Children() []Node { return nc.children }
 func (nc *NodeContainer) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:

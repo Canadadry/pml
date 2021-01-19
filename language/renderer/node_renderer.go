@@ -93,7 +93,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 		x := 0.0
 		y := 0.0
 
-		for _, child := range node.Chilrend() {
+		for _, child := range node.Children() {
 			offset := 0
 			textChild, ok := child.(*NodeText)
 			if !ok {
@@ -126,7 +126,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 	}
 
 	if renderChild {
-		for _, child := range node.Chilrend() {
+		for _, child := range node.Children() {
 			err := r.draw(child, pdf, xOrigin, yOrigin)
 			if err != nil {
 				return err
