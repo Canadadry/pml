@@ -19,12 +19,12 @@ func Run(input io.Reader, output io.Writer, param io.Reader) error {
 
 	l := lexer.New(out)
 	p := parser.New(l)
-	r := renderer.New(output, pdf.New(svg.New()))
-
 	item, err := p.Parse()
 	if err != nil {
 		return fmt.Errorf("parsing failed : %w on : \n%s", err, out)
 	}
+
+	r := renderer.New(output, pdf.New(svg.New()))
 	err = r.Render(item)
 	if err != nil {
 		return fmt.Errorf("rendering failed : %w", err)

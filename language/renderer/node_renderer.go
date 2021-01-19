@@ -28,7 +28,7 @@ func New(output io.Writer, pdf Pdf) renderer {
 
 func (r *renderer) Render(tree *ast.Item) error {
 
-	rt, err := GenerateFrom(tree)
+	rt, err := generate(tree)
 	if err != nil {
 		return err
 	}

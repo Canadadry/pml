@@ -124,7 +124,7 @@ func TestGenerateFrom(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d]parsing failed : %v on : \n%s", i, err, tt.program)
 		}
-		n, err := GenerateFrom(item)
+		n, err := generate(item)
 		if err != nil {
 			t.Fatalf("[%d]generator failed : %v on : \n%s", i, err, tt.program)
 		}
@@ -355,7 +355,7 @@ func TestGenerateFrom_Hierarchy(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d] parsing failed : %v on : \n%s", i, err, program)
 		}
-		_, err = GenerateFrom(item)
+		_, err = generate(item)
 		if !errors.Is(err, tt.err) {
 			t.Fatalf("[%d] generator failed got %v expected %v on : \n%s", i, err, tt.err, program)
 		}
@@ -422,7 +422,7 @@ func TestGenerateFrom_Property(t *testing.T) {
 		if err != nil {
 			t.Fatalf("[%d] parsing failed : %v on : \n%s", i, err, program)
 		}
-		_, err = GenerateFrom(item)
+		_, err = generate(item)
 		if !errors.Is(err, tt.err) {
 			t.Fatalf("[%d] generator failed got %v expected %v on : \n%s", i, err, tt.err, program)
 		}

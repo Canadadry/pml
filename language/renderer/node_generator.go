@@ -31,15 +31,15 @@ type Node interface {
 	initFrom(*ast.Item) error
 }
 
-func GenerateFrom(item *ast.Item) (Node, error) {
+func generate(item *ast.Item) (Node, error) {
 
 	if item.TokenType.Literal != itemDocument {
 		return nil, fmt.Errorf("%w : got %s exp %s", rootMustBeDocumentItem, item.TokenType.Literal, itemDocument)
 	}
-	return generateFrom(item)
+	return generateItem(item)
 }
 
-func generateFrom(item *ast.Item) (Node, error) {
+func generateItem(item *ast.Item) (Node, error) {
 	n, err := createNodeFrom(item)
 	if err != nil {
 		return nil, err
@@ -49,7 +49,7 @@ func generateFrom(item *ast.Item) (Node, error) {
 		return nil, err
 	}
 	for _, c := range item.Children {
-		child, err := generateFrom(&c)
+		child, err := generateItem(&c)
 		if err != nil {
 			return nil, err
 		}
