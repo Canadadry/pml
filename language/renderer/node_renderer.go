@@ -14,6 +14,12 @@ const (
 	ImgModeB64  = "b64"
 )
 
+var (
+	ErrEmptyImageFileProperty = fmt.Errorf("in image item, you must specify a property file")
+	ErrCantOpenFile           = fmt.Errorf("ErrCantOpenFile")
+	ErrB64Read                = fmt.Errorf("ErrB64Read")
+)
+
 type renderer struct {
 	output io.Writer
 	pdf    Pdf
@@ -62,31 +68,31 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 		pdf.LoadFont(n.name, n.file)
 	case *NodeImage:
 		if len(n.file) == 0 {
-			return fmt.Errorf("in image item, you must specify a property file")
+			return ErrEmptyImageFileProperty
 		}
 		var rs io.ReadSeeker
 		if n.mode == ImgModeFile {
 			file, err := os.Open(n.file)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w : %v", ErrCantOpenFile, err)
 			}
 			defer file.Close()
 			rs = file
 		} else {
 			decoded, err := base64.StdEncoding.DecodeString(n.file)
 			if err != nil {
-				return err
+				return fmt.Errorf("%w : %v", ErrB64Read, err)
 			}
 			rs = bytes.NewReader(decoded)
 		}
 		pdf.Image(rs, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
 	case *NodeVector:
 		if len(n.file) == 0 {
-			return fmt.Errorf("in vector item, you must specify a property file")
+			return ErrEmptyImageFileProperty
 		}
 		file, err := os.Open(n.file)
 		if err != nil {
-			return err
+			return fmt.Errorf("%w : %v", ErrCantOpenFile, err)
 		}
 		defer file.Close()
 		pdf.Vector(file, n.x+xOrigin, n.y+yOrigin, n.width, n.height)

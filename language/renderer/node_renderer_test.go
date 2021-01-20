@@ -1,6 +1,7 @@
 package renderer
 
 import (
+	"errors"
 	"fmt"
 	"github.com/canadadry/pml/language/lexer"
 	"github.com/canadadry/pml/language/parser"
@@ -89,10 +90,19 @@ func TestRender(t *testing.T) {
 	tests := []struct {
 		in    string
 		calls []string
+		err   error
 	}{
 		{
 			in:    "Document{}",
 			calls: []string{"Output"},
+		},
+		{
+			in:  "Fake{}",
+			err: rootMustBeDocumentItem,
+		},
+		{
+			in:  "Document{Fake{}}",
+			err: errItemNotFound,
 		},
 		{
 			in: "Document{Page{}}",
@@ -137,7 +147,20 @@ func TestRender(t *testing.T) {
 				"Output",
 			},
 		},
-
+		{
+			in:  `Document{ Page{ Image{ }}}`,
+			err: ErrEmptyImageFileProperty,
+			calls: []string{
+				"AddPage",
+			},
+		},
+		{
+			in:  `Document{ Page{ Image{ file:"fake"}}}`,
+			err: ErrCantOpenFile,
+			calls: []string{
+				"AddPage",
+			},
+		},
 		{
 			in: `Document{ Page{ Image{ mode: b64 file:"dGVzdA=="}}}`,
 			calls: []string{
@@ -147,11 +170,32 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
+			in:  `Document{ Page{ Image{ mode: b64 file:"1fake"}}}`,
+			err: ErrB64Read,
+			calls: []string{
+				"AddPage",
+			},
+		},
+		{
 			in: `Document{ Page{ Vector{ file:"node_renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
 				"Vector(0,0,0,0)",
 				"Output",
+			},
+		},
+		{
+			in:  `Document{ Page{ Vector{ }}}`,
+			err: ErrEmptyImageFileProperty,
+			calls: []string{
+				"AddPage",
+			},
+		},
+		{
+			in:  `Document{ Page{ Vector{ file:"fake"}}}`,
+			err: ErrCantOpenFile,
+			calls: []string{
+				"AddPage",
 			},
 		},
 		{
@@ -246,6 +290,65 @@ func TestRender(t *testing.T) {
 		{
 			in: `Document{ 
 				Page{ 
+					Rectangle{
+						x:100
+						y:100
+						width:100
+						height:100
+						color: #ff0000
+
+						Vector{ 
+							x:10
+							y:10
+							width:80
+							height:80
+							file:"node_renderer.go"
+						}
+					}
+				}
+			}`,
+			calls: []string{
+				"AddPage",
+				"SetFillColor({255 0 0 255})",
+				"Rect(100,100,100,100)",
+				"Vector(110,110,80,80)",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ 
+				Page{ 
+					Rectangle{
+						x:100
+						y:100
+						width:100
+						height:100
+						color: #ff0000
+
+						Text{ 
+							x:10
+							y:10
+							width:80
+							height:80
+							text:"fake"
+						}
+					}
+				}
+			}`,
+			calls: []string{
+				"AddPage",
+				"SetFillColor({255 0 0 255})",
+				"Rect(100,100,100,100)",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"Text('fake',110,110,80,80,TopLeft)",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ 
+				Page{ 
 					Paragraph{
 						width:100
 						Text{text:"mon chien"}
@@ -291,8 +394,8 @@ func TestRender(t *testing.T) {
 
 		r := New(nil, &fpdf)
 		err = r.Render(item)
-		if err != nil {
-			t.Fatalf("[%d] rendering failed : %v on : \n%s", i, err, tt.in)
+		if !errors.Is(err, tt.err) {
+			t.Fatalf("[%d] rendering error got  %v exp %v on : \n%s", i, err, tt.err, tt.in)
 		}
 
 		if len(tt.calls) != len(fpdf.d.callStack) {
