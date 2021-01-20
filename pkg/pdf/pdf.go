@@ -2,7 +2,8 @@ package pdf
 
 import (
 	"fmt"
-	"github.com/canadadry/pml/language/renderer"
+	"github.com/canadadry/pml/compiler/renderer"
+	"github.com/canadadry/pml/pkg/svg/svgdrawer"
 	"github.com/jung-kurt/gofpdf"
 	"image/color"
 	"io"
@@ -30,26 +31,26 @@ var alignPossibleValue = map[renderer.PdfTextAlign]string{
 }
 
 type pdfbuilder struct {
-	svgRenderer renderer.Svg
+	drawSvg svgdrawer.DrawFunc
 }
 
 type pdf struct {
-	gopdf       *gofpdf.Fpdf
-	svgRenderer renderer.Svg
-	imageCount  int
+	gopdf      *gofpdf.Fpdf
+	drawSvg    svgdrawer.DrawFunc
+	imageCount int
 }
 
-func New(svgRenderer renderer.Svg) renderer.Pdf {
+func New(d svgdrawer.DrawFunc) renderer.Pdf {
 	return &pdfbuilder{
-		svgRenderer: svgRenderer,
+		drawSvg: d,
 	}
 }
 
 func (pb *pdfbuilder) Init() renderer.PdfDrawer {
 	return &pdf{
-		gopdf:       gofpdf.New("P", "mm", "A4", ""),
-		svgRenderer: pb.svgRenderer,
-		imageCount:  0,
+		gopdf:      gofpdf.New("P", "mm", "A4", ""),
+		drawSvg:    pb.drawSvg,
+		imageCount: 0,
 	}
 }
 
@@ -144,7 +145,7 @@ func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, he
 }
 
 func (p *pdf) Vector(vector io.Reader, x float64, y float64, width float64, height float64) {
-	p.svgRenderer.Draw(p, vector, x, y, width, height)
+	p.drawSvg(p, vector, x, y, width, height)
 }
 
 func (p *pdf) Output(out io.Writer) error {
@@ -164,7 +165,7 @@ func (p *pdf) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float6
 	p.gopdf.CurveBezierCubicTo(x1, y1, x2, y2, x3, y3)
 }
 
-func (p *pdf) CloseAndDraw(s renderer.SvgStyle) {
+func (p *pdf) CloseAndDraw(s svgdrawer.Style) {
 	p.gopdf.ClosePath()
 
 	p.gopdf.SetDrawColor(int(s.BorderColor.R), int(s.BorderColor.G), int(s.BorderColor.B))

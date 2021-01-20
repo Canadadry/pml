@@ -1,37 +1,23 @@
 package svg
 
 import (
-	"github.com/canadadry/pml/language/renderer"
-	"github.com/canadadry/pml/pkg/svg/matrix"
+	"github.com/canadadry/pml/pkg/svg/svgdrawer"
+	"github.com/canadadry/pml/pkg/svg/svgnode"
 	"github.com/canadadry/pml/pkg/svg/svgparser"
-	"github.com/canadadry/pml/pkg/svg/svgpath"
 	"io"
 )
 
-type svgNode struct {
-	worldToLocal matrix.Matrix
-	commands     []svgpath.Command
-	style        renderer.SvgStyle
-	children     []*svgNode
-}
-
-type svgDrawer struct{}
-
-func New() *svgDrawer {
-	return &svgDrawer{}
-}
-
-func (sd *svgDrawer) Draw(d renderer.SvgDrawer, svg io.Reader, x float64, y float64, w float64, h float64) error {
+func Draw(d svgdrawer.Drawer, svg io.Reader, x float64, y float64, w float64, h float64) error {
 
 	element, err := svgparser.Parse(svg)
 	if err != nil {
 		return err
 	}
 
-	root, err := svgMain(element, viewBox{x, y, w, h})
+	root, err := svgnode.SvgMain(element, svgnode.ViewBox{x, y, w, h})
 	if err != nil {
 		return err
 	}
 
-	return root.draw(d)
+	return root.Draw(d)
 }

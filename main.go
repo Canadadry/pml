@@ -3,7 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-	"github.com/canadadry/pml/language"
+	"github.com/canadadry/pml/compiler"
+	"github.com/canadadry/pml/pkg/pdf"
+	"github.com/canadadry/pml/pkg/svg"
 	"io"
 	"os"
 )
@@ -48,5 +50,5 @@ func run() error {
 	}
 	defer fOut.Close()
 
-	return language.Run(fIn, fOut, fParam)
+	return compiler.Run(fIn, fOut, fParam, pdf.New(svg.Draw))
 }
