@@ -45,7 +45,7 @@ func (d *drawer) Rect(x float64, y float64, w float64, h float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Rect(%v,%v,%v,%v)", x, y, w, h))
 }
 func (d *drawer) SetFont(n string, s float64) {
-	d.callStack = append(d.callStack, fmt.Sprintf("SetFont(%v,%v)", n, s))
+	d.callStack = append(d.callStack, fmt.Sprintf("SetFont('%v',%v)", n, s))
 }
 func (d *drawer) GetDefaultFontName() string {
 	d.callStack = append(d.callStack, "GetDefaultFontName()")
@@ -54,21 +54,21 @@ func (d *drawer) GetDefaultFontName() string {
 func (d *drawer) SetTextColor(c color.RGBA) {
 	d.callStack = append(d.callStack, fmt.Sprintf("SetTextColor(%v)", c))
 }
-func (d *drawer) Text(string, float64, float64, float64, float64, PdfTextAlign) {
-	d.callStack = append(d.callStack, "Text")
+func (d *drawer) Text(s string, x float64, y float64, w float64, h float64, a PdfTextAlign) {
+	d.callStack = append(d.callStack, fmt.Sprintf("Text('%s',%v,%v,%v,%v,%s)", s, x, y, w, h, a))
 }
 func (d *drawer) GetTextMaxLength(text string, maxWidth float64) (int, float64) {
-	d.callStack = append(d.callStack, "GetTextMaxLength")
+	d.callStack = append(d.callStack, "GetTextMaxLength()")
 	return 0, 0
 }
-func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, width float64, height float64) {
-	d.callStack = append(d.callStack, "Image")
+func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64) {
+	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v)", x, y, w, h))
 }
-func (d *drawer) Vector(image io.Reader, x float64, y float64, width float64, height float64) {
-	d.callStack = append(d.callStack, "Vector")
+func (d *drawer) Vector(image io.Reader, x float64, y float64, w float64, h float64) {
+	d.callStack = append(d.callStack, fmt.Sprintf("Vector(%v,%v,%v,%v)", x, y, w, h))
 }
-func (d *drawer) LoadFont(fontName string, fontFilePath string) error {
-	d.callStack = append(d.callStack, "LoadFont")
+func (d *drawer) LoadFont(name string, path string) error {
+	d.callStack = append(d.callStack, fmt.Sprintf("LoadFont('%s','%s')", name, path))
 	return d.nextError
 }
 func (d *drawer) Output(out io.Writer) error {
@@ -95,7 +95,7 @@ func TestRender(t *testing.T) {
 		{
 			in: "Document{Font{} Page{}}",
 			calls: []string{
-				"LoadFont",
+				"LoadFont('','')",
 				"AddPage",
 				"Output",
 			},
@@ -114,9 +114,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"GetDefaultFontName()",
-				"SetFont(fakefont,6)",
+				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
-				"Text",
+				"Text('',0,0,0,0,TopLeft)",
 				"Output",
 			},
 		},
@@ -124,7 +124,7 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Image{ file:"node_renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
-				"Image",
+				"Image(0,0,0,0)",
 				"Output",
 			},
 		},
@@ -132,7 +132,7 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Vector{ file:"node_renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
-				"Vector",
+				"Vector(0,0,0,0)",
 				"Output",
 			},
 		},
@@ -148,10 +148,10 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"GetDefaultFontName()",
-				"SetFont(fakefont,6)",
+				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
 				"GetDefaultFontName()",
-				"SetFont(fakefont,6)",
+				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
 				"Output",
 			},
@@ -159,17 +159,17 @@ func TestRender(t *testing.T) {
 		{
 			in: `Document{ Font{} Page{ Rectangle{Rectangle{}} Paragraph{Text{} Text{}}}}`,
 			calls: []string{
-				"LoadFont",
+				"LoadFont('','')",
 				"AddPage",
 				"SetFillColor({0 0 0 0})",
 				"Rect(0,0,0,0)",
 				"SetFillColor({0 0 0 0})",
 				"Rect(0,0,0,0)",
 				"GetDefaultFontName()",
-				"SetFont(fakefont,6)",
+				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
 				"GetDefaultFontName()",
-				"SetFont(fakefont,6)",
+				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
 				"Output",
 			},
