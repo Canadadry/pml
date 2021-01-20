@@ -58,8 +58,17 @@ func (d *drawer) Text(s string, x float64, y float64, w float64, h float64, a Pd
 	d.callStack = append(d.callStack, fmt.Sprintf("Text('%s',%v,%v,%v,%v,%s)", s, x, y, w, h, a))
 }
 func (d *drawer) GetTextMaxLength(text string, maxWidth float64) (int, float64) {
-	d.callStack = append(d.callStack, "GetTextMaxLength()")
-	return 0, 0
+	d.callStack = append(d.callStack, fmt.Sprintf("GetTextMaxLength('%s',%g)", text, maxWidth))
+	fixedCharSize := int(14)
+	maxLen := int(maxWidth) / fixedCharSize
+	lenTxt := len(text)
+	if maxLen == 0 {
+		return lenTxt, float64(lenTxt * fixedCharSize)
+	}
+	if lenTxt < maxLen {
+		return lenTxt, float64(lenTxt * fixedCharSize)
+	}
+	return maxLen, float64(maxLen * fixedCharSize)
 }
 func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v)", x, y, w, h))
@@ -128,6 +137,15 @@ func TestRender(t *testing.T) {
 				"Output",
 			},
 		},
+
+		{
+			in: `Document{ Page{ Image{ mode: b64 file:"dGVzdA=="}}}`,
+			calls: []string{
+				"AddPage",
+				"Image(0,0,0,0)",
+				"Output",
+			},
+		},
 		{
 			in: `Document{ Page{ Vector{ file:"node_renderer.go"}}}`,
 			calls: []string{
@@ -174,6 +192,86 @@ func TestRender(t *testing.T) {
 				"Output",
 			},
 		},
+		{
+			in: `Document{ 
+				Page{ 
+					Container{
+						x:100
+						y:100
+
+						Image{ 
+							x:10
+							y:10
+							width:80
+							height:80
+							file:"node_renderer.go"
+						}
+					}
+				}
+			}`,
+			calls: []string{
+				"AddPage",
+				"Image(110,110,80,80)",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ 
+				Page{ 
+					Rectangle{
+						x:100
+						y:100
+						width:100
+						height:100
+						color: #ff0000
+
+						Image{ 
+							x:10
+							y:10
+							width:80
+							height:80
+							file:"node_renderer.go"
+						}
+					}
+				}
+			}`,
+			calls: []string{
+				"AddPage",
+				"SetFillColor({255 0 0 255})",
+				"Rect(100,100,100,100)",
+				"Image(110,110,80,80)",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ 
+				Page{ 
+					Paragraph{
+						width:100
+						Text{text:"mon chien"}
+						Text{text:" va bien"}
+					}
+				}
+			}`,
+			calls: []string{
+				"AddPage",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"GetTextMaxLength('mon chien',100)",
+				"Text('mon chi',0,0,100,6,BaselineLeft)",
+				"GetTextMaxLength('en',2)",
+				"Text('en',98,0,100,6,BaselineLeft)",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"GetTextMaxLength(' va bien',100)",
+				"Text(' va bie',0,6,100,6,BaselineLeft)",
+				"GetTextMaxLength('n',2)",
+				"Text('n',98,6,100,6,BaselineLeft)",
+				"Output",
+			},
+		},
 	}
 
 	for i, tt := range tests {
@@ -198,12 +296,12 @@ func TestRender(t *testing.T) {
 		}
 
 		if len(tt.calls) != len(fpdf.d.callStack) {
-			t.Fatalf("[%d] callstack len got %d exp %d\n got %v\n exp %v", i, len(fpdf.d.callStack), len(tt.calls), fpdf.d.callStack, tt.calls)
+			t.Fatalf("[%d] callstack len got %d exp %d\n got %v\n exp %v on : \n%s", i, len(fpdf.d.callStack), len(tt.calls), fpdf.d.callStack, tt.calls, tt.in)
 		}
 
 		for j := range tt.calls {
 			if tt.calls[j] != fpdf.d.callStack[j] {
-				t.Fatalf("[%d] callstack at %d got '%s' exp '%s'", i, j, fpdf.d.callStack[j], tt.calls[j])
+				t.Fatalf("[%d] callstack at %d got '%s' exp '%s' on : \n%s", i, j, fpdf.d.callStack[j], tt.calls[j], tt.in)
 			}
 		}
 	}

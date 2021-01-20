@@ -49,6 +49,8 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 	case *NodeRectangle:
 		pdf.SetFillColor(n.color)
 		pdf.Rect(n.x+xOrigin, n.y+yOrigin, n.width, n.height)
+		xOrigin = xOrigin + n.x
+		yOrigin = yOrigin + n.y
 	case *NodeText:
 		if len(n.fontName) == 0 {
 			n.fontName = pdf.GetDefaultFontName()
