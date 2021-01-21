@@ -1,0 +1,68 @@
+package renderer
+
+import (
+	"github.com/canadadry/pml/compiler/ast"
+	"image/color"
+)
+
+type NodeText struct {
+	Frame
+	text     string
+	color    color.RGBA
+	align    string
+	fontName string
+	fontSize float64
+}
+
+func (n *NodeText) Children() []Node          { return nil }
+func (n *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
+func (n *NodeText) needToDrawChild() bool     { return true }
+func (n *NodeText) initFrom(item *ast.Item) error {
+	var err error
+	n.text, err = item.GetPropertyAsStringWithDefault("text", "")
+	if err != nil {
+		return err
+	}
+	n.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
+	if err != nil {
+		return err
+	}
+	values := []string{
+		string(AlingTopLeft),
+		string(AlingTopCenter),
+		string(AlingTopRight),
+		string(AlingMiddleLeft),
+		string(AlingMiddleCenter),
+		string(AlingMiddleRight),
+		string(AlingBottomLeft),
+		string(AlingBottomCenter),
+		string(AlingBottomRight),
+		string(AlingBaselineLeft),
+		string(AlingBaselineCenter),
+		string(AlingBaselineRight),
+	}
+	n.align, err = item.GetPropertyAsIdentifierFromListWithDefault("align", values[0], values)
+	if err != nil {
+		return err
+	}
+	n.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "")
+	if err != nil {
+		return err
+	}
+	n.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 6)
+	if err != nil {
+		return err
+	}
+	return n.Frame.initFrom(item)
+}
+func (n *NodeText) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
+
+	if len(n.fontName) == 0 {
+		n.fontName = pdf.GetDefaultFontName()
+	}
+	pdf.SetFont(n.fontName, n.fontSize)
+	pdf.SetTextColor(n.color)
+	rb = rb.Cut(n.Frame)
+	pdf.Text(n.text, rb.x, rb.y, rb.w, rb.h, PdfTextAlign(n.align))
+	return rb, nil
+}

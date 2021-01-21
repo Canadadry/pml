@@ -128,7 +128,7 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ Page{ Image{ file:"node_renderer.go"}}}`,
+			in: `Document{ Page{ Image{ file:"renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
 				"Image(0,0,0,0)",
@@ -165,7 +165,7 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ Page{ Vector{ file:"node_renderer.go"}}}`,
+			in: `Document{ Page{ Vector{ file:"renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
 				"Vector(0,0,0,0)",
@@ -236,7 +236,7 @@ func TestRender(t *testing.T) {
 							y:10
 							width:80
 							height:80
-							file:"node_renderer.go"
+							file:"renderer.go"
 						}
 					}
 				}
@@ -262,7 +262,7 @@ func TestRender(t *testing.T) {
 							y:10
 							width:80
 							height:80
-							file:"node_renderer.go"
+							file:"renderer.go"
 						}
 					}
 				}
@@ -290,7 +290,7 @@ func TestRender(t *testing.T) {
 							y:10
 							width:80
 							height:80
-							file:"node_renderer.go"
+							file:"renderer.go"
 						}
 					}
 				}
