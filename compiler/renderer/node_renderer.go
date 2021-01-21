@@ -43,11 +43,11 @@ type renderBox struct {
 	h float64
 }
 
-func (rb renderBox) Cut(x, y, w, h float64) renderBox {
-	rb.x = rb.x + x
-	rb.y = rb.y + y
-	rb.w = w
-	rb.h = h
+func (rb renderBox) Cut(f Frame) renderBox {
+	rb.x = rb.x + f.x
+	rb.y = rb.y + f.y
+	rb.w = f.width
+	rb.h = f.height
 	return rb
 }
 
@@ -64,7 +64,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 		pdf.AddPage()
 	case *NodeRectangle:
 		pdf.SetFillColor(n.color)
-		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		rb = rb.Cut(n.Frame)
 		pdf.Rect(rb.x, rb.y, rb.w, rb.h)
 	case *NodeText:
 		if len(n.fontName) == 0 {
@@ -72,7 +72,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 		}
 		pdf.SetFont(n.fontName, n.fontSize)
 		pdf.SetTextColor(n.color)
-		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		rb = rb.Cut(n.Frame)
 		pdf.Text(n.text, rb.x, rb.y, rb.w, rb.h, PdfTextAlign(n.align))
 	case *NodeFont:
 		pdf.LoadFont(n.name, n.file)
@@ -95,7 +95,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 			}
 			rs = bytes.NewReader(decoded)
 		}
-		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		rb = rb.Cut(n.Frame)
 		pdf.Image(rs, rb.x, rb.y, rb.w, rb.h)
 	case *NodeVector:
 		if len(n.file) == 0 {
@@ -106,13 +106,13 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 			return fmt.Errorf("%w : %v", ErrCantOpenFile, err)
 		}
 		defer file.Close()
-		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		rb = rb.Cut(n.Frame)
 		pdf.Vector(file, rb.x, rb.y, rb.w, rb.h)
 	case *NodeParagraph:
 		renderChild = false
 		x := 0.0
 		y := 0.0
-		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		rb = rb.Cut(n.Frame)
 
 		for _, child := range node.Children() {
 			offset := 0
@@ -140,7 +140,7 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 			}
 		}
 	case *NodeContainer:
-		rb = rb.Cut(n.x, n.y, rb.w, rb.h)
+		rb = rb.Cut(n.Frame)
 	default:
 		return fmt.Errorf("cannot render node type")
 	}

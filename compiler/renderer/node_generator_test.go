@@ -72,6 +72,8 @@ func TestGenerateFrom(t *testing.T) {
 									y:      21,
 									width:  31,
 									height: 41,
+									xAlign: Free,
+									yAlign: Free,
 								},
 							},
 							&NodeText{
@@ -80,6 +82,8 @@ func TestGenerateFrom(t *testing.T) {
 									y:      22,
 									width:  32,
 									height: 42,
+									xAlign: Free,
+									yAlign: Free,
 								},
 								text:  "text",
 								align: "TopLeft",
@@ -90,6 +94,8 @@ func TestGenerateFrom(t *testing.T) {
 									y:      23,
 									width:  33,
 									height: 43,
+									xAlign: Free,
+									yAlign: Free,
 								},
 								file: "filename",
 								mode: "file",
@@ -100,6 +106,8 @@ func TestGenerateFrom(t *testing.T) {
 									y:      24,
 									width:  34,
 									height: 44,
+									xAlign: Free,
+									yAlign: Free,
 								},
 								file: "vecname",
 							},
@@ -109,13 +117,17 @@ func TestGenerateFrom(t *testing.T) {
 									y:      25,
 									width:  35,
 									height: 45,
+									xAlign: Free,
+									yAlign: Free,
 								},
 								lineHeight: 6,
 							},
 							&NodeContainer{
 								Frame: Frame{
-									x: 16,
-									y: 26,
+									x:      16,
+									y:      26,
+									xAlign: Free,
+									yAlign: Free,
 								},
 							},
 						},
@@ -186,20 +198,25 @@ func testNodeMatch(t *testing.T, i int, got Node, exp Node) {
 	}
 }
 
+func testFrame(t *testing.T, i int, in string, got Frame, exp Frame) {
+	testFloatProperty(t, i, in, "x", got.x, exp.x)
+	testFloatProperty(t, i, in, "y", got.y, exp.y)
+	testFloatProperty(t, i, in, "width", got.width, exp.width)
+	testFloatProperty(t, i, in, "height", got.height, exp.height)
+	testStringProperty(t, i, in, "xAlign", got.xAlign, exp.xAlign)
+	testStringProperty(t, i, in, "yAlign", got.yAlign, exp.yAlign)
+}
+
 func testNodeRectangle(t *testing.T, i int, got NodeRectangle, exp NodeRectangle) {
-	testFloatProperty(t, i, "NodeRectangle", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeRectangle", "y", got.y, exp.y)
-	testFloatProperty(t, i, "NodeRectangle", "width", got.width, exp.width)
-	testFloatProperty(t, i, "NodeRectangle", "height", got.height, exp.height)
+	testFrame(t, i, "NodeRectangle", got.Frame, exp.Frame)
+	// testColorProperty(t, i, "NodeRectangle", "color", got.color, exp.color)
 }
 
 func testNodeText(t *testing.T, i int, got NodeText, exp NodeText) {
-	testFloatProperty(t, i, "NodeText", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeText", "y", got.y, exp.y)
-	testFloatProperty(t, i, "NodeText", "width", got.width, exp.width)
-	testFloatProperty(t, i, "NodeText", "height", got.height, exp.height)
+	testFrame(t, i, "NodeText", got.Frame, exp.Frame)
 	testStringProperty(t, i, "NodeText", "text", got.text, exp.text)
 	testStringProperty(t, i, "NodeText", "align", got.align, exp.align)
+	// testColorProperty(t, i, "NodeText", "color", got.color, exp.color)
 }
 
 func testNodeFont(t *testing.T, i int, got NodeFont, exp NodeFont) {
@@ -208,33 +225,23 @@ func testNodeFont(t *testing.T, i int, got NodeFont, exp NodeFont) {
 }
 
 func testNodeImage(t *testing.T, i int, got NodeImage, exp NodeImage) {
-	testFloatProperty(t, i, "NodeImage", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeImage", "y", got.y, exp.y)
-	testFloatProperty(t, i, "NodeImage", "width", got.width, exp.width)
-	testFloatProperty(t, i, "NodeImage", "height", got.height, exp.height)
+	testFrame(t, i, "NodeImage", got.Frame, exp.Frame)
 	testStringProperty(t, i, "NodeImage", "file", got.file, exp.file)
 	testStringProperty(t, i, "NodeImage", "mode", got.mode, exp.mode)
 }
 
 func testNodeVector(t *testing.T, i int, got NodeVector, exp NodeVector) {
-	testFloatProperty(t, i, "NodeVector", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeVector", "y", got.y, exp.y)
-	testFloatProperty(t, i, "NodeVector", "width", got.width, exp.width)
-	testFloatProperty(t, i, "NodeVector", "height", got.height, exp.height)
+	testFrame(t, i, "NodeVector", got.Frame, exp.Frame)
 	testStringProperty(t, i, "NodeVector", "file", got.file, exp.file)
 }
 
 func testNodeParagraph(t *testing.T, i int, got NodeParagraph, exp NodeParagraph) {
-	testFloatProperty(t, i, "NodeParagraph", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeParagraph", "y", got.y, exp.y)
-	testFloatProperty(t, i, "NodeParagraph", "width", got.width, exp.width)
-	testFloatProperty(t, i, "NodeParagraph", "height", got.height, exp.height)
+	testFrame(t, i, "NodeParagraph", got.Frame, exp.Frame)
 	testFloatProperty(t, i, "NodeParagraph", "lineHeight", got.lineHeight, exp.lineHeight)
 }
 
 func testNodeContainer(t *testing.T, i int, got NodeContainer, exp NodeContainer) {
-	testFloatProperty(t, i, "NodeContainer", "x", got.x, exp.x)
-	testFloatProperty(t, i, "NodeContainer", "y", got.y, exp.y)
+	testFrame(t, i, "NodeContainer", got.Frame, exp.Frame)
 }
 
 func testFloatProperty(t *testing.T, i int, node string, property string, got float64, exp float64) {
