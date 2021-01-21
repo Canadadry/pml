@@ -19,6 +19,21 @@ const (
 	itemContainer = "Container"
 )
 
+const (
+	Left   = "left"
+	Center = "center"
+	Right  = "right"
+	Top    = "top"
+	Middle = "middle"
+	Bottom = "bottom"
+	Fill   = "fill"
+	Layout = "layout"
+	Free   = "free"
+
+	ImgModeFile = "file"
+	ImgModeB64  = "b64"
+)
+
 var (
 	errItemNotFound        = errors.New("errItemNotFound")
 	rootMustBeDocumentItem = errors.New("rootMustBeDocumentItem")
@@ -89,8 +104,8 @@ type NodeDocument struct {
 	children []Node
 }
 
-func (nd *NodeDocument) Children() []Node { return nd.children }
-func (nd *NodeDocument) addChild(child Node) error {
+func (n *NodeDocument) Children() []Node { return n.children }
+func (n *NodeDocument) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
 		return errChildrenNotAllowed
@@ -109,17 +124,57 @@ func (nd *NodeDocument) addChild(child Node) error {
 	case *NodeContainer:
 		return errChildrenNotAllowed
 	}
-	nd.children = append(nd.children, child)
+	n.children = append(n.children, child)
 	return nil
 }
-func (nd *NodeDocument) initFrom(*ast.Item) error { return nil }
+func (n *NodeDocument) initFrom(*ast.Item) error { return nil }
+
+type Frame struct {
+	x      float64
+	y      float64
+	width  float64
+	height float64
+	xAlign string
+	yAlign string
+}
+
+func (f *Frame) initFrom(item *ast.Item) error {
+	var err error
+	f.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
+	if err != nil {
+		return err
+	}
+	f.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
+	if err != nil {
+		return err
+	}
+	f.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
+	if err != nil {
+		return err
+	}
+	f.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
+	if err != nil {
+		return err
+	}
+	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
+	f.xAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("xAlign", xvalues[5], xvalues)
+	if err != nil {
+		return err
+	}
+	yvalues := []string{Top, Middle, Bottom, Fill, Layout, Free}
+	f.yAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("yAlign", yvalues[5], yvalues)
+	if err != nil {
+		return err
+	}
+	return nil
+}
 
 type NodePage struct {
 	children []Node
 }
 
-func (np *NodePage) Children() []Node { return np.children }
-func (np *NodePage) addChild(child Node) error {
+func (n *NodePage) Children() []Node { return n.children }
+func (n *NodePage) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
 		return errChildrenNotAllowed
@@ -134,22 +189,19 @@ func (np *NodePage) addChild(child Node) error {
 	case *NodeParagraph:
 	case *NodeContainer:
 	}
-	np.children = append(np.children, child)
+	n.children = append(n.children, child)
 	return nil
 }
-func (np *NodePage) initFrom(*ast.Item) error { return nil }
+func (n *NodePage) initFrom(*ast.Item) error { return nil }
 
 type NodeRectangle struct {
+	Frame
 	children []Node
-	x        float64
-	y        float64
-	width    float64
-	height   float64
 	color    color.RGBA
 }
 
-func (nr *NodeRectangle) Children() []Node { return nr.children }
-func (nr *NodeRectangle) addChild(child Node) error {
+func (n *NodeRectangle) Children() []Node { return n.children }
+func (n *NodeRectangle) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
 		return errChildrenNotAllowed
@@ -165,88 +217,67 @@ func (nr *NodeRectangle) addChild(child Node) error {
 	case *NodeContainer:
 		return errChildrenNotAllowed
 	}
-	nr.children = append(nr.children, child)
+	n.children = append(n.children, child)
 	return nil
 }
-func (nr *NodeRectangle) initFrom(item *ast.Item) error {
+func (n *NodeRectangle) initFrom(item *ast.Item) error {
 	var err error
 
-	nr.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
+	n.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
 	if err != nil {
 		return err
 	}
-	nr.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
-	if err != nil {
-		return err
-	}
-	nr.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
-	if err != nil {
-		return err
-	}
-	nr.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
-	if err != nil {
-		return err
-	}
-	nr.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
-	if err != nil {
-		return err
-	}
-	return nil
+	return n.Frame.initFrom(item)
 }
 
 type NodeText struct {
+	Frame
 	text     string
-	x        float64
-	y        float64
-	width    float64
-	height   float64
 	color    color.RGBA
 	align    string
 	fontName string
 	fontSize float64
 }
 
-func (nt *NodeText) Children() []Node          { return nil }
-func (nt *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
-func (nt *NodeText) initFrom(item *ast.Item) error {
+func (n *NodeText) Children() []Node          { return nil }
+func (n *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
+func (n *NodeText) initFrom(item *ast.Item) error {
 	var err error
-	nt.text, err = item.GetPropertyAsStringWithDefault("text", "")
+	n.text, err = item.GetPropertyAsStringWithDefault("text", "")
 	if err != nil {
 		return err
 	}
-	nt.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
+	n.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
 	if err != nil {
 		return err
 	}
-	nt.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
+	values := []string{
+		string(AlingTopLeft),
+		string(AlingTopCenter),
+		string(AlingTopRight),
+		string(AlingMiddleLeft),
+		string(AlingMiddleCenter),
+		string(AlingMiddleRight),
+		string(AlingBottomLeft),
+		string(AlingBottomCenter),
+		string(AlingBottomRight),
+		string(AlingBaselineLeft),
+		string(AlingBaselineCenter),
+		string(AlingBaselineRight),
+	}
+	n.align, err = item.GetPropertyAsIdentifierFromListWithDefault("align", values[0], values)
 	if err != nil {
 		return err
 	}
-	nt.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
+	n.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "")
 	if err != nil {
 		return err
 	}
-	nt.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
+	n.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 6)
 	if err != nil {
 		return err
 	}
-	nt.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
-	if err != nil {
-		return err
-	}
-	nt.align, err = item.GetPropertyAsIdentifierWithDefault("align", "TopLeft")
-	if err != nil {
-		return err
-	}
-	nt.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "")
-	if err != nil {
-		return err
-	}
-	nt.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 6)
-	if err != nil {
-		return err
-	}
-	return nil
+	return n.Frame.initFrom(item)
 }
 
 type NodeFont struct {
@@ -254,15 +285,15 @@ type NodeFont struct {
 	name string
 }
 
-func (nf *NodeFont) Children() []Node          { return nil }
-func (nf *NodeFont) addChild(child Node) error { return errChildrenNotAllowed }
-func (nf *NodeFont) initFrom(item *ast.Item) error {
+func (n *NodeFont) Children() []Node          { return nil }
+func (n *NodeFont) addChild(child Node) error { return errChildrenNotAllowed }
+func (n *NodeFont) initFrom(item *ast.Item) error {
 	var err error
-	nf.file, err = item.GetPropertyAsStringWithDefault("file", "")
+	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
 		return err
 	}
-	nf.name, err = item.GetPropertyAsStringWithDefault("name", "")
+	n.name, err = item.GetPropertyAsStringWithDefault("name", "")
 	if err != nil {
 		return err
 	}
@@ -270,91 +301,53 @@ func (nf *NodeFont) initFrom(item *ast.Item) error {
 }
 
 type NodeImage struct {
-	file   string
-	mode   string
-	x      float64
-	y      float64
-	width  float64
-	height float64
+	Frame
+	file string
+	mode string
 }
 
-func (ni *NodeImage) Children() []Node          { return nil }
-func (ni *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
-func (ni *NodeImage) initFrom(item *ast.Item) error {
+func (n *NodeImage) Children() []Node          { return nil }
+func (n *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
+func (n *NodeImage) initFrom(item *ast.Item) error {
 	var err error
-	ni.file, err = item.GetPropertyAsStringWithDefault("file", "")
+	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
 		return err
 	}
-	ni.mode, err = item.GetPropertyAsIdentifierWithDefault("mode", ImgModeFile)
+	values := []string{ImgModeFile, ImgModeB64}
+	n.mode, err = item.GetPropertyAsIdentifierFromListWithDefault("mode", ImgModeFile, values)
 	if err != nil {
 		return err
 	}
-	ni.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
-	if err != nil {
-		return err
-	}
-	ni.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
-	if err != nil {
-		return err
-	}
-	ni.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
-	if err != nil {
-		return err
-	}
-	ni.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return n.Frame.initFrom(item)
 }
 
 type NodeVector struct {
-	file   string
-	x      float64
-	y      float64
-	width  float64
-	height float64
+	Frame
+	file string
 }
 
-func (nv *NodeVector) Children() []Node          { return nil }
-func (nv *NodeVector) addChild(child Node) error { return errChildrenNotAllowed }
-func (nv *NodeVector) initFrom(item *ast.Item) error {
+func (n *NodeVector) Children() []Node          { return nil }
+func (n *NodeVector) addChild(child Node) error { return errChildrenNotAllowed }
+func (n *NodeVector) initFrom(item *ast.Item) error {
 	var err error
-	nv.file, err = item.GetPropertyAsStringWithDefault("file", "")
+	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
 		return err
 	}
-	nv.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
-	if err != nil {
-		return err
-	}
-	nv.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
-	if err != nil {
-		return err
-	}
-	nv.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
-	if err != nil {
-		return err
-	}
-	nv.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return n.Frame.initFrom(item)
 }
 
 type NodeParagraph struct {
+	Frame
 	children   []Node
-	x          float64
-	y          float64
-	width      float64
-	height     float64
 	lineHeight float64
 }
 
-func (np *NodeParagraph) Children() []Node { return np.children }
-func (np *NodeParagraph) addChild(child Node) error {
+func (n *NodeParagraph) Children() []Node { return n.children }
+func (n *NodeParagraph) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
 		return errChildrenNotAllowed
@@ -374,42 +367,37 @@ func (np *NodeParagraph) addChild(child Node) error {
 	case *NodeContainer:
 		return errChildrenNotAllowed
 	}
-	np.children = append(np.children, child)
+	n.children = append(n.children, child)
 	return nil
 }
-func (np *NodeParagraph) initFrom(item *ast.Item) error {
+func (n *NodeParagraph) initFrom(item *ast.Item) error {
 	var err error
-	np.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
+
+	n.lineHeight, err = item.GetPropertyAsFloatWithDefault("lineHeight", 6)
 	if err != nil {
 		return err
 	}
-	np.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
+	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
+	n.xAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("xAlign", xvalues[5], xvalues)
 	if err != nil {
 		return err
 	}
-	np.width, err = item.GetPropertyAsFloatWithDefault("width", 0)
+	yvalues := []string{Top, Middle, Bottom, Fill, Layout, Free}
+	n.yAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("yAlign", yvalues[5], yvalues)
 	if err != nil {
 		return err
 	}
-	np.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
-	if err != nil {
-		return err
-	}
-	np.lineHeight, err = item.GetPropertyAsFloatWithDefault("lineHeight", 6)
-	if err != nil {
-		return err
-	}
-	return nil
+
+	return n.Frame.initFrom(item)
 }
 
 type NodeContainer struct {
+	Frame
 	children []Node
-	x        float64
-	y        float64
 }
 
-func (nc *NodeContainer) Children() []Node { return nc.children }
-func (nc *NodeContainer) addChild(child Node) error {
+func (n *NodeContainer) Children() []Node { return n.children }
+func (n *NodeContainer) addChild(child Node) error {
 	switch child.(type) {
 	case *NodeDocument:
 		return errChildrenNotAllowed
@@ -424,18 +412,9 @@ func (nc *NodeContainer) addChild(child Node) error {
 	case *NodeParagraph:
 	case *NodeContainer:
 	}
-	nc.children = append(nc.children, child)
+	n.children = append(n.children, child)
 	return nil
 }
-func (nc *NodeContainer) initFrom(item *ast.Item) error {
-	var err error
-	nc.x, err = item.GetPropertyAsFloatWithDefault("x", 0)
-	if err != nil {
-		return err
-	}
-	nc.y, err = item.GetPropertyAsFloatWithDefault("y", 0)
-	if err != nil {
-		return err
-	}
-	return nil
+func (n *NodeContainer) initFrom(item *ast.Item) error {
+	return n.Frame.initFrom(item)
 }

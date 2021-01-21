@@ -9,8 +9,8 @@ import (
 )
 
 var (
-	ErrInvalidTypeForProperty     = errors.New("invalidTypeForProperty")
-	errPropertyDefinitionNotFound = errors.New("errPropertyDefinitionNotFound")
+	ErrInvalidTypeForProperty = errors.New("invalidTypeForProperty")
+	ErrPropertyNotInRange     = errors.New("errPropertyNotInRange")
 )
 
 type Item struct {
@@ -97,4 +97,20 @@ func (i *Item) GetPropertyAsIdentifierWithDefault(name string, defaultValue stri
 		return defaultValue, ErrInvalidTypeForProperty
 	}
 	return v.Token().Literal, nil
+}
+
+func (i *Item) GetPropertyAsIdentifierFromListWithDefault(name string, defaultValue string, values []string) (string, error) {
+
+	p, err := i.GetPropertyAsIdentifierWithDefault(name, defaultValue)
+	if err != nil {
+		return p, err
+	}
+
+	for _, v := range values {
+		if p == v {
+			return p, nil
+		}
+	}
+
+	return defaultValue, fmt.Errorf("%w : %v", ErrPropertyNotInRange, values)
 }

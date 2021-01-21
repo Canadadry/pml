@@ -9,11 +9,6 @@ import (
 	"os"
 )
 
-const (
-	ImgModeFile = "file"
-	ImgModeB64  = "b64"
-)
-
 var (
 	ErrEmptyImageFileProperty = fmt.Errorf("in image item, you must specify a property file")
 	ErrCantOpenFile           = fmt.Errorf("ErrCantOpenFile")
@@ -38,10 +33,25 @@ func (r *renderer) Render(tree *ast.Item) error {
 	if err != nil {
 		return err
 	}
-	return r.draw(rt, nil, 0, 0)
+	return r.draw(rt, nil, renderBox{})
 }
 
-func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float64) error {
+type renderBox struct {
+	x float64
+	y float64
+	w float64
+	h float64
+}
+
+func (rb renderBox) Cut(x, y, w, h float64) renderBox {
+	rb.x = rb.x + x
+	rb.y = rb.y + y
+	rb.w = w
+	rb.h = h
+	return rb
+}
+
+func (r *renderer) draw(node Node, pdf PdfDrawer, rb renderBox) error {
 
 	initialized := false
 	renderChild := true
@@ -54,16 +64,16 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 		pdf.AddPage()
 	case *NodeRectangle:
 		pdf.SetFillColor(n.color)
-		pdf.Rect(n.x+xOrigin, n.y+yOrigin, n.width, n.height)
-		xOrigin = xOrigin + n.x
-		yOrigin = yOrigin + n.y
+		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		pdf.Rect(rb.x, rb.y, rb.w, rb.h)
 	case *NodeText:
 		if len(n.fontName) == 0 {
 			n.fontName = pdf.GetDefaultFontName()
 		}
 		pdf.SetFont(n.fontName, n.fontSize)
 		pdf.SetTextColor(n.color)
-		pdf.Text(n.text, n.x+xOrigin, n.y+yOrigin, n.width, n.height, PdfTextAlign(n.align))
+		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		pdf.Text(n.text, rb.x, rb.y, rb.w, rb.h, PdfTextAlign(n.align))
 	case *NodeFont:
 		pdf.LoadFont(n.name, n.file)
 	case *NodeImage:
@@ -85,7 +95,8 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 			}
 			rs = bytes.NewReader(decoded)
 		}
-		pdf.Image(rs, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
+		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		pdf.Image(rs, rb.x, rb.y, rb.w, rb.h)
 	case *NodeVector:
 		if len(n.file) == 0 {
 			return ErrEmptyImageFileProperty
@@ -95,11 +106,13 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 			return fmt.Errorf("%w : %v", ErrCantOpenFile, err)
 		}
 		defer file.Close()
-		pdf.Vector(file, n.x+xOrigin, n.y+yOrigin, n.width, n.height)
+		rb = rb.Cut(n.x, n.y, n.width, n.height)
+		pdf.Vector(file, rb.x, rb.y, rb.w, rb.h)
 	case *NodeParagraph:
 		renderChild = false
 		x := 0.0
 		y := 0.0
+		rb = rb.Cut(n.x, n.y, n.width, n.height)
 
 		for _, child := range node.Children() {
 			offset := 0
@@ -117,25 +130,24 @@ func (r *renderer) draw(node Node, pdf PdfDrawer, xOrigin float64, yOrigin float
 			for offset < len(textChild.text) {
 				maxSize, textWidth := pdf.GetTextMaxLength(textChild.text[offset:], n.width-x)
 				text := textChild.text[offset : offset+maxSize]
-				pdf.Text(text, n.x+x+xOrigin, n.y+y+yOrigin, n.width, n.lineHeight, "BaselineLeft")
+				pdf.Text(text, x+rb.x, y+rb.y, rb.w, n.lineHeight, "BaselineLeft")
 				offset = offset + maxSize
 				x = x + textWidth
-				if x > n.width {
+				if x > rb.w {
 					x = 0
 					y = y + n.lineHeight
 				}
 			}
 		}
 	case *NodeContainer:
-		xOrigin = xOrigin + n.x
-		yOrigin = yOrigin + n.y
+		rb = rb.Cut(n.x, n.y, rb.w, rb.h)
 	default:
 		return fmt.Errorf("cannot render node type")
 	}
 
 	if renderChild {
 		for _, child := range node.Children() {
-			err := r.draw(child, pdf, xOrigin, yOrigin)
+			err := r.draw(child, pdf, rb)
 			if err != nil {
 				return err
 			}
