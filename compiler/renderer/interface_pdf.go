@@ -5,6 +5,11 @@ import (
 	"io"
 )
 
+const (
+	PdfWidthMm = 210
+	PdfHeight  = 297
+)
+
 type PdfTextAlign string
 
 const (
