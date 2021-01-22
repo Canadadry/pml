@@ -85,21 +85,6 @@ type Node interface {
 	needToDrawChild() bool
 }
 
-type renderBox struct {
-	x float64
-	y float64
-	w float64
-	h float64
-}
-
-func (rb renderBox) Cut(f Frame) renderBox {
-	rb.x = rb.x + f.x
-	rb.y = rb.y + f.y
-	rb.w = f.width
-	rb.h = f.height
-	return rb
-}
-
 func generate(item *ast.Item) (Node, error) {
 
 	if item.TokenType.Literal != itemDocument {
