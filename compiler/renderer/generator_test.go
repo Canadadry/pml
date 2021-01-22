@@ -394,6 +394,8 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "color"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "y"},
@@ -404,6 +406,8 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `1.0`, property: "text"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `1.0`, property: "fontName"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "fontSize"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "y"},
@@ -411,21 +415,29 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `12334`, property: "file"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "mode"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "y"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `12334`, property: "file"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"x"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"x"`, property: "y"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "lineHeight"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "y"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "height"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "xAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "yAlign"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Font"}, value: `1`, property: "file"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Font"}, value: `1`, property: "name"},
