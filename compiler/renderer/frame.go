@@ -4,6 +4,18 @@ import (
 	"github.com/canadadry/pml/compiler/ast"
 )
 
+const (
+	Left   = "left"
+	Center = "center"
+	Right  = "right"
+	Top    = "top"
+	Middle = "middle"
+	Bottom = "bottom"
+	Fill   = "fill"
+	Layout = "layout"
+	Free   = "free"
+)
+
 type Frame struct {
 	x      float64
 	y      float64

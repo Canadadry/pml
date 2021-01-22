@@ -12,17 +12,18 @@ type NodeFont struct {
 func (n *NodeFont) Children() []Node          { return nil }
 func (n *NodeFont) addChild(child Node) error { return errChildrenNotAllowed }
 func (n *NodeFont) needToDrawChild() bool     { return true }
-func (n *NodeFont) initFrom(item *ast.Item) error {
+func (*NodeFont) new(item *ast.Item) (Node, error) {
+	n := &NodeFont{}
 	var err error
 	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	n.name, err = item.GetPropertyAsStringWithDefault("name", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return n, nil
 }
 func (n *NodeFont) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	pdf.LoadFont(n.name, n.file)

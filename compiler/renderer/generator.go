@@ -18,20 +18,58 @@ const (
 	itemContainer = "Container"
 )
 
-const (
-	Left   = "left"
-	Center = "center"
-	Right  = "right"
-	Top    = "top"
-	Middle = "middle"
-	Bottom = "bottom"
-	Fill   = "fill"
-	Layout = "layout"
-	Free   = "free"
+type definition struct {
+	AllowedChild []string
+	Type         Node
+}
 
-	ImgModeFile = "file"
-	ImgModeB64  = "b64"
-)
+func (d *definition) AllowChild(name string) bool {
+	for _, c := range d.AllowedChild {
+		if c == name {
+			return true
+		}
+	}
+	return false
+}
+
+var nodeDefinition = map[string]definition{
+	itemDocument: {
+		AllowedChild: []string{itemPage, itemFont},
+		Type:         &NodeDocument{},
+	},
+	itemFont: {
+		AllowedChild: []string{},
+		Type:         &NodeFont{},
+	},
+	itemPage: {
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer},
+		Type:         &NodePage{},
+	},
+	itemContainer: {
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer},
+		Type:         &NodeContainer{},
+	},
+	itemRectangle: {
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph},
+		Type:         &NodeRectangle{},
+	},
+	itemParagraph: {
+		AllowedChild: []string{itemText},
+		Type:         &NodeParagraph{},
+	},
+	itemText: {
+		AllowedChild: []string{},
+		Type:         &NodeText{},
+	},
+	itemImage: {
+		AllowedChild: []string{},
+		Type:         &NodeImage{},
+	},
+	itemVector: {
+		AllowedChild: []string{},
+		Type:         &NodeVector{},
+	},
+}
 
 var (
 	errItemNotFound        = errors.New("errItemNotFound")
@@ -42,7 +80,7 @@ var (
 type Node interface {
 	Children() []Node
 	addChild(child Node) error
-	initFrom(*ast.Item) error
+	new(*ast.Item) (Node, error)
 	draw(pdf PdfDrawer, rb renderBox) (renderBox, error)
 	needToDrawChild() bool
 }
@@ -71,11 +109,11 @@ func generate(item *ast.Item) (Node, error) {
 }
 
 func generateItem(item *ast.Item) (Node, error) {
-	n, err := createNodeFrom(item)
-	if err != nil {
-		return nil, err
+	def, ok := nodeDefinition[item.TokenType.Literal]
+	if !ok {
+		return nil, errItemNotFound
 	}
-	err = n.initFrom(item)
+	n, err := def.Type.new(item)
 	if err != nil {
 		return nil, err
 	}
@@ -84,34 +122,13 @@ func generateItem(item *ast.Item) (Node, error) {
 		if err != nil {
 			return nil, err
 		}
+		if def.AllowChild(c.TokenType.Literal) == false {
+			return nil, errChildrenNotAllowed
+		}
 		err = n.addChild(child)
 		if err != nil {
 			return nil, err
 		}
 	}
 	return n, nil
-}
-
-func createNodeFrom(item *ast.Item) (Node, error) {
-	switch item.TokenType.Literal {
-	case itemDocument:
-		return &NodeDocument{children: []Node{}}, nil
-	case itemPage:
-		return &NodePage{children: []Node{}}, nil
-	case itemRectangle:
-		return &NodeRectangle{children: []Node{}}, nil
-	case itemText:
-		return &NodeText{}, nil
-	case itemFont:
-		return &NodeFont{}, nil
-	case itemImage:
-		return &NodeImage{}, nil
-	case itemVector:
-		return &NodeVector{}, nil
-	case itemParagraph:
-		return &NodeParagraph{}, nil
-	case itemContainer:
-		return &NodeContainer{}, nil
-	}
-	return nil, errItemNotFound
 }

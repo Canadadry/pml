@@ -17,15 +17,16 @@ type NodeText struct {
 func (n *NodeText) Children() []Node          { return nil }
 func (n *NodeText) addChild(child Node) error { return errChildrenNotAllowed }
 func (n *NodeText) needToDrawChild() bool     { return true }
-func (n *NodeText) initFrom(item *ast.Item) error {
+func (*NodeText) new(item *ast.Item) (Node, error) {
+	n := &NodeText{}
 	var err error
 	n.text, err = item.GetPropertyAsStringWithDefault("text", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	n.color, err = item.GetPropertyAsColorWithDefault("color", color.RGBA{0, 0, 0, 0})
 	if err != nil {
-		return err
+		return nil, err
 	}
 	values := []string{
 		string(AlingTopLeft),
@@ -43,17 +44,18 @@ func (n *NodeText) initFrom(item *ast.Item) error {
 	}
 	n.align, err = item.GetPropertyAsIdentifierFromListWithDefault("align", values[0], values)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	n.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	n.fontSize, err = item.GetPropertyAsFloatWithDefault("fontSize", 6)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return n.Frame.initFrom(item)
+	err = n.Frame.initFrom(item)
+	return n, err
 }
 func (n *NodeText) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 

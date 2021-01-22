@@ -14,14 +14,16 @@ type NodeVector struct {
 func (n *NodeVector) Children() []Node          { return nil }
 func (n *NodeVector) addChild(child Node) error { return errChildrenNotAllowed }
 func (n *NodeVector) needToDrawChild() bool     { return true }
-func (n *NodeVector) initFrom(item *ast.Item) error {
+func (*NodeVector) new(item *ast.Item) (Node, error) {
+	n := &NodeVector{}
 	var err error
 	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return n.Frame.initFrom(item)
+	err = n.Frame.initFrom(item)
+	return n, err
 }
 func (n *NodeVector) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	if len(n.file) == 0 {

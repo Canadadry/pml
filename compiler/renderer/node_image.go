@@ -9,6 +9,11 @@ import (
 	"os"
 )
 
+const (
+	ImgModeFile = "file"
+	ImgModeB64  = "b64"
+)
+
 type NodeImage struct {
 	Frame
 	file string
@@ -18,19 +23,20 @@ type NodeImage struct {
 func (n *NodeImage) Children() []Node          { return nil }
 func (n *NodeImage) addChild(child Node) error { return errChildrenNotAllowed }
 func (n *NodeImage) needToDrawChild() bool     { return true }
-func (n *NodeImage) initFrom(item *ast.Item) error {
+func (*NodeImage) new(item *ast.Item) (Node, error) {
+	n := &NodeImage{}
 	var err error
 	n.file, err = item.GetPropertyAsStringWithDefault("file", "")
 	if err != nil {
-		return err
+		return nil, err
 	}
 	values := []string{ImgModeFile, ImgModeB64}
 	n.mode, err = item.GetPropertyAsIdentifierFromListWithDefault("mode", ImgModeFile, values)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	return n.Frame.initFrom(item)
+	err = n.Frame.initFrom(item)
+	return n, err
 }
 func (n *NodeImage) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	if len(n.file) == 0 {

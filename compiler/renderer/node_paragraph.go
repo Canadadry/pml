@@ -14,47 +14,30 @@ type NodeParagraph struct {
 func (n *NodeParagraph) Children() []Node      { return n.children }
 func (n *NodeParagraph) needToDrawChild() bool { return false }
 func (n *NodeParagraph) addChild(child Node) error {
-	switch child.(type) {
-	case *NodeDocument:
-		return errChildrenNotAllowed
-	case *NodePage:
-		return errChildrenNotAllowed
-	case *NodeRectangle:
-		return errChildrenNotAllowed
-	case *NodeText:
-	case *NodeFont:
-		return errChildrenNotAllowed
-	case *NodeImage:
-		return errChildrenNotAllowed
-	case *NodeVector:
-		return errChildrenNotAllowed
-	case *NodeParagraph:
-		return errChildrenNotAllowed
-	case *NodeContainer:
-		return errChildrenNotAllowed
-	}
 	n.children = append(n.children, child)
 	return nil
 }
-func (n *NodeParagraph) initFrom(item *ast.Item) error {
+func (*NodeParagraph) new(item *ast.Item) (Node, error) {
+	n := &NodeParagraph{}
 	var err error
 
 	n.lineHeight, err = item.GetPropertyAsFloatWithDefault("lineHeight", 6)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
 	n.xAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("xAlign", xvalues[5], xvalues)
 	if err != nil {
-		return err
+		return nil, err
 	}
 	yvalues := []string{Top, Middle, Bottom, Fill, Layout, Free}
 	n.yAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("yAlign", yvalues[5], yvalues)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return n.Frame.initFrom(item)
+	err = n.Frame.initFrom(item)
+	return n, err
 }
 func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	x := 0.0
