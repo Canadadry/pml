@@ -51,9 +51,6 @@ func (d *drawer) GetTextMaxLength(text string, maxWidth float64) (int, float64) 
 	fixedCharSize := int(14)
 	maxLen := int(maxWidth) / fixedCharSize
 	lenTxt := len(text)
-	if maxLen == 0 {
-		return lenTxt, float64(lenTxt * fixedCharSize)
-	}
 	if lenTxt < maxLen {
 		return lenTxt, float64(lenTxt * fixedCharSize)
 	}
@@ -194,7 +191,7 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ Page{ Paragraph{Text{} Text{}}}}`,
+			in: `Document{ Page{ Paragraph{ Text{} Text{}}}}`,
 			calls: []string{
 				"AddPage",
 				"GetDefaultFontName()",
@@ -207,7 +204,31 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ Font{} Page{ Rectangle{Rectangle{}} Paragraph{Text{} Text{}}}}`,
+			in: `Document{ Page{ Paragraph{width:0 Text{text:"test"} }}}`,
+			calls: []string{
+				"AddPage",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"GetTextMaxLength('test',0)",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ Page{ Paragraph{width:100 Text{} Text{}}}}`,
+			calls: []string{
+				"AddPage",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"GetDefaultFontName()",
+				"SetFont('fakefont',6)",
+				"SetTextColor({0 0 0 0})",
+				"Output",
+			},
+		},
+		{
+			in: `Document{ Font{} Page{ Rectangle{Rectangle{}} Paragraph{ width:100 Text{} Text{}}}}`,
 			calls: []string{
 				"LoadFont('','')",
 				"AddPage",
@@ -352,16 +373,17 @@ func TestRender(t *testing.T) {
 				"GetTextMaxLength('mon chien',100)",
 				"Text('mon chi',0,0,100,6,BaselineLeft)",
 				"GetTextMaxLength('en',2)",
-				"Text('en',98,0,100,6,BaselineLeft)",
+				"GetTextMaxLength('en',100)",
+				"Text('en',0,6,100,6,BaselineLeft)",
 				"GetDefaultFontName()",
 				"SetFont('fakefont',6)",
 				"SetTextColor({0 0 0 0})",
-				"GetTextMaxLength(' va bien',100)",
-				"Text(' va bie',0,6,100,6,BaselineLeft)",
-				"GetTextMaxLength('n',2)",
-				"Text('n',98,6,100,6,BaselineLeft)",
-				"Output",
-			},
+				"GetTextMaxLength(' va bien',72)",
+				"Text(' va b',28,6,100,6,BaselineLeft)",
+				"GetTextMaxLength('ien',2)",
+				"GetTextMaxLength('ien',100)",
+				"Text('ien',0,12,100,6,BaselineLeft)",
+				"Output"},
 		},
 	}
 

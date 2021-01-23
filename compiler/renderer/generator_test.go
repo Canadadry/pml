@@ -68,66 +68,66 @@ func TestGenerateFrom(t *testing.T) {
 						children: []Node{
 							&NodeRectangle{
 								Frame: Frame{
-									x:      11,
-									y:      21,
-									width:  31,
-									height: 41,
-									xAlign: Free,
-									yAlign: Free,
+									x:       11,
+									y:       21,
+									width:   31,
+									height:  41,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 							},
 							&NodeText{
 								Frame: Frame{
-									x:      12,
-									y:      22,
-									width:  32,
-									height: 42,
-									xAlign: Free,
-									yAlign: Free,
+									x:       12,
+									y:       22,
+									width:   32,
+									height:  42,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 								text:  "text",
 								align: "TopLeft",
 							},
 							&NodeImage{
 								Frame: Frame{
-									x:      13,
-									y:      23,
-									width:  33,
-									height: 43,
-									xAlign: Free,
-									yAlign: Free,
+									x:       13,
+									y:       23,
+									width:   33,
+									height:  43,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 								file: "filename",
 								mode: "file",
 							},
 							&NodeVector{
 								Frame: Frame{
-									x:      14,
-									y:      24,
-									width:  34,
-									height: 44,
-									xAlign: Free,
-									yAlign: Free,
+									x:       14,
+									y:       24,
+									width:   34,
+									height:  44,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 								file: "vecname",
 							},
 							&NodeParagraph{
 								Frame: Frame{
-									x:      15,
-									y:      25,
-									width:  35,
-									height: 45,
-									xAlign: Free,
-									yAlign: Free,
+									x:       15,
+									y:       25,
+									width:   35,
+									height:  45,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 								lineHeight: 6,
 							},
 							&NodeContainer{
 								Frame: Frame{
-									x:      16,
-									y:      26,
-									xAlign: Free,
-									yAlign: Free,
+									x:       16,
+									y:       26,
+									xAnchor: Free,
+									yAnchor: Free,
 								},
 							},
 						},
@@ -203,8 +203,8 @@ func testFrame(t *testing.T, i int, in string, got Frame, exp Frame) {
 	testFloatProperty(t, i, in, "y", got.y, exp.y)
 	testFloatProperty(t, i, in, "width", got.width, exp.width)
 	testFloatProperty(t, i, in, "height", got.height, exp.height)
-	testStringProperty(t, i, in, "xAlign", got.xAlign, exp.xAlign)
-	testStringProperty(t, i, in, "yAlign", got.yAlign, exp.yAlign)
+	testStringProperty(t, i, in, "xAnchor", got.xAnchor, exp.xAnchor)
+	testStringProperty(t, i, in, "yAnchor", got.yAnchor, exp.yAnchor)
 }
 
 func testNodeRectangle(t *testing.T, i int, got NodeRectangle, exp NodeRectangle) {
@@ -394,8 +394,8 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "color"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Rectangle"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "y"},
@@ -406,8 +406,8 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `1.0`, property: "text"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `1.0`, property: "fontName"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"x"`, property: "fontSize"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Text"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "y"},
@@ -415,29 +415,29 @@ func TestGenerateFrom_Property(t *testing.T) {
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `12334`, property: "file"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "mode"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Image"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "y"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "height"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `12334`, property: "file"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Vector"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"x"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"x"`, property: "y"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Container"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "lineHeight"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "x"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "y"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "width"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "height"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "xAlign"},
-		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "yAlign"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "xAnchor"},
+		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Page", "Paragraph"}, value: `"str"`, property: "yAnchor"},
 
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Font"}, value: `1`, property: "file"},
 		{err: ast.ErrInvalidTypeForProperty, hierachy: []string{"Document", "Font"}, value: `1`, property: "name"},

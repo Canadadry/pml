@@ -14,7 +14,7 @@ func (rb renderBox) Cut(f Frame) renderBox {
 		w: f.width,
 		h: f.height,
 	}
-	switch f.xAlign {
+	switch f.xAnchor {
 	case Left:
 		out.x = rb.x
 	case Center:
@@ -25,10 +25,10 @@ func (rb renderBox) Cut(f Frame) renderBox {
 		out.x = rb.x
 		out.w = rb.w
 	}
-	switch f.yAlign {
+	switch f.yAnchor {
 	case Top:
 		out.y = rb.y
-	case Middle:
+	case Center:
 		out.y = rb.y + (rb.h-f.height)/2
 	case Bottom:
 		out.y = rb.y + rb.h - f.height

@@ -47,7 +47,7 @@ func TestCut(t *testing.T) {
 		},
 		{
 			In:    renderBox{10, 10, 100, 100},
-			Frame: Frame{10, 10, 80, 80, Free, Middle},
+			Frame: Frame{10, 10, 80, 80, Free, Center},
 			Exp:   renderBox{20, 20, 80, 80},
 		},
 		{

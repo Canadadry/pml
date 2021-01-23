@@ -193,6 +193,6 @@ Can be customised with this json file :
 
 - line return in text
 - justifing text or paragraph
-- item layout (centerIn, fill parent, ...)
+
 
 

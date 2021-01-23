@@ -6,23 +6,22 @@ import (
 
 const (
 	Left   = "left"
-	Center = "center"
 	Right  = "right"
 	Top    = "top"
-	Middle = "middle"
 	Bottom = "bottom"
+	Center = "center"
 	Fill   = "fill"
 	Layout = "layout"
 	Free   = "free"
 )
 
 type Frame struct {
-	x      float64
-	y      float64
-	width  float64
-	height float64
-	xAlign string
-	yAlign string
+	x       float64
+	y       float64
+	width   float64
+	height  float64
+	xAnchor string
+	yAnchor string
 }
 
 func (f *Frame) initFrom(item *ast.Item) error {
@@ -44,14 +43,29 @@ func (f *Frame) initFrom(item *ast.Item) error {
 		return err
 	}
 	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
-	f.xAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("xAlign", xvalues[5], xvalues)
+	f.xAnchor, err = item.GetPropertyAsIdentifierFromListWithDefault("xAnchor", xvalues[5], xvalues)
 	if err != nil {
 		return err
 	}
-	yvalues := []string{Top, Middle, Bottom, Fill, Layout, Free}
-	f.yAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("yAlign", yvalues[5], yvalues)
+	yvalues := []string{Top, Center, Bottom, Fill, Layout, Free}
+	f.yAnchor, err = item.GetPropertyAsIdentifierFromListWithDefault("yAnchor", yvalues[5], yvalues)
 	if err != nil {
 		return err
 	}
+
+	values := []string{Center, Fill, Free}
+	anchor, err := item.GetPropertyAsIdentifierFromListWithDefault("anchor", values[2], values)
+	if err != nil {
+		return err
+	}
+	switch anchor {
+	case Center:
+		f.xAnchor = Center
+		f.yAnchor = Center
+	case Fill:
+		f.xAnchor = Fill
+		f.yAnchor = Fill
+	}
+
 	return nil
 }

@@ -25,16 +25,6 @@ func (*NodeParagraph) new(item *ast.Item) (Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
-	n.xAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("xAlign", xvalues[5], xvalues)
-	if err != nil {
-		return nil, err
-	}
-	yvalues := []string{Top, Middle, Bottom, Fill, Layout, Free}
-	n.yAlign, err = item.GetPropertyAsIdentifierFromListWithDefault("yAlign", yvalues[5], yvalues)
-	if err != nil {
-		return nil, err
-	}
 
 	err = n.Frame.initFrom(item)
 	return n, err
@@ -58,7 +48,16 @@ func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 		pdf.SetTextColor(textChild.color)
 
 		for offset < len(textChild.text) {
-			maxSize, textWidth := pdf.GetTextMaxLength(textChild.text[offset:], n.width-x)
+			maxSize, textWidth := pdf.GetTextMaxLength(textChild.text[offset:], rb.w-x)
+			if textWidth == 0 {
+				if x > 0 {
+					x = 0
+					y = y + n.lineHeight
+					continue
+				} else {
+					break
+				}
+			}
 			text := textChild.text[offset : offset+maxSize]
 			pdf.Text(text, x+rb.x, y+rb.y, rb.w, n.lineHeight, "BaselineLeft")
 			offset = offset + maxSize
