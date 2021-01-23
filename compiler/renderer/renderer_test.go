@@ -38,7 +38,7 @@ func (d *drawer) SetFont(n string, s float64) {
 }
 func (d *drawer) GetDefaultFontName() string {
 	d.callStack = append(d.callStack, "GetDefaultFontName()")
-	return "fakefont"
+	return "Arial"
 }
 func (d *drawer) SetTextColor(c color.RGBA) {
 	d.callStack = append(d.callStack, fmt.Sprintf("SetTextColor(%v)", c))
@@ -117,8 +117,7 @@ func TestRender(t *testing.T) {
 			in: "Document{ Page{ Text{}}}",
 			calls: []string{
 				"AddPage",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
+				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
 				"Text('',0,0,0,0,TopLeft)",
 				"Output",
@@ -194,12 +193,8 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Paragraph{ Text{} Text{}}}}`,
 			calls: []string{
 				"AddPage",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
+				"SetFont('Arial',6)",
+				"SetFont('Arial',6)",
 				"Output",
 			},
 		},
@@ -207,10 +202,8 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Paragraph{width:0 Text{text:"test"} }}}`,
 			calls: []string{
 				"AddPage",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
-				"GetTextMaxLength('test',0)",
+				"SetFont('Arial',6)",
+				"GetTextMaxLength('test',210)",
 				"Output",
 			},
 		},
@@ -218,12 +211,8 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Paragraph{width:100 Text{} Text{}}}}`,
 			calls: []string{
 				"AddPage",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
+				"SetFont('Arial',6)",
+				"SetFont('Arial',6)",
 				"Output",
 			},
 		},
@@ -236,12 +225,8 @@ func TestRender(t *testing.T) {
 				"Rect(0,0,0,0)",
 				"SetFillColor({0 0 0 0})",
 				"Rect(0,0,0,0)",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
-				"SetTextColor({0 0 0 0})",
+				"SetFont('Arial',6)",
+				"SetFont('Arial',6)",
 				"Output",
 			},
 		},
@@ -348,8 +333,7 @@ func TestRender(t *testing.T) {
 				"AddPage",
 				"SetFillColor({255 0 0 255})",
 				"Rect(100,100,100,100)",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
+				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
 				"Text('fake',110,110,80,80,TopLeft)",
 				"Output",
@@ -361,28 +345,41 @@ func TestRender(t *testing.T) {
 					Paragraph{
 						width:100
 						Text{text:"mon chien"}
-						Text{text:" va bien"}
+						Text{text:" va bien merci"}
 					}
 				}
 			}`,
 			calls: []string{
 				"AddPage",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
+
+				"SetFont('Arial',6)",
+				"GetTextMaxLength('mon',210)",
+				"GetTextMaxLength('chien',210)",
+				"SetFont('Arial',6)",
+				"GetTextMaxLength('va',210)",
+				"GetTextMaxLength('bien',210)",
+				"GetTextMaxLength('merci',210)",
+
+				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
-				"GetTextMaxLength('mon chien',100)",
-				"Text('mon chi',0,0,100,6,BaselineLeft)",
-				"GetTextMaxLength('en',2)",
-				"GetTextMaxLength('en',100)",
-				"Text('en',0,6,100,6,BaselineLeft)",
-				"GetDefaultFontName()",
-				"SetFont('fakefont',6)",
+				"Text('mon',0,0,100,6,BaselineLeft)",
+
+				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
-				"GetTextMaxLength(' va bien',72)",
-				"Text(' va b',28,6,100,6,BaselineLeft)",
-				"GetTextMaxLength('ien',2)",
-				"GetTextMaxLength('ien',100)",
-				"Text('ien',0,12,100,6,BaselineLeft)",
+				"Text('chien',0,6,100,6,BaselineLeft)",
+
+				"SetFont('Arial',6)",
+				"SetTextColor({0 0 0 0})",
+				"Text('va',72,6,100,6,BaselineLeft)",
+
+				"SetFont('Arial',6)",
+				"SetTextColor({0 0 0 0})",
+				"Text('bien',0,12,100,6,BaselineLeft)",
+
+				"SetFont('Arial',6)",
+				"SetTextColor({0 0 0 0})",
+				"Text('merci',0,18,100,6,BaselineLeft)",
+
 				"Output"},
 		},
 	}

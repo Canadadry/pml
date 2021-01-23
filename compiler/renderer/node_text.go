@@ -46,7 +46,7 @@ func (*NodeText) new(item *ast.Item) (Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	n.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "")
+	n.fontName, err = item.GetPropertyAsStringWithDefault("fontName", "Arial")
 	if err != nil {
 		return nil, err
 	}
