@@ -194,7 +194,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"Output",
 			},
 		},
@@ -203,6 +205,7 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"GetTextMaxLength('test',210)",
 				"Output",
 			},
@@ -212,7 +215,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"Output",
 			},
 		},
@@ -226,7 +231,9 @@ func TestRender(t *testing.T) {
 				"SetFillColor({0 0 0 0})",
 				"Rect(0,0,0,0)",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"Output",
 			},
 		},
@@ -353,9 +360,11 @@ func TestRender(t *testing.T) {
 				"AddPage",
 
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"GetTextMaxLength('mon',210)",
 				"GetTextMaxLength('chien',210)",
 				"SetFont('Arial',6)",
+				"GetTextMaxLength(' ',210)",
 				"GetTextMaxLength('va',210)",
 				"GetTextMaxLength('bien',210)",
 				"GetTextMaxLength('merci',210)",
@@ -370,11 +379,11 @@ func TestRender(t *testing.T) {
 
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
-				"Text('va',72,6,100,6,BaselineLeft)",
+				"Text('va',0,12,100,6,BaselineLeft)",
 
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
-				"Text('bien',0,12,100,6,BaselineLeft)",
+				"Text('bien',22,12,100,6,BaselineLeft)",
 
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
