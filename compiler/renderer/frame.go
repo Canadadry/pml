@@ -5,14 +5,14 @@ import (
 )
 
 const (
-	Left   = "left"
-	Right  = "right"
-	Top    = "top"
-	Bottom = "bottom"
-	Center = "center"
-	Fill   = "fill"
-	Layout = "layout"
-	Free   = "free"
+	Left     = "left"
+	Right    = "right"
+	Top      = "top"
+	Bottom   = "bottom"
+	Center   = "center"
+	Fill     = "fill"
+	Layout   = "layout"
+	Relative = "relative"
 )
 
 type Frame struct {
@@ -42,18 +42,18 @@ func (f *Frame) initFrom(item *ast.Item) error {
 	if err != nil {
 		return err
 	}
-	xvalues := []string{Left, Center, Right, Fill, Layout, Free}
+	xvalues := []string{Left, Center, Right, Fill, Layout, Relative}
 	f.xAnchor, err = item.GetPropertyAsIdentifierFromListWithDefault("xAnchor", xvalues[5], xvalues)
 	if err != nil {
 		return err
 	}
-	yvalues := []string{Top, Center, Bottom, Fill, Layout, Free}
+	yvalues := []string{Top, Center, Bottom, Fill, Layout, Relative}
 	f.yAnchor, err = item.GetPropertyAsIdentifierFromListWithDefault("yAnchor", yvalues[5], yvalues)
 	if err != nil {
 		return err
 	}
 
-	values := []string{Center, Fill, Free}
+	values := []string{Center, Fill, Relative}
 	anchor, err := item.GetPropertyAsIdentifierFromListWithDefault("anchor", values[2], values)
 	if err != nil {
 		return err

@@ -101,6 +101,9 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
 
  `Image` properties :
@@ -109,6 +112,9 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `file` : full path from working dir to image file or base64 content to display
  - `mode`:  default `file` if property `file` contain a valid path or `b64` if property `file` contain a valid b64 string with image data
 
@@ -118,6 +124,9 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `file` : full path from working dir to svg image file (partial support)
 
  `Text` properties :
@@ -126,6 +135,9 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
  - `text` : text to write
  - `align` : how the text is render in his box. Possible values are : `TopLeft`, `TopCenter`, `TopRight`, `MiddleLeft`, `MiddleCenter`, `MiddleRight`, `BottomLeft`, `BottomCenter`, `BottomRight`, `BaselineLeft`, `BaselineCenter`, `BaselineRight`
@@ -138,7 +150,12 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `lineHeight` : height of the line must be a float value in millimeter
+  - `align` : how the paragraph is render in his box. Possible values are : `Left`, `Right`, `Center`, `Justify`
+
 
 Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh` and `align` properties. 
 
@@ -146,6 +163,11 @@ Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`he
 
  - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
+ - `width` : width of the rectangle must be a float value in millimeter
+ - `height` : height of the rectangle must be a float value in millimeter
+ - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
+ - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
+ - `anchor` : shortcut to x and y anchor : `center`, `fill`
 
 ### Using Variable 
 
@@ -192,7 +214,7 @@ Can be customised with this json file :
 ## TODO
 
 - line return in text
-- justifing text or paragraph
+- easier texte styling 
 
 
 
