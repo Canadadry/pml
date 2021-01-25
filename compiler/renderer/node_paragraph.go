@@ -14,20 +14,20 @@ const (
 	ParagraphJustify = "justify"
 )
 
-type getAlginStartAndSpacing func(l Line) (float64, float64)
+type getAlginStartAndSpacing func(ls LineSize) (float64, float64)
 
 var getAlginStartAndSpacingByParagraphMode = map[string]getAlginStartAndSpacing{
-	ParagraphLeft: func(l Line) (float64, float64) {
-		return 0, l.spaceWidth
+	ParagraphLeft: func(ls LineSize) (float64, float64) {
+		return 0, 0
 	},
-	ParagraphRight: func(l Line) (float64, float64) {
-		return l.spaceLeft - l.spaceWidth*float64(len(l.words)), l.spaceWidth
+	ParagraphRight: func(ls LineSize) (float64, float64) {
+		return ls.spaceLeft, 0
 	},
-	ParagraphCenter: func(l Line) (float64, float64) {
-		return (l.spaceLeft - l.spaceWidth*float64(len(l.words))) / 2, l.spaceWidth
+	ParagraphCenter: func(ls LineSize) (float64, float64) {
+		return ls.spaceLeft / 2, 0
 	},
-	ParagraphJustify: func(l Line) (float64, float64) {
-		return 0, l.spaceLeft / float64(len(l.words))
+	ParagraphJustify: func(ls LineSize) (float64, float64) {
+		return 0, ls.spaceLeft / float64(ls.wordCount-1)
 	},
 }
 
@@ -66,6 +66,34 @@ func (*NodeParagraph) new(item *ast.Item) (Node, error) {
 	return n, err
 }
 
+func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
+	rb = rb.Cut(n.Frame)
+	words, err := childrenToWords(pdf, n.children)
+	if err != nil {
+		return rb, err
+	}
+	lines := wordsToLines(words, rb.w)
+	n.drawLines(pdf, rb, n.lineHeight, lines)
+	return rb, nil
+}
+
+func (n *NodeParagraph) drawLines(pdf PdfDrawer, rb renderBox, lineHeight float64, lines []Line) {
+	y := 0.0
+	for _, l := range lines {
+		ls := getLineSize(l, rb.w)
+		// fmt.Printf("%#v\n", ls)
+		x, spacing := n.align(ls)
+		// fmt.Printf("%v,%v\n", x, spacing)
+		for _, w := range l.words {
+			pdf.SetFont(w.fontName, w.fontSize)
+			pdf.SetTextColor(w.color)
+			pdf.Text(w.text, x+rb.x, y+rb.y, rb.w, lineHeight, AlingBaselineLeft)
+			x = x + w.width + spacing + w.spaceWidth
+		}
+		y = y + n.lineHeight
+	}
+}
+
 type Word struct {
 	text       string
 	width      float64
@@ -73,6 +101,20 @@ type Word struct {
 	fontName   string
 	color      color.RGBA
 	spaceWidth float64
+}
+
+func childrenToWords(pdf PdfDrawer, nodes []Node) ([]Word, error) {
+	words := []Word{}
+
+	for _, child := range nodes {
+		textChild, ok := child.(*NodeText)
+		if !ok {
+			return nil, fmt.Errorf("Unexpected node in paragraph")
+		}
+
+		words = append(words, textToWords(pdf, *textChild)...)
+	}
+	return words, nil
 }
 
 func textToWords(pdf PdfDrawer, node NodeText) []Word {
@@ -100,9 +142,7 @@ func textToWords(pdf PdfDrawer, node NodeText) []Word {
 }
 
 type Line struct {
-	words      []Word
-	spaceLeft  float64
-	spaceWidth float64
+	words []Word
 }
 
 func wordsToLines(words []Word, width float64) []Line {
@@ -114,51 +154,33 @@ func wordsToLines(words []Word, width float64) []Line {
 			if x == 0 {
 				continue
 			}
-			line.spaceLeft = width - x
-			line.spaceWidth = line.spaceWidth / float64(len(line.words))
 			lines = append(lines, line)
 			line = Line{}
 			x = 0
 		}
 		x = x + w.width + w.spaceWidth
 		line.words = append(line.words, w)
-		line.spaceWidth = line.spaceWidth + w.spaceWidth
 	}
 	if len(line.words) > 0 {
-		line.spaceLeft = width - x
-		line.spaceWidth = line.spaceWidth / float64(len(line.words))
 		lines = append(lines, line)
 		line = Line{}
 	}
 	return lines
 }
 
-func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
-	rb = rb.Cut(n.Frame)
+type LineSize struct {
+	spaceLeft float64
+	wordCount int
+}
 
-	words := []Word{}
-
-	for _, child := range n.children {
-		textChild, ok := child.(*NodeText)
-		if !ok {
-			return rb, fmt.Errorf("Unexpected node in paragraph")
-		}
-
-		words = append(words, textToWords(pdf, *textChild)...)
+func getLineSize(l Line, width float64) LineSize {
+	realWidth := 0.0
+	for _, w := range l.words {
+		realWidth = realWidth + w.width + w.spaceWidth
 	}
-
-	lines := wordsToLines(words, rb.w)
-
-	y := 0.0
-	for _, l := range lines {
-		x, spacing := n.align(l)
-		for _, w := range l.words {
-			pdf.SetFont(w.fontName, w.fontSize)
-			pdf.SetTextColor(w.color)
-			pdf.Text(w.text, x+rb.x, y+rb.y, rb.w, n.lineHeight, AlingBaselineLeft)
-			x = x + w.width + spacing
-		}
-		y = y + n.lineHeight
+	realWidth = realWidth - l.words[len(l.words)-1].spaceWidth
+	return LineSize{
+		spaceLeft: width - realWidth,
+		wordCount: len(l.words),
 	}
-	return rb, nil
 }

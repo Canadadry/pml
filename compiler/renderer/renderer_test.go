@@ -22,6 +22,7 @@ type drawer struct {
 	nextError error
 	callStack []string
 	t         *testing.T
+	charSize  int
 }
 
 func (d *drawer) AddPage() {
@@ -48,13 +49,12 @@ func (d *drawer) Text(s string, x float64, y float64, w float64, h float64, a Pd
 }
 func (d *drawer) GetTextMaxLength(text string, maxWidth float64) (int, float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("GetTextMaxLength('%s',%g)", text, maxWidth))
-	fixedCharSize := int(14)
-	maxLen := int(maxWidth) / fixedCharSize
+	maxLen := int(maxWidth) / d.charSize
 	lenTxt := len(text)
 	if lenTxt < maxLen {
-		return lenTxt, float64(lenTxt * fixedCharSize)
+		return lenTxt, float64(lenTxt * d.charSize)
 	}
-	return maxLen, float64(maxLen * fixedCharSize)
+	return maxLen, float64(maxLen * d.charSize)
 }
 func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v)", x, y, w, h))
@@ -238,13 +238,13 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ 
-				Page{ 
+			in: `Document{
+				Page{
 					Container{
 						x:100
 						y:100
 
-						Image{ 
+						Image{
 							x:10
 							y:10
 							width:80
@@ -261,8 +261,8 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ 
-				Page{ 
+			in: `Document{
+				Page{
 					Rectangle{
 						x:100
 						y:100
@@ -270,7 +270,7 @@ func TestRender(t *testing.T) {
 						height:100
 						color: #ff0000
 
-						Image{ 
+						Image{
 							x:10
 							y:10
 							width:80
@@ -289,8 +289,8 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ 
-				Page{ 
+			in: `Document{
+				Page{
 					Rectangle{
 						x:100
 						y:100
@@ -298,7 +298,7 @@ func TestRender(t *testing.T) {
 						height:100
 						color: #ff0000
 
-						Vector{ 
+						Vector{
 							x:10
 							y:10
 							width:80
@@ -317,8 +317,8 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ 
-				Page{ 
+			in: `Document{
+				Page{
 					Rectangle{
 						x:100
 						y:100
@@ -326,7 +326,7 @@ func TestRender(t *testing.T) {
 						height:100
 						color: #ff0000
 
-						Text{ 
+						Text{
 							x:10
 							y:10
 							width:80
@@ -347,12 +347,11 @@ func TestRender(t *testing.T) {
 			},
 		},
 		{
-			in: `Document{ 
-				Page{ 
+			in: `Document{
+				Page{
 					Paragraph{
 						width:100
-						Text{text:"mon chien"}
-						Text{text:" va bien merci"}
+						Text{text:"mon chien va bien merci"}
 					}
 				}
 			}`,
@@ -363,8 +362,6 @@ func TestRender(t *testing.T) {
 				"GetTextMaxLength(' ',210)",
 				"GetTextMaxLength('mon',210)",
 				"GetTextMaxLength('chien',210)",
-				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
 				"GetTextMaxLength('va',210)",
 				"GetTextMaxLength('bien',210)",
 				"GetTextMaxLength('merci',210)",
@@ -383,13 +380,14 @@ func TestRender(t *testing.T) {
 
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
-				"Text('bien',22,12,100,6,BaselineLeft)",
+				"Text('bien',44,12,100,6,BaselineLeft)",
 
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
 				"Text('merci',0,18,100,6,BaselineLeft)",
 
-				"Output"},
+				"Output",
+			},
 		},
 	}
 
@@ -404,7 +402,8 @@ func TestRender(t *testing.T) {
 
 		fpdf := fakePdf{
 			d: drawer{
-				t: t,
+				t:        t,
+				charSize: 14,
 			},
 		}
 
