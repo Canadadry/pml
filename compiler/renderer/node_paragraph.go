@@ -81,9 +81,7 @@ func (n *NodeParagraph) drawLines(pdf PdfDrawer, rb renderBox, lineHeight float6
 	y := 0.0
 	for _, l := range lines {
 		ls := getLineSize(l, rb.w)
-		// fmt.Printf("%#v\n", ls)
 		x, spacing := n.align(ls)
-		// fmt.Printf("%v,%v\n", x, spacing)
 		for _, w := range l.words {
 			pdf.SetFont(w.fontName, w.fontSize)
 			pdf.SetTextColor(w.color)
@@ -121,14 +119,14 @@ func textToWords(pdf PdfDrawer, node NodeText) []Word {
 	words := []Word{}
 
 	pdf.SetFont(node.fontName, node.fontSize)
-	_, spaceWidth := pdf.GetTextMaxLength(" ", PdfWidthMm)
+	spaceWidth := pdf.GetStringWidth(" ")
 
 	splitted := strings.Split(node.text, " ")
 	for _, part := range splitted {
 		if len(part) == 0 {
 			continue
 		}
-		_, width := pdf.GetTextMaxLength(part, PdfWidthMm)
+		width := pdf.GetStringWidth(part)
 		words = append(words, Word{
 			text:       part,
 			width:      width,

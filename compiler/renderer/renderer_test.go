@@ -47,14 +47,9 @@ func (d *drawer) SetTextColor(c color.RGBA) {
 func (d *drawer) Text(s string, x float64, y float64, w float64, h float64, a PdfTextAlign) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Text('%s',%v,%v,%v,%v,%s)", s, x, y, w, h, a))
 }
-func (d *drawer) GetTextMaxLength(text string, maxWidth float64) (int, float64) {
-	d.callStack = append(d.callStack, fmt.Sprintf("GetTextMaxLength('%s',%g)", text, maxWidth))
-	maxLen := int(maxWidth) / d.charSize
-	lenTxt := len(text)
-	if lenTxt < maxLen {
-		return lenTxt, float64(lenTxt * d.charSize)
-	}
-	return maxLen, float64(maxLen * d.charSize)
+func (d *drawer) GetStringWidth(text string) float64 {
+	d.callStack = append(d.callStack, fmt.Sprintf("GetStringWidth('%s')", text))
+	return float64(len(text))
 }
 func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v)", x, y, w, h))
@@ -194,9 +189,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"Output",
 			},
 		},
@@ -205,8 +200,8 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
-				"GetTextMaxLength('test',210)",
+				"GetStringWidth(' ')",
+				"GetStringWidth('test')",
 				"Output",
 			},
 		},
@@ -215,9 +210,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"Output",
 			},
 		},
@@ -231,9 +226,9 @@ func TestRender(t *testing.T) {
 				"SetFillColor({0 0 0 0})",
 				"Rect(0,0,0,0)",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
+				"GetStringWidth(' ')",
 				"Output",
 			},
 		},
@@ -343,49 +338,6 @@ func TestRender(t *testing.T) {
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
 				"Text('fake',110,110,80,80,TopLeft)",
-				"Output",
-			},
-		},
-		{
-			in: `Document{
-				Page{
-					Paragraph{
-						width:100
-						Text{text:"mon chien va bien merci"}
-					}
-				}
-			}`,
-			calls: []string{
-				"AddPage",
-
-				"SetFont('Arial',6)",
-				"GetTextMaxLength(' ',210)",
-				"GetTextMaxLength('mon',210)",
-				"GetTextMaxLength('chien',210)",
-				"GetTextMaxLength('va',210)",
-				"GetTextMaxLength('bien',210)",
-				"GetTextMaxLength('merci',210)",
-
-				"SetFont('Arial',6)",
-				"SetTextColor({0 0 0 0})",
-				"Text('mon',0,0,100,6,BaselineLeft)",
-
-				"SetFont('Arial',6)",
-				"SetTextColor({0 0 0 0})",
-				"Text('chien',0,6,100,6,BaselineLeft)",
-
-				"SetFont('Arial',6)",
-				"SetTextColor({0 0 0 0})",
-				"Text('va',0,12,100,6,BaselineLeft)",
-
-				"SetFont('Arial',6)",
-				"SetTextColor({0 0 0 0})",
-				"Text('bien',44,12,100,6,BaselineLeft)",
-
-				"SetFont('Arial',6)",
-				"SetTextColor({0 0 0 0})",
-				"Text('merci',0,18,100,6,BaselineLeft)",
-
 				"Output",
 			},
 		},

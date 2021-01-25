@@ -105,18 +105,8 @@ func (p *pdf) Text(text string, x float64, y float64, width float64, height floa
 	p.gopdf.CellFormat(width, height, text, "", 0, gopdfAlign, false, 0, "")
 }
 
-func (p *pdf) GetTextMaxLength(text string, maxWidth float64) (int, float64) {
-	splitted := strings.Split(text, " ")
-	tmp := ""
-	textWidth := 0.0
-	for _, part := range splitted {
-		textWidth = p.gopdf.GetStringWidth(tmp + part + " ")
-		if textWidth > maxWidth {
-			return len(tmp), textWidth
-		}
-		tmp = tmp + part + " "
-	}
-	return len(text), textWidth
+func (p *pdf) GetStringWidth(text string) float64 {
+	return p.gopdf.GetStringWidth(text)
 }
 
 func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, height float64) {

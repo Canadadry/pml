@@ -40,7 +40,7 @@ type PdfDrawer interface {
 	GetDefaultFontName() string
 	SetTextColor(c color.RGBA)
 	Text(text string, x float64, y float64, width float64, height float64, align PdfTextAlign)
-	GetTextMaxLength(text string, maxWidth float64) (int, float64)
+	GetStringWidth(text string) float64
 	Image(image io.ReadSeeker, x float64, y float64, width float64, height float64)
 	Vector(image io.Reader, x float64, y float64, width float64, height float64)
 	Output(out io.Writer) error
