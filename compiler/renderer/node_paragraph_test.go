@@ -30,6 +30,14 @@ func TestTextToWords(t *testing.T) {
 				Word{spaceWidth: 1, width: 5, text: "Donec"},
 			},
 		},
+		{
+			in: "Lorem\nipsum",
+			out: []Word{
+				Word{spaceWidth: 1, width: 5, text: "Lorem"},
+				Word{text: "\n"},
+				Word{spaceWidth: 1, width: 5, text: "ipsum"},
+			},
+		},
 	}
 
 	for i, tt := range tests {
@@ -78,6 +86,59 @@ func TestWordsToLines(t *testing.T) {
 					words: []Word{
 						Word{spaceWidth: 1, width: 5, text: "Lorem"},
 						Word{spaceWidth: 1, width: 5, text: "ipsum"},
+						Word{spaceWidth: 1, width: 5, text: "dolor"},
+						Word{spaceWidth: 1, width: 3, text: "sit"},
+						Word{spaceWidth: 1, width: 5, text: "amet,"},
+						Word{spaceWidth: 1, width: 11, text: "consectetur"},
+						Word{spaceWidth: 1, width: 10, text: "adipiscing"},
+					},
+				},
+				Line{
+					words: []Word{
+						Word{spaceWidth: 1, width: 5, text: "elit."},
+						Word{spaceWidth: 1, width: 5, text: "Fusce"},
+						Word{spaceWidth: 1, width: 8, text: "sagittis"},
+						Word{spaceWidth: 1, width: 9, text: "tincidunt"},
+						Word{spaceWidth: 1, width: 10, text: "porttitor."},
+						Word{spaceWidth: 1, width: 5, text: "Donec"},
+					},
+				},
+				Line{
+					words: []Word{
+						Word{spaceWidth: 1, width: 5, text: "marro"},
+					},
+				},
+			},
+		},
+		{
+			in: []Word{
+				Word{spaceWidth: 1, width: 5, text: "Lorem"},
+				Word{spaceWidth: 1, width: 5, text: "ipsum"},
+				Word{text: "\n"},
+				Word{spaceWidth: 1, width: 5, text: "dolor"},
+				Word{spaceWidth: 1, width: 3, text: "sit"},
+				Word{spaceWidth: 1, width: 5, text: "amet,"},
+				Word{spaceWidth: 1, width: 11, text: "consectetur"},
+				Word{spaceWidth: 1, width: 10, text: "adipiscing"},
+				Word{text: "\n"},
+				Word{spaceWidth: 1, width: 5, text: "elit."},
+				Word{spaceWidth: 1, width: 5, text: "Fusce"},
+				Word{spaceWidth: 1, width: 8, text: "sagittis"},
+				Word{spaceWidth: 1, width: 9, text: "tincidunt"},
+				Word{spaceWidth: 1, width: 10, text: "porttitor."},
+				Word{spaceWidth: 1, width: 5, text: "Donec"},
+				Word{spaceWidth: 1, width: 5, text: "marro"},
+			},
+			width: 50,
+			out: []Line{
+				Line{
+					words: []Word{
+						Word{spaceWidth: 1, width: 5, text: "Lorem"},
+						Word{spaceWidth: 1, width: 5, text: "ipsum"},
+					},
+				},
+				Line{
+					words: []Word{
 						Word{spaceWidth: 1, width: 5, text: "dolor"},
 						Word{spaceWidth: 1, width: 3, text: "sit"},
 						Word{spaceWidth: 1, width: 5, text: "amet,"},

@@ -116,10 +116,28 @@ func childrenToWords(pdf PdfDrawer, nodes []Node) ([]Word, error) {
 }
 
 func textToWords(pdf PdfDrawer, node NodeText) []Word {
-	words := []Word{}
-
 	pdf.SetFont(node.fontName, node.fontSize)
 	spaceWidth := pdf.GetStringWidth(" ")
+
+	splitted := strings.Split(node.text, "\n")
+	words := []Word{}
+	for i := 0; i < len(splitted); i++ {
+		n := NodeText{
+			text:     splitted[i],
+			fontSize: node.fontSize,
+			fontName: node.fontName,
+			color:    node.color,
+		}
+		words = append(words, lineToWords(spaceWidth, pdf, n)...)
+		if i < (len(splitted) - 1) {
+			words = append(words, Word{text: "\n"})
+		}
+	}
+	return words
+}
+
+func lineToWords(spaceWidth float64, pdf PdfDrawer, node NodeText) []Word {
+	words := []Word{}
 
 	splitted := strings.Split(node.text, " ")
 	for _, part := range splitted {
@@ -148,7 +166,7 @@ func wordsToLines(words []Word, width float64) []Line {
 	lines := []Line{}
 	line := Line{}
 	for _, w := range words {
-		if (x + w.width) > width {
+		if (x+w.width) > width || w.text == "\n" {
 			if x == 0 {
 				continue
 			}
@@ -157,7 +175,9 @@ func wordsToLines(words []Word, width float64) []Line {
 			x = 0
 		}
 		x = x + w.width + w.spaceWidth
-		line.words = append(line.words, w)
+		if w.text != "\n" {
+			line.words = append(line.words, w)
+		}
 	}
 	if len(line.words) > 0 {
 		lines = append(lines, line)

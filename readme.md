@@ -213,8 +213,7 @@ Can be customised with this json file :
 
 ## TODO
 
-- line return in text
-- easier texte styling 
+- easier texte styling  ( pipe for markdown ?? )
 - add comment with // or # 
 
 
