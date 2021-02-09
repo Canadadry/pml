@@ -9,7 +9,7 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 
 	testedString := `Font{
 	id:title
-	familly:"helevetica"
+	familly:"hele\nvetica"
 	size:12
 	weight:3.3
 	color1:#fafafaff
@@ -27,7 +27,7 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: token.IDENTIFIER, Literal: "title", Line: 2, Column: 5},
 		{Type: token.IDENTIFIER, Literal: "familly", Line: 3, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 3, Column: 9},
-		{Type: token.STRING, Literal: "helevetica", Line: 3, Column: 10},
+		{Type: token.STRING, Literal: "hele\nvetica", Line: 3, Column: 10},
 		{Type: token.IDENTIFIER, Literal: "size", Line: 4, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 4, Column: 6},
 		{Type: token.FLOAT, Literal: "12", Line: 4, Column: 7},

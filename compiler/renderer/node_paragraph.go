@@ -169,7 +169,7 @@ func wordsToLines(words []Word, width float64) []Line {
 	line := Line{}
 	for _, w := range words {
 		if (x+w.width) > width || w.text == "\n" {
-			if x == 0 {
+			if x == 0 && w.text != "\n" {
 				continue
 			}
 			lines = append(lines, line)
@@ -194,6 +194,9 @@ type LineSize struct {
 }
 
 func getLineSize(l Line, width float64) LineSize {
+	if len(l.words) == 0 {
+		return LineSize{}
+	}
 	realWidth := 0.0
 	for _, w := range l.words {
 		realWidth = realWidth + w.width + w.spaceWidth

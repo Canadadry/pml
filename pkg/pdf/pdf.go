@@ -47,8 +47,10 @@ func New(d svgdrawer.DrawFunc) renderer.Pdf {
 }
 
 func (pb *pdfbuilder) Init() renderer.PdfDrawer {
+	p := gofpdf.New("P", "mm", "A4", "")
+	p.SetAutoPageBreak(false, 0)
 	return &pdf{
-		gopdf:      gofpdf.New("P", "mm", "A4", ""),
+		gopdf:      p,
 		drawSvg:    pb.drawSvg,
 		imageCount: 0,
 	}

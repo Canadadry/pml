@@ -2,6 +2,7 @@ package lexer
 
 import (
 	"github.com/canadadry/pml/compiler/token"
+	"strings"
 )
 
 type Lexer struct {
@@ -148,7 +149,7 @@ func (lexer *Lexer) readString() string {
 		lexer.readChar()
 	}
 	defer lexer.readChar()
-	return lexer.source[start:lexer.current]
+	return strings.ReplaceAll(lexer.source[start:lexer.current], "\\n", "\n")
 }
 
 func isDot(ch byte) bool {
