@@ -14,6 +14,8 @@ const (
 	ParagraphJustify = "justify"
 )
 
+const utf8LineBreak = "\xE2\x80\xA9"
+
 type getAlginStartAndSpacing func(ls LineSize) (float64, float64)
 
 var getAlginStartAndSpacingByParagraphMode = map[string]getAlginStartAndSpacing{
@@ -123,7 +125,7 @@ func textToWords(pdf PdfDrawer, node NodeText) []Word {
 	words := []Word{}
 	for i := 0; i < len(splitted); i++ {
 		n := NodeText{
-			text:     splitted[i],
+			text:     strings.ReplaceAll(splitted[i], utf8LineBreak, ""),
 			fontSize: node.fontSize,
 			fontName: node.fontName,
 			color:    node.color,
