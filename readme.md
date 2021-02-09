@@ -215,6 +215,7 @@ Can be customised with this json file :
 
 - line return in text
 - easier texte styling 
+- add comment with // or # 
 
 
 

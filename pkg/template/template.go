@@ -9,29 +9,36 @@ import (
 	"text/template"
 )
 
-func ApplyJson(in io.Reader, param io.Reader) (string, error) {
-	templateContent, err := ioutil.ReadAll(in)
-	if err != nil {
-		return "", fmt.Errorf("Cannot read input")
-	}
-	if param == nil {
-		return string(templateContent), nil
-	}
-
+func ApplyJson(in map[string]io.Reader, name string, param io.Reader) (string, error) {
 	var data interface{}
-	err = json.NewDecoder(param).Decode(&data)
-	if err != nil {
-		return "", fmt.Errorf("Cannot unmarshall json file : %w\n", err)
+	if param != nil {
+		if err := json.NewDecoder(param).Decode(&data); err != nil {
+			return "", fmt.Errorf("Cannot unmarshall json file : %w\n", err)
+		}
 	}
 
-	pmlTemplate, err := template.New("pml").Parse(string(templateContent))
-	if err != nil {
-		return "", err
+	var main *template.Template
+	for n, r := range in {
+		var tmpl *template.Template
+		templateContent, err := ioutil.ReadAll(r)
+		if err != nil {
+			return "", fmt.Errorf("Cannot read input of %s", n)
+		}
+		if main == nil {
+			main = template.New(n)
+		}
+		if n == main.Name() {
+			tmpl = main
+		} else {
+			tmpl = main.New(n)
+		}
+		_, err = tmpl.Parse(string(templateContent))
+		if err != nil {
+			return "", err
+		}
 	}
 
-	s := ""
-	buf := bytes.NewBufferString(s)
-
-	err = pmlTemplate.Execute(buf, param)
+	buf := bytes.Buffer{}
+	err := main.ExecuteTemplate(&buf, name, data)
 	return buf.String(), err
 }

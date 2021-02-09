@@ -9,8 +9,8 @@ import (
 	"io"
 )
 
-func Run(input io.Reader, output io.Writer, param io.Reader, pdf renderer.Pdf) error {
-	out, err := template.ApplyJson(input, param)
+func Run(input map[string]io.Reader, main string, output io.Writer, param io.Reader, pdf renderer.Pdf) error {
+	out, err := template.ApplyJson(input, main, param)
 	if err != nil {
 		return fmt.Errorf("failed to transform template : %w\n", err)
 	}
