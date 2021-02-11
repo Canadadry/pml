@@ -29,6 +29,9 @@ var getAlginStartAndSpacingByParagraphMode = map[string]getAlginStartAndSpacing{
 		return ls.spaceLeft / 2, 0
 	},
 	ParagraphJustify: func(ls LineSize) (float64, float64) {
+		if ls.breakLine {
+			return 0, 0
+		}
 		return 0, ls.spaceLeft / float64(ls.wordCount-1)
 	},
 }
@@ -160,7 +163,8 @@ func lineToWords(spaceWidth float64, pdf PdfDrawer, node NodeText) []Word {
 }
 
 type Line struct {
-	words []Word
+	words     []Word
+	breakLine bool
 }
 
 func wordsToLines(words []Word, width float64) []Line {
@@ -172,6 +176,7 @@ func wordsToLines(words []Word, width float64) []Line {
 			if x == 0 && w.text != "\n" {
 				continue
 			}
+			line.breakLine = w.text == "\n"
 			lines = append(lines, line)
 			line = Line{}
 			x = 0
@@ -182,8 +187,8 @@ func wordsToLines(words []Word, width float64) []Line {
 		}
 	}
 	if len(line.words) > 0 {
+		line.breakLine = true
 		lines = append(lines, line)
-		line = Line{}
 	}
 	return lines
 }
@@ -191,6 +196,7 @@ func wordsToLines(words []Word, width float64) []Line {
 type LineSize struct {
 	spaceLeft float64
 	wordCount int
+	breakLine bool
 }
 
 func getLineSize(l Line, width float64) LineSize {
@@ -205,5 +211,6 @@ func getLineSize(l Line, width float64) LineSize {
 	return LineSize{
 		spaceLeft: width - realWidth,
 		wordCount: len(l.words),
+		breakLine: l.breakLine,
 	}
 }
