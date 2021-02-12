@@ -2,6 +2,7 @@ package svgnode
 
 import (
 	"errors"
+	"fmt"
 	"github.com/canadadry/pml/pkg/matrix"
 	"github.com/canadadry/pml/pkg/svg/svgdrawer"
 	"github.com/canadadry/pml/pkg/svg/svgparser"
@@ -63,14 +64,38 @@ func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) sv
 
 func parseColorParam(attribute string) (color.RGBA, error) {
 
-	if len(attribute) <= 4 || attribute[:4] != "rgb(" {
-		rgb, ok := colorDict[attribute]
-		if !ok {
-			return color.RGBA{}, errors.New("ColorNotFoundInDictionnary")
-		}
-		return rgb, nil
+	if len(attribute) > 4 && attribute[:4] == "rgb(" {
+		return parseFuncRgbColor(attribute)
 	}
 
+	if (len(attribute) == 7 || len(attribute) == 4) && attribute[0] == '#' {
+		return parseHexColor(attribute)
+	}
+
+	rgb, ok := colorDict[attribute]
+	if !ok {
+		return color.RGBA{}, errors.New("ColorNotFoundInDictionnary")
+	}
+	return rgb, nil
+}
+
+func parseHexColor(s string) (c color.RGBA, err error) {
+	switch len(s) {
+	case 7:
+		_, err = fmt.Sscanf(s, "#%02x%02x%02x", &c.R, &c.G, &c.B)
+	case 4:
+		_, err = fmt.Sscanf(s, "#%1x%1x%1x", &c.R, &c.G, &c.B)
+		c.R *= 17
+		c.G *= 17
+		c.B *= 17
+	default:
+		err = fmt.Errorf("invalid length, must be 7 or 4")
+
+	}
+	return
+}
+
+func parseFuncRgbColor(attribute string) (color.RGBA, error) {
 	colorAttr := attribute[4 : len(attribute)-1]
 	colorPart := strings.Split(colorAttr, ",")
 	if len(colorPart) != 3 {
