@@ -9,7 +9,10 @@ func (sn *SvgNode) Draw(d svgdrawer.Drawer) error {
 
 	position := svgpath.Point{}
 
+	cmdCount := 0
+
 	for _, cmd := range sn.commands {
+		cmdCount = cmdCount + 1
 		switch cmd.Kind {
 		case 'M':
 			position.X = cmd.Points[0].X
@@ -83,9 +86,15 @@ func (sn *SvgNode) Draw(d svgdrawer.Drawer) error {
 			}
 		case 'Z':
 			d.CloseAndDraw(sn.style)
+			cmdCount = 0
 		case 'z':
 			d.CloseAndDraw(sn.style)
+			cmdCount = 0
 		}
+	}
+
+	if cmdCount > 0 {
+		d.CloseAndDraw(sn.style)
 	}
 
 	for _, child := range sn.children {

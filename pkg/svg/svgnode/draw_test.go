@@ -387,6 +387,33 @@ func TestSvgNodeDraw(t *testing.T) {
 				return dcs
 			}(),
 		},
+		{
+			path:      "M1,2l2,2",
+			transform: matrix.Identity(),
+			expected: func() *svgdrawer.ForTesting {
+				dcs := &svgdrawer.ForTesting{Callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:3, y:4",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
+		{
+			path:      "M1,2l2,2ZM3,4l2,2",
+			transform: matrix.Identity(),
+			expected: func() *svgdrawer.ForTesting {
+				dcs := &svgdrawer.ForTesting{Callstack: []string{
+					"MoveTo x:1, y:2",
+					"LineTo x:3, y:4",
+					"CloseAndDraw",
+					"MoveTo x:3, y:4",
+					"LineTo x:5, y:6",
+					"CloseAndDraw",
+				}}
+				return dcs
+			}(),
+		},
 	}
 
 	for _, tt := range tests {
