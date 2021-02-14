@@ -89,10 +89,9 @@ func LoadInputFiles(filename string) (map[string]io.Reader, error) {
 		return files, nil
 	}
 
-	pattern := filepath.Clean(filename + "/*.pml")
-	paths, err := filepath.Glob(pattern)
+	paths, err := glob(filename, ".pml")
 	if err != nil {
-		return files, fmt.Errorf("Cannot glob '%s' : %w", pattern, err)
+		return files, fmt.Errorf("Cannot glob '%s' : %w", filename, err)
 	}
 
 	for _, p := range paths {
@@ -111,6 +110,19 @@ func LoadInputFiles(filename string) (map[string]io.Reader, error) {
 	}
 
 	return files, nil
+}
+
+func glob(dir string, ext string) ([]string, error) {
+
+	files := []string{}
+	err := filepath.Walk(dir, func(path string, f os.FileInfo, err error) error {
+		if filepath.Ext(path) == ext {
+			files = append(files, path)
+		}
+		return nil
+	})
+
+	return files, err
 }
 
 func CloseFiles(files map[string]io.Reader) {
