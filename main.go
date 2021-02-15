@@ -97,6 +97,7 @@ func run() error {
 		Pdf:    pdf.New(svg.Draw),
 		Funcs: map[string]interface{}{
 			"eval": templateEval,
+			"data": BuildDataMap,
 			"tr":   Translate(tr),
 			"upper": func(v interface{}) string {
 				return strings.ToUpper(fmt.Sprintf("%v", v))
@@ -170,6 +171,17 @@ func templateEval(values ...interface{}) string {
 		return err.Error()
 	}
 	return fmt.Sprintf("%v", result)
+}
+
+func BuildDataMap(values ...interface{}) (map[string]interface{}, error) {
+	ret := map[string]interface{}{}
+	if len(values)%2 == 1 {
+		return nil, fmt.Errorf("Must have a pair number of param : a key and a value")
+	}
+	for i := 0; i < len(values); i += 2 {
+		ret[fmt.Sprintf("%v", values[i+0])] = values[i+1]
+	}
+	return ret, nil
 }
 
 func Translate(tr i18n.Translation) func(string, ...interface{}) (string, error) {
