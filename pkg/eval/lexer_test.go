@@ -6,7 +6,7 @@ import (
 
 func TestNextToken_SingleCharToken(t *testing.T) {
 
-	testedString := "()+* /-**//\n12.32#"
+	testedString := "()+* /-**//\n12.32%#"
 
 	expectedTokens := []Token{
 		{Type: LEFT_PAR, Literal: "(", Pos: 0},
@@ -18,8 +18,9 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: DOUBLE_STAR, Literal: "**", Pos: 7},
 		{Type: DOUBLE_SLASH, Literal: "//", Pos: 9},
 		{Type: NUMBER, Literal: "12.32", Pos: 12},
-		{Type: ILLEGAL, Literal: "#", Pos: 17},
-		{Type: EOF, Literal: "", Pos: 18},
+		{Type: PERCENT, Literal: "%", Pos: 17},
+		{Type: ILLEGAL, Literal: "#", Pos: 18},
+		{Type: EOF, Literal: "", Pos: 19},
 	}
 
 	lexer := NewLexer(testedString)

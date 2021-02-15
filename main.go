@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"github.com/canadadry/pml/compiler"
+	"github.com/canadadry/pml/pkg/eval"
 	"github.com/canadadry/pml/pkg/pdf"
 	"github.com/canadadry/pml/pkg/svg"
 	"io"
@@ -69,7 +70,16 @@ func run() error {
 	}
 	defer fOut.Close()
 
-	return compiler.Run(files, main, fOut, fParam, pdf.New(svg.Draw))
+	env := compiler.Env{
+		Input:  files,
+		Main:   main,
+		Output: fOut,
+		Param:  fParam,
+		Pdf:    pdf.New(svg.Draw),
+		Funcs:  map[string]interface{}{"eval": templateEval},
+	}
+
+	return compiler.Run(env)
 }
 
 func LoadInputFiles(filename string) (map[string]io.Reader, error) {
@@ -123,6 +133,18 @@ func glob(dir string, ext string) ([]string, error) {
 	})
 
 	return files, err
+}
+
+func templateEval(values ...interface{}) string {
+	str := ""
+	for _, v := range values {
+		str = fmt.Sprintf("%s %v", str, v)
+	}
+	result, err := eval.Eval(str)
+	if err != nil {
+		return err.Error()
+	}
+	return fmt.Sprintf("%v", result)
 }
 
 func CloseFiles(files map[string]io.Reader) {

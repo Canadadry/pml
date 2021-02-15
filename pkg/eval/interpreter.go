@@ -10,7 +10,8 @@ var (
 		MINUS:        Sub,
 		STAR:         Mul,
 		SLASH:        Div,
-		DOUBLE_STAR:  Pow,
+		PERCENT:      math.Mod,
+		DOUBLE_STAR:  math.Pow,
 		DOUBLE_SLASH: IntDiv,
 	}
 	PrefixFuncMap = map[TokenType]PrefixFunc{
@@ -36,7 +37,6 @@ func Add(l, r float64) float64    { return l + r }
 func Sub(l, r float64) float64    { return l - r }
 func Mul(l, r float64) float64    { return l * r }
 func Div(l, r float64) float64    { return l / r }
-func Pow(l, r float64) float64    { return math.Pow(l, r) }
 func IntDiv(l, r float64) float64 { return math.Floor(l / r) }
 
 type PrefixFunc func(v float64) float64

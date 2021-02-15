@@ -20,4 +20,5 @@ const (
 	SLASH                  = "SLASH"
 	DOUBLE_STAR            = "DOUBLE_STAR"
 	DOUBLE_SLASH           = "DOUBLE_SLASH"
+	PERCENT                = "PERCENT"
 )

@@ -9,7 +9,7 @@ import (
 	"text/template"
 )
 
-func ApplyJson(in map[string]io.Reader, name string, param io.Reader) (string, error) {
+func ApplyJson(in map[string]io.Reader, name string, param io.Reader, funcs template.FuncMap) (string, error) {
 	var data interface{}
 	if param != nil {
 		if err := json.NewDecoder(param).Decode(&data); err != nil {
@@ -32,7 +32,7 @@ func ApplyJson(in map[string]io.Reader, name string, param io.Reader) (string, e
 		} else {
 			tmpl = main.New(n)
 		}
-		_, err = tmpl.Parse(string(templateContent))
+		_, err = tmpl.Funcs(funcs).Parse(string(templateContent))
 		if err != nil {
 			return "", err
 		}

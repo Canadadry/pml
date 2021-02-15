@@ -15,7 +15,6 @@ func TestNodeEval(t *testing.T) {
 		{Infix{Value(1.0), Value(1.0), Sub}, 0.0},
 		{Infix{Value(1.0), Value(1.0), Mul}, 1.0},
 		{Infix{Value(1.0), Value(1.0), Div}, 1.0},
-		{Infix{Value(2.0), Value(3.0), Pow}, 8.0},
 		{Infix{Value(3.0), Value(2.0), IntDiv}, 1.0},
 		{Infix{Prefix{Value(1.0), Neg}, Value(2.0), Mul}, -2.0},
 	}

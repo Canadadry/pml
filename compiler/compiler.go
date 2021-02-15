@@ -9,8 +9,17 @@ import (
 	"io"
 )
 
-func Run(input map[string]io.Reader, main string, output io.Writer, param io.Reader, pdf renderer.Pdf) error {
-	out, err := template.ApplyJson(input, main, param)
+type Env struct {
+	Input  map[string]io.Reader
+	Main   string
+	Output io.Writer
+	Param  io.Reader
+	Pdf    renderer.Pdf
+	Funcs  map[string]interface{}
+}
+
+func Run(e Env) error {
+	out, err := template.ApplyJson(e.Input, e.Main, e.Param, e.Funcs)
 	if err != nil {
 		return fmt.Errorf("failed to transform template : %w\n", err)
 	}
@@ -22,7 +31,7 @@ func Run(input map[string]io.Reader, main string, output io.Writer, param io.Rea
 		return fmt.Errorf("parsing failed : %w on : \n%s", err, out)
 	}
 
-	r := renderer.New(output, pdf)
+	r := renderer.New(e.Output, e.Pdf)
 	err = r.Render(item)
 	if err != nil {
 		return fmt.Errorf("rendering failed : %w", err)

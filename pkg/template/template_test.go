@@ -57,6 +57,7 @@ func TestApplyJson(t *testing.T) {
 			in,
 			tt.main,
 			bytes.NewBufferString(tt.data),
+			nil,
 		)
 		if err != nil {
 			t.Fatalf("[%d] failed %v", i, err)

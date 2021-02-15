@@ -16,6 +16,7 @@ const (
 var precedences = map[TokenType]int{
 	PLUS:         SUM,
 	MINUS:        SUM,
+	PERCENT:      SUM,
 	SLASH:        PRODUCT,
 	DOUBLE_SLASH: PRODUCT,
 	STAR:         PRODUCT,
@@ -56,6 +57,7 @@ func NewParser(lexer *Lexer) *Parser {
 	}
 
 	parser.infixParseFns = map[TokenType]infixParseFn{
+		PERCENT:      parser.parseInfixExpression,
 		PLUS:         parser.parseInfixExpression,
 		MINUS:        parser.parseInfixExpression,
 		SLASH:        parser.parseInfixExpression,

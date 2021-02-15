@@ -41,6 +41,9 @@ func (lexer *Lexer) GetNextToken() Token {
 	case '-':
 		tok.Type = MINUS
 		lexer.readChar()
+	case '%':
+		tok.Type = PERCENT
+		lexer.readChar()
 	case '*':
 		if lexer.peekChar() == '*' {
 			tok.Type = DOUBLE_STAR
