@@ -55,7 +55,15 @@ func (lexer *Lexer) GetNextToken() token.Token {
 	case '"':
 		tok.Type = token.STRING
 		lexer.readChar()
-		tok.Literal = lexer.readString()
+		tok.Literal = lexer.readString('"')
+	case '\'':
+		tok.Type = token.STRING
+		lexer.readChar()
+		tok.Literal = lexer.readString('\'')
+	case '`':
+		tok.Type = token.STRING
+		lexer.readChar()
+		tok.Literal = lexer.readString('`')
 	case '#':
 		lexer.readChar()
 		tok.Literal, tok.Type = lexer.readColor()
@@ -143,9 +151,9 @@ func isWhiteSpace(ch byte) bool {
 	return ch == ' ' || ch == '\t' || ch == '\r' || ch == '\n'
 }
 
-func (lexer *Lexer) readString() string {
+func (lexer *Lexer) readString(end byte) string {
 	start := lexer.current
-	for lexer.ch != '"' && lexer.ch != 0 {
+	for lexer.ch != end && lexer.ch != 0 {
 		lexer.readChar()
 	}
 	defer lexer.readChar()
