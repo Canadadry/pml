@@ -34,7 +34,9 @@ type Pdf interface {
 type PdfDrawer interface {
 	AddPage()
 	SetFillColor(c color.RGBA)
-	Rect(x float64, y float64, width float64, height float64)
+	SetStrokeColor(c color.RGBA)
+	SetStrokeWidth(w float64)
+	Rect(x float64, y float64, width float64, height float64, radius float64)
 	LoadFont(fontName string, fontFilePath string) error
 	SetFont(fontName string, fontSizeMm float64)
 	GetDefaultFontName() string

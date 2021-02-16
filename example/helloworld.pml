@@ -8,11 +8,13 @@ Document{
 			color:#00aaff
 		}
 		Rectangle{
-			x:0.0
-			y:0.0
+			x:10.0
+			y:10.0
 			width:100.0
 			height:100.0
-			color:#ffaa00
+			color:#ffffff
+			borderColor:#00ff00
+			radius:10.0
 		}
 		Text{
 			text:"Hello World from a Pml File"

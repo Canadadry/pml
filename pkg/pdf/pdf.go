@@ -64,8 +64,43 @@ func (p *pdf) SetFillColor(c color.RGBA) {
 	p.gopdf.SetFillColor(int(c.R), int(c.G), int(c.B))
 }
 
-func (p *pdf) Rect(x float64, y float64, width float64, height float64) {
-	p.gopdf.Rect(x, y, width, height, "F")
+func (p *pdf) SetStrokeColor(c color.RGBA) {
+	p.gopdf.SetDrawColor(int(c.R), int(c.G), int(c.B))
+}
+
+func (p *pdf) SetStrokeWidth(w float64) {
+	p.gopdf.SetLineWidth(w)
+}
+
+func (p *pdf) Rect(x float64, y float64, width float64, height float64, radius float64) {
+	mode := "F"
+	if p.gopdf.GetLineWidth() > 0 {
+		mode = "B"
+	}
+	if radius <= 0 {
+		p.gopdf.Rect(x, y, width, height, mode)
+		return
+	}
+
+	xs := []float64{x, x + radius, x + width - radius, x + width}
+	ys := []float64{y, y + radius, y + height - radius, y + height}
+
+	p.gopdf.MoveTo(xs[1], ys[0])
+
+	p.gopdf.LineTo(xs[2], ys[0])
+	p.gopdf.ArcTo(xs[2], ys[1], radius, radius, -90, 180, 90)
+
+	p.gopdf.LineTo(xs[3], ys[2])
+	p.gopdf.ArcTo(xs[2], ys[2], radius, radius, -90, 90, 0)
+
+	p.gopdf.LineTo(xs[1], ys[3])
+	p.gopdf.ArcTo(xs[1], ys[2], radius, radius, -90, 0, -90)
+
+	p.gopdf.LineTo(xs[0], ys[1])
+	p.gopdf.ArcTo(xs[1], ys[1], radius, radius, -90, -90, -180)
+
+	p.gopdf.ClosePath()
+	p.gopdf.DrawPath(mode)
 }
 
 func (p *pdf) LoadFont(fontName string, fontFilePath string) error {
@@ -160,6 +195,7 @@ func (p *pdf) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float6
 func (p *pdf) CloseAndDraw(s svgdrawer.Style) {
 	p.gopdf.ClosePath()
 
+	p.gopdf.SetDrawColor(int(s.BorderColor.R), int(s.BorderColor.G), int(s.BorderColor.B))
 	p.gopdf.SetFillColor(int(s.FillColor.R), int(s.FillColor.G), int(s.FillColor.B))
 	p.gopdf.SetLineWidth(s.BorderSize)
 
