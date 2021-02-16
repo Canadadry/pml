@@ -147,6 +147,8 @@ Where `Item` and `Child` are one of the following :
  - `fontSize` : define the size of the rendering font must be a float value in millimeter
  - `fontName` : select the font to draw text must be one of the registerer fonts see item `Font`
 
+If you need your text to be diplayed on multiple line use a `Paragraph` instead
+
  `Paragraph` properties :
 
  - `x` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
@@ -160,7 +162,7 @@ Where `Item` and `Child` are one of the following :
   - `align` : how the paragraph is render in his box. Possible values are : `Left`, `Right`, `Center`, `Justify`
 
 
-Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh` and `align` properties. 
+Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh`, `align` and achors properties. 
 
  `Container` properties :
 
