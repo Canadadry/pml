@@ -13,10 +13,10 @@ import (
 
 func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) svgdrawer.Style {
 	s := svgdrawer.Style{
-		Fill:        false,
 		FillColor:   color.RGBA{0, 0, 0, 0},
 		BorderSize:  0,
 		BorderColor: color.RGBA{0, 0, 0, 0},
+		PathStyle:   svgdrawer.None,
 	}
 
 	style, ok := element.Attributes["style"]
@@ -38,7 +38,15 @@ func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) sv
 				continue
 			}
 			s.FillColor = c
-			s.Fill = true
+			switch s.PathStyle {
+			case svgdrawer.None:
+				s.PathStyle = svgdrawer.Fill
+			case svgdrawer.Fill:
+				s.PathStyle = svgdrawer.Fill
+			default:
+				s.PathStyle = svgdrawer.FillAndStroke
+			}
+
 		case "stroke":
 			c, err := parseColorParam(arg[1])
 			if err != nil {
@@ -46,8 +54,16 @@ func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) sv
 			}
 			s.BorderColor = c
 			s.BorderSize = 0.1
-		case "stroke-width":
+			switch s.PathStyle {
+			case svgdrawer.None:
+				s.PathStyle = svgdrawer.Stroke
+			case svgdrawer.Stroke:
+				s.PathStyle = svgdrawer.Stroke
+			default:
+				s.PathStyle = svgdrawer.FillAndStroke
+			}
 
+		case "stroke-width":
 			if arg[1][len(arg[1])-2:] == "px" {
 				width, err := strconv.ParseFloat(arg[1][:len(arg[1])-2], 64)
 				if err != nil {
@@ -56,6 +72,8 @@ func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) sv
 				newWidth, _ := transform.ProjectPoint(width, 0)
 				s.BorderSize = newWidth
 			}
+		case "fill-rule":
+			s.EvenOddRule = arg[1] != "nonzero"
 		}
 	}
 

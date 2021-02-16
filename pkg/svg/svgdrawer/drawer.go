@@ -6,11 +6,21 @@ import (
 	"io"
 )
 
+type PathStyle int
+
+const (
+	None PathStyle = iota
+	Fill
+	Stroke
+	FillAndStroke
+)
+
 type Style struct {
-	Fill        bool
 	FillColor   color.RGBA
 	BorderSize  float64
 	BorderColor color.RGBA
+	PathStyle   PathStyle
+	EvenOddRule bool
 }
 
 type Drawer interface {

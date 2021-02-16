@@ -160,17 +160,24 @@ func (p *pdf) BezierTo(x1 float64, y1 float64, x2 float64, y2 float64, x3 float6
 func (p *pdf) CloseAndDraw(s svgdrawer.Style) {
 	p.gopdf.ClosePath()
 
-	p.gopdf.SetDrawColor(int(s.BorderColor.R), int(s.BorderColor.G), int(s.BorderColor.B))
 	p.gopdf.SetFillColor(int(s.FillColor.R), int(s.FillColor.G), int(s.FillColor.B))
 	p.gopdf.SetLineWidth(s.BorderSize)
 
 	mode := ""
 
-	if s.Fill {
-		mode += "F"
+	switch s.PathStyle {
+	case svgdrawer.None:
+		return
+	case svgdrawer.Fill:
+		mode = "f"
+	case svgdrawer.Stroke:
+		mode = "S"
+	default:
+		mode = "B"
 	}
-	if s.BorderSize > 0 {
-		mode += "D"
+
+	if s.EvenOddRule {
+		mode += "*"
 	}
 
 	p.gopdf.DrawPath(mode)
