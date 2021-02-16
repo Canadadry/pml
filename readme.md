@@ -72,7 +72,7 @@ Item{
 
 ```
 
-### Item
+### Items
 
 Where `Item` and `Child` are one of the following : 
 
@@ -172,10 +172,21 @@ Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`he
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
 
-### Using Variable 
+### Using Templating 
+
+Each pml file is pass throught the go template engine to be preprocessed.
+It allow a lot usefull featuer : 
+
+ - Injecting data comming from a json file
+ - Splitting your pdf document accross several pml file
+ - Translation  
+
+When writing your pml file just follow the golang template language : [cheat sheet](https://curtisvermeeren.github.io/2017/09/14/Golang-Templates-Cheatsheet)
+
+## Injecting Data
 
 To Allow dynamic content you must provide a data file (json) to the `param` cli option or post it in api mode. 
-When writing your pml file just follow the golang template language : [cheat sheet](https://curtisvermeeren.github.io/2017/09/14/Golang-Templates-Cheatsheet)
+
 
 Example : 
 ```pml
@@ -213,11 +224,82 @@ Can be customised with this json file :
 }
 ```
 
+### Splitting your pdf document accross several pml file
 
-## TODO
+Instead of giving a file as an input, you can also gave a folder. Each pml file in the directory hierarchy will be parse by the go templating runtime
+You will have to specify the main template file with the `-main` argument
 
-- easier texte styling  ( pipe for markdown ?? )
-- add comment with // or # 
+_Example_
+
+Suppose You have this directory structure
+
+```
+└── MyPmlProject/
+    ├── Page/                     
+    │   ├── Content.pml            
+    │   ├── Header.pml
+    │   └── Footer.pml
+    └────── Main.pml
+```
+
+Run the following command to parse all file with the `Main.pml` file as the root element.
+
+```bash
+pml -in MyPmlProject/ -main MyPmlProject/Main.pml
+```
+
+To reference inject the other pml file just use the `template` command
+
+```pml
+Document{
+    Page{
+        {{ template "MyPmlProject/Page/Header.pml" . }}
+        {{ template "MyPmlProject/Page/Content.pml" . }}
+        {{ template "MyPmlProject/Page/Footer.pml" . }}
+    }
+}
+```
+
+### Translation
+
+Translation is enable with the `-trans` argument. This argument expect a path to a csv file containing at least 2 columns. 
+The first column should contain the translation keys and the following columns must contain traduction. 
+Each column must start with the local language. 
+
+_Example_
+
+```csv
+---,en,fr,es
+hello,"Hello %name%","Bonjour %name%","Holà %name%"
+thans,"Thank you","Merci","Gracias"
+```
+
+If the file only contain one language it will be used by default, orherwise you must use the `-local`argument to select the language you want to use. 
+
+To access one translation value in your document use the `tr` pipeline as follow : 
+
+```pml
+Document{
+    Page{
+        Text{
+            text:{{ tr "hello" "%name%" "World"}}
+        }
+    }
+}
+```
+
+The `tr` pipe can takes extra arguments to remplace certain part of the text with orther value. See the pipe part for more.
+
+
+### Pipes
+
+For a simplier build of pml a few pipeline are added on top of the basic one provided by golang
+
+- `tr`: to translate a text ( args are :  `tr key [search replace] [search replace] ...`)
+- `data`: to build data map ( args are :  `data [key value] [key value] ...`)
+- `eval`: to evaluate a expression like `3+5*6` ( args are `eval expr`)
+- `upper` : to capitalize a text ( args are `upper text`)
+
 
 
 
