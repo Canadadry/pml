@@ -31,8 +31,14 @@ func (d *drawer) AddPage() {
 func (d *drawer) SetFillColor(c color.RGBA) {
 	d.callStack = append(d.callStack, fmt.Sprintf("SetFillColor(%v)", c))
 }
-func (d *drawer) Rect(x float64, y float64, w float64, h float64) {
-	d.callStack = append(d.callStack, fmt.Sprintf("Rect(%v,%v,%v,%v)", x, y, w, h))
+func (d *drawer) SetStrokeColor(c color.RGBA) {
+	d.callStack = append(d.callStack, fmt.Sprintf("SetStrokeColor(%v)", c))
+}
+func (d *drawer) SetStrokeWidth(w float64) {
+	d.callStack = append(d.callStack, fmt.Sprintf("SetStrokeWidth(%v)", w))
+}
+func (d *drawer) Rect(x float64, y float64, w float64, h float64, r float64) {
+	d.callStack = append(d.callStack, fmt.Sprintf("Rect(%v,%v,%v,%v,%v)", x, y, w, h, r))
 }
 func (d *drawer) SetFont(n string, s float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("SetFont('%v',%v)", n, s))
@@ -104,7 +110,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFillColor({0 0 0 0})",
-				"Rect(0,0,0,0)",
+				"SetStrokeColor({0 0 0 0})",
+				"SetStrokeWidth(0)",
+				"Rect(0,0,0,0,0)",
 				"Output",
 			},
 		},
@@ -222,9 +230,13 @@ func TestRender(t *testing.T) {
 				"LoadFont('','')",
 				"AddPage",
 				"SetFillColor({0 0 0 0})",
-				"Rect(0,0,0,0)",
+				"SetStrokeColor({0 0 0 0})",
+				"SetStrokeWidth(0)",
+				"Rect(0,0,0,0,0)",
 				"SetFillColor({0 0 0 0})",
-				"Rect(0,0,0,0)",
+				"SetStrokeColor({0 0 0 0})",
+				"SetStrokeWidth(0)",
+				"Rect(0,0,0,0,0)",
 				"SetFont('Arial',6)",
 				"GetStringWidth(' ')",
 				"SetFont('Arial',6)",
@@ -264,6 +276,7 @@ func TestRender(t *testing.T) {
 						width:100
 						height:100
 						color: #ff0000
+						radius: 10.0
 
 						Image{
 							x:10
@@ -278,7 +291,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFillColor({255 0 0 255})",
-				"Rect(100,100,100,100)",
+				"SetStrokeColor({0 0 0 0})",
+				"SetStrokeWidth(0)",
+				"Rect(100,100,100,100,10)",
 				"Image(110,110,80,80)",
 				"Output",
 			},
@@ -306,7 +321,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFillColor({255 0 0 255})",
-				"Rect(100,100,100,100)",
+				"SetStrokeColor({0 0 0 0})",
+				"SetStrokeWidth(0)",
+				"Rect(100,100,100,100,0)",
 				"Vector(110,110,80,80)",
 				"Output",
 			},
@@ -320,6 +337,8 @@ func TestRender(t *testing.T) {
 						width:100
 						height:100
 						color: #ff0000
+						borderColor: #ffffff
+						borderWidth: 2.0
 
 						Text{
 							x:10
@@ -334,7 +353,9 @@ func TestRender(t *testing.T) {
 			calls: []string{
 				"AddPage",
 				"SetFillColor({255 0 0 255})",
-				"Rect(100,100,100,100)",
+				"SetStrokeColor({255 255 255 255})",
+				"SetStrokeWidth(2)",
+				"Rect(100,100,100,100,0)",
 				"SetFont('Arial',6)",
 				"SetTextColor({0 0 0 0})",
 				"Text('fake',110,110,80,80,TopLeft)",

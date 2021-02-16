@@ -15,6 +15,7 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 	color1:#fafafaff
 	color2:#fafafa
 	fake:#fafaf
+	// nothing wrong here
 	+
 	12a
 	'test""'
@@ -44,11 +45,11 @@ func TestNextToken_SingleCharToken(t *testing.T) {
 		{Type: token.IDENTIFIER, Literal: "fake", Line: 8, Column: 2},
 		{Type: token.DOTS, Literal: ":", Line: 8, Column: 6},
 		{Type: token.ILLEGAL, Literal: "fafaf", Line: 8, Column: 7},
-		{Type: token.ILLEGAL, Literal: "+", Line: 9, Column: 2},
-		{Type: token.ILLEGAL, Literal: "12a", Line: 10, Column: 2},
-		{Type: token.STRING, Literal: `test""`, Line: 11, Column: 2},
-		{Type: token.RIGHT_BRACE, Literal: "}", Line: 12, Column: 1},
-		{Type: token.EOF, Literal: "", Line: 12, Column: 2},
+		{Type: token.ILLEGAL, Literal: "+", Line: 10, Column: 2},
+		{Type: token.ILLEGAL, Literal: "12a", Line: 11, Column: 2},
+		{Type: token.STRING, Literal: `test""`, Line: 12, Column: 2},
+		{Type: token.RIGHT_BRACE, Literal: "}", Line: 13, Column: 1},
+		{Type: token.EOF, Literal: "", Line: 13, Column: 2},
 	}
 
 	lexer := New(testedString)

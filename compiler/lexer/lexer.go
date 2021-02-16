@@ -31,6 +31,7 @@ func (lexer *Lexer) GetNextToken() token.Token {
 	for isWhiteSpace(lexer.ch) {
 		lexer.readChar()
 	}
+
 	tok := token.Token{
 		Type:    "",
 		Literal: string(lexer.ch),
@@ -67,6 +68,16 @@ func (lexer *Lexer) GetNextToken() token.Token {
 	case '#':
 		lexer.readChar()
 		tok.Literal, tok.Type = lexer.readColor()
+	case '/':
+		lexer.readChar()
+		if lexer.ch != '/' {
+			tok.Type = token.ILLEGAL
+		} else {
+			for !isNewLine(lexer.ch) {
+				lexer.readChar()
+			}
+			return lexer.GetNextToken()
+		}
 	default:
 		switch {
 		case isLetter(lexer.ch):
@@ -145,6 +156,10 @@ func (lexer *Lexer) readNumeric() (string, token.TokenType) {
 	}
 
 	return lexer.source[start:lexer.current], token.FLOAT
+}
+
+func isNewLine(ch byte) bool {
+	return ch == '\n'
 }
 
 func isWhiteSpace(ch byte) bool {
