@@ -105,6 +105,9 @@ Where `Item` and `Child` are one of the following :
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `color` : color of the rectangle must be an rgb hexavalue ex : `#ffaabb`
+ - `borderColor` : color of the rectangle's border must be an rgb hexavalue ex : `#ffaabb`
+ - `borderWidth` : width of the rectangle's border must be a float value in millimeter
+ - `radius` : radius of the rectangle' corner must be a float value in millimeter
 
  `Image` properties :
 
