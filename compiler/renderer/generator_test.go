@@ -97,8 +97,9 @@ func TestGenerateFrom(t *testing.T) {
 									xAnchor: Relative,
 									yAnchor: Relative,
 								},
-								file: "filename",
-								mode: "file",
+								file:     "filename",
+								srcMode:  "file",
+								drawMode: "fill",
 							},
 							&NodeVector{
 								Frame: Frame{
@@ -227,7 +228,8 @@ func testNodeFont(t *testing.T, i int, got NodeFont, exp NodeFont) {
 func testNodeImage(t *testing.T, i int, got NodeImage, exp NodeImage) {
 	testFrame(t, i, "NodeImage", got.Frame, exp.Frame)
 	testStringProperty(t, i, "NodeImage", "file", got.file, exp.file)
-	testStringProperty(t, i, "NodeImage", "mode", got.mode, exp.mode)
+	testStringProperty(t, i, "NodeImage", "mode", got.srcMode, exp.srcMode)
+	testStringProperty(t, i, "NodeImage", "draw", got.drawMode, exp.drawMode)
 }
 
 func testNodeVector(t *testing.T, i int, got NodeVector, exp NodeVector) {

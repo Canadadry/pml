@@ -57,8 +57,8 @@ func (d *drawer) GetStringWidth(text string) float64 {
 	d.callStack = append(d.callStack, fmt.Sprintf("GetStringWidth('%s')", text))
 	return float64(len(text))
 }
-func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64) {
-	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v)", x, y, w, h))
+func (d *drawer) Image(image io.ReadSeeker, x float64, y float64, w float64, h float64, k bool) {
+	d.callStack = append(d.callStack, fmt.Sprintf("Image(%v,%v,%v,%v,%v)", x, y, w, h, k))
 }
 func (d *drawer) Vector(image io.Reader, x float64, y float64, w float64, h float64) {
 	d.callStack = append(d.callStack, fmt.Sprintf("Vector(%v,%v,%v,%v)", x, y, w, h))
@@ -130,7 +130,7 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Image{ file:"renderer.go"}}}`,
 			calls: []string{
 				"AddPage",
-				"Image(0,0,0,0)",
+				"Image(0,0,0,0,false)",
 				"Output",
 			},
 		},
@@ -152,7 +152,7 @@ func TestRender(t *testing.T) {
 			in: `Document{ Page{ Image{ mode: b64 file:"dGVzdA=="}}}`,
 			calls: []string{
 				"AddPage",
-				"Image(0,0,0,0)",
+				"Image(0,0,0,0,false)",
 				"Output",
 			},
 		},
@@ -263,7 +263,7 @@ func TestRender(t *testing.T) {
 			}`,
 			calls: []string{
 				"AddPage",
-				"Image(110,110,80,80)",
+				"Image(110,110,80,80,false)",
 				"Output",
 			},
 		},
@@ -294,7 +294,7 @@ func TestRender(t *testing.T) {
 				"SetStrokeColor({0 0 0 0})",
 				"SetStrokeWidth(0)",
 				"Rect(100,100,100,100,10)",
-				"Image(110,110,80,80)",
+				"Image(110,110,80,80,false)",
 				"Output",
 			},
 		},
@@ -376,7 +376,7 @@ func TestRender(t *testing.T) {
 			}`,
 			calls: []string{
 				"AddPage",
-				"Image(92.5,150,25,0)",
+				"Image(92.5,150,25,0,false)",
 				"Output",
 			},
 		},

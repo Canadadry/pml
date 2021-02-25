@@ -82,25 +82,59 @@ func (p *pdf) Rect(x float64, y float64, width float64, height float64, radius f
 		return
 	}
 
+	hSkip, vSkip, radius := checkCornerRadius(width, height, radius)
+
 	xs := []float64{x, x + radius, x + width - radius, x + width}
 	ys := []float64{y, y + radius, y + height - radius, y + height}
 
 	p.gopdf.MoveTo(xs[1], ys[0])
 
-	p.gopdf.LineTo(xs[2], ys[0])
+	if !hSkip {
+		p.gopdf.LineTo(xs[2], ys[0])
+	}
 	p.gopdf.ArcTo(xs[2], ys[1], radius, radius, -90, 180, 90)
 
-	p.gopdf.LineTo(xs[3], ys[2])
+	if !vSkip {
+		p.gopdf.LineTo(xs[3], ys[2])
+	}
 	p.gopdf.ArcTo(xs[2], ys[2], radius, radius, -90, 90, 0)
 
-	p.gopdf.LineTo(xs[1], ys[3])
+	if !hSkip {
+		p.gopdf.LineTo(xs[1], ys[3])
+	}
 	p.gopdf.ArcTo(xs[1], ys[2], radius, radius, -90, 0, -90)
 
-	p.gopdf.LineTo(xs[0], ys[1])
+	if !vSkip {
+		p.gopdf.LineTo(xs[0], ys[1])
+	}
 	p.gopdf.ArcTo(xs[1], ys[1], radius, radius, -90, -90, -180)
 
 	p.gopdf.ClosePath()
 	p.gopdf.DrawPath(mode)
+}
+
+func checkCornerRadius(width, height, radius float64) (bool, bool, float64) {
+	hSkip := radius >= width/2
+	vSkip := radius >= height/2
+
+	if hSkip == false && vSkip == false {
+		return hSkip, vSkip, radius
+	}
+
+	minSide := width
+	if height < width {
+		minSide = height
+	}
+
+	if hSkip == vSkip {
+		return hSkip, vSkip, minSide / 2
+	}
+
+	if minSide == width {
+		return hSkip, vSkip, width / 2
+	}
+
+	return hSkip, vSkip, height / 2
 }
 
 func (p *pdf) LoadFont(fontName string, fontFilePath string) error {
@@ -146,7 +180,7 @@ func (p *pdf) GetStringWidth(text string) float64 {
 	return p.gopdf.GetStringWidth(text)
 }
 
-func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, height float64) {
+func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, height float64, keepAspectRation bool) {
 
 	mimetype := getFileContentType(image)
 	imageType := p.gopdf.ImageTypeFromMime(mimetype)
@@ -156,14 +190,26 @@ func (p *pdf) Image(image io.ReadSeeker, x float64, y float64, width float64, he
 	imageRef := fmt.Sprintf("image%d", p.imageCount)
 	p.imageCount = p.imageCount + 1
 
-	_ = p.gopdf.RegisterImageOptionsReader(imageRef, gofpdf.ImageOptions{ImageType: imageType}, image)
+	info := p.gopdf.RegisterImageOptionsReader(imageRef, gofpdf.ImageOptions{ImageType: imageType}, image)
+
+	realWidth := width
+	realHeight := height
+
+	if keepAspectRation {
+		ratio := info.Width() / info.Height()
+		if ratio > 1 {
+			realHeight = 0
+		} else {
+			realWidth = 0
+		}
+	}
 
 	p.gopdf.ImageOptions(
 		imageRef,
 		x,
 		y,
-		width,
-		height,
+		realWidth,
+		realHeight,
 		false,
 		gofpdf.ImageOptions{},
 		0,

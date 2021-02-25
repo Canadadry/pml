@@ -2,7 +2,6 @@ package i18n
 
 import (
 	"encoding/csv"
-	// "fmt"
 	"io"
 	"strings"
 )
@@ -39,7 +38,6 @@ func LoadFromCsv(file io.Reader, local string) (Translation, error) {
 	t := Translation{}
 	for _, line := range records[1:] {
 		t[line[0]] = line[localIndex]
-		// fmt.Println(line[0], ":", line[localIndex])
 	}
 	return t, nil
 }

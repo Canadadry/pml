@@ -14,10 +14,16 @@ const (
 	ImgModeB64  = "b64"
 )
 
+const (
+	ImgDrawKeep = "keepAspectRatio"
+	ImgDrawFill = "fill"
+)
+
 type NodeImage struct {
 	Frame
-	file string
-	mode string
+	file     string
+	srcMode  string
+	drawMode string
 }
 
 func (n *NodeImage) Children() []Node          { return nil }
@@ -30,8 +36,13 @@ func (*NodeImage) new(item *ast.Item) (Node, error) {
 	if err != nil {
 		return nil, err
 	}
-	values := []string{ImgModeFile, ImgModeB64}
-	n.mode, err = item.GetPropertyAsIdentifierFromListWithDefault("mode", ImgModeFile, values)
+	modeValues := []string{ImgModeFile, ImgModeB64}
+	n.srcMode, err = item.GetPropertyAsIdentifierFromListWithDefault("mode", ImgModeFile, modeValues)
+	if err != nil {
+		return nil, err
+	}
+	drawValues := []string{ImgDrawKeep, ImgDrawFill}
+	n.drawMode, err = item.GetPropertyAsIdentifierFromListWithDefault("draw", ImgDrawFill, drawValues)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +54,7 @@ func (n *NodeImage) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 		return rb, ErrEmptyImageFileProperty
 	}
 	var rs io.ReadSeeker
-	if n.mode == ImgModeFile {
+	if n.srcMode == ImgModeFile {
 		file, err := os.Open(n.file)
 		if err != nil {
 			return rb, fmt.Errorf("%w : %v", ErrCantOpenFile, err)
@@ -58,6 +69,6 @@ func (n *NodeImage) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 		rs = bytes.NewReader(decoded)
 	}
 	rb = rb.Cut(n.Frame)
-	pdf.Image(rs, rb.x, rb.y, rb.w, rb.h)
+	pdf.Image(rs, rb.x, rb.y, rb.w, rb.h, n.drawMode == ImgDrawKeep)
 	return rb, nil
 }
