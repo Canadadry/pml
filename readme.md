@@ -305,6 +305,7 @@ For a simplier build of pml a few pipeline are added on top of the basic one pro
 
 - `tr`: to translate a text ( args are :  `tr key [search replace] [search replace] ...`)
 - `data`: to build data map ( args are :  `data [key value] [key value] ...`)
+- `array`: to build data array ( args are :  `array  value1 value2 ...`)
 - `eval`: to evaluate a expression like `3+5*6` ( args are `eval expr`)
 - `upper` : to capitalize a text ( args are `upper text`)
 

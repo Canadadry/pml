@@ -96,9 +96,10 @@ func run() error {
 		Param:  fParam,
 		Pdf:    pdf.New(svg.Draw),
 		Funcs: map[string]interface{}{
-			"eval": templateEval,
-			"data": BuildDataMap,
-			"tr":   Translate(tr),
+			"eval":  templateEval,
+			"data":  BuildDataMap,
+			"array": BuildDataArray,
+			"tr":    Translate(tr),
 			"upper": func(v interface{}) string {
 				return strings.ToUpper(fmt.Sprintf("%v", v))
 			},
@@ -180,6 +181,14 @@ func BuildDataMap(values ...interface{}) (map[string]interface{}, error) {
 	}
 	for i := 0; i < len(values); i += 2 {
 		ret[fmt.Sprintf("%v", values[i+0])] = values[i+1]
+	}
+	return ret, nil
+}
+
+func BuildDataArray(values ...interface{}) ([]interface{}, error) {
+	ret := []interface{}{}
+	for i := 0; i < len(values); i++ {
+		ret = append(ret, values[i])
 	}
 	return ret, nil
 }
