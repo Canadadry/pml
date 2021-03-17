@@ -69,7 +69,7 @@ func parseStyleAttribute(element *svgparser.Element, transform matrix.Matrix) sv
 				if err != nil {
 					continue
 				}
-				newWidth, _ := transform.ProjectPoint(width, 0)
+				newWidth, _, _ := transform.Project(width, 0, 0)
 				s.BorderSize = newWidth
 			}
 		case "fill-rule":

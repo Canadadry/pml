@@ -72,6 +72,24 @@ func (p *pdf) SetStrokeWidth(w float64) {
 	p.gopdf.SetLineWidth(w)
 }
 
+func (p *pdf) Path(path string, x float64, y float64, width float64, height float64) {
+	svg := `<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%%" height="100%%" viewBox="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <g>
+        <path d="%s" style="fill:rgb(%d,%d,%d);stroke:rgb(%d,%d,%d);stroke-width:%gpx"/>
+    </g>
+</svg>
+`
+
+	fR, fG, fB := p.gopdf.GetFillColor()
+	sR, sG, sB := p.gopdf.GetDrawColor()
+
+	finalSvg := fmt.Sprintf(svg, path, fR, fG, fB, sR, sG, sB, p.gopdf.GetLineWidth())
+
+	p.Vector(strings.NewReader(finalSvg), x, y, width, height)
+}
+
 func (p *pdf) Rect(x float64, y float64, width float64, height float64, radius float64) {
 	mode := "F"
 	if p.gopdf.GetLineWidth() > 0 {

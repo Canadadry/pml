@@ -16,6 +16,7 @@ const (
 	itemVector    = "Vector"
 	itemParagraph = "Paragraph"
 	itemContainer = "Container"
+	itemPath      = "Path"
 )
 
 type definition struct {
@@ -42,15 +43,15 @@ var nodeDefinition = map[string]definition{
 		Type:         &NodeFont{},
 	},
 	itemPage: {
-		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer},
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer, itemPath},
 		Type:         &NodePage{},
 	},
 	itemContainer: {
-		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer},
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemContainer, itemPath},
 		Type:         &NodeContainer{},
 	},
 	itemRectangle: {
-		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph},
+		AllowedChild: []string{itemRectangle, itemText, itemImage, itemVector, itemParagraph, itemPath},
 		Type:         &NodeRectangle{},
 	},
 	itemParagraph: {
@@ -68,6 +69,10 @@ var nodeDefinition = map[string]definition{
 	itemVector: {
 		AllowedChild: []string{},
 		Type:         &NodeVector{},
+	},
+	itemPath: {
+		AllowedChild: []string{},
+		Type:         &NodePath{},
 	},
 }
 
