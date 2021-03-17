@@ -62,7 +62,7 @@ func (n *NodeText) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	if len(n.fontName) == 0 {
 		n.fontName = pdf.GetDefaultFontName()
 	}
-	pdf.SetFont(n.fontName, n.fontSize)
+	pdf.SetFont(n.fontName, n.fontSize*rb.s*n.scale)
 	pdf.SetTextColor(n.color)
 	rb = rb.Cut(n.Frame)
 	pdf.Text(n.text, rb.x, rb.y, rb.w, rb.h, PdfTextAlign(n.align))

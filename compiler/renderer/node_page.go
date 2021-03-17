@@ -17,5 +17,5 @@ func (n *NodePage) addChild(child Node) error {
 func (n *NodePage) new(*ast.Item) (Node, error) { return &NodePage{}, nil }
 func (n *NodePage) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	pdf.AddPage()
-	return renderBox{w: PdfWidthMm, h: PdfHeight}, nil
+	return renderBox{w: PdfWidthMm, h: PdfHeight, s: 1.0}, nil
 }

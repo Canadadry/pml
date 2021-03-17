@@ -73,6 +73,11 @@ func (*NodeParagraph) new(item *ast.Item) (Node, error) {
 
 func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	rb = rb.Cut(n.Frame)
+	err := n.applyScaling(rb)
+	if err != nil {
+		return rb, err
+	}
+
 	words, err := childrenToWords(pdf, n.children)
 	if err != nil {
 		return rb, err
@@ -80,6 +85,19 @@ func (n *NodeParagraph) draw(pdf PdfDrawer, rb renderBox) (renderBox, error) {
 	lines := wordsToLines(words, rb.w)
 	n.drawLines(pdf, rb, n.lineHeight, lines)
 	return rb, nil
+}
+
+func (n *NodeParagraph) applyScaling(rb renderBox) error {
+	n.lineHeight *= rb.s * n.scale
+	for k, child := range n.children {
+		textChild, ok := child.(*NodeText)
+		if !ok {
+			return fmt.Errorf("Unexpected node in paragraph")
+		}
+		textChild.fontSize *= rb.s * n.scale
+		n.children[k] = textChild
+	}
+	return nil
 }
 
 func (n *NodeParagraph) drawLines(pdf PdfDrawer, rb renderBox, lineHeight float64, lines []Line) {

@@ -5,14 +5,20 @@ type renderBox struct {
 	y float64
 	w float64
 	h float64
+	s float64
 }
 
 func (rb renderBox) Cut(f Frame) renderBox {
+
+	f.width *= f.scale * rb.s
+	f.height *= f.scale * rb.s
+
 	out := renderBox{
-		x: rb.x + f.x,
-		y: rb.y + f.y,
+		x: rb.x + f.x*rb.s,
+		y: rb.y + f.y*rb.s,
 		w: f.width,
 		h: f.height,
+		s: f.scale * rb.s,
 	}
 	switch f.xAnchor {
 	case Left:

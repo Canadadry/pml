@@ -22,6 +22,7 @@ type Frame struct {
 	height  float64
 	xAnchor string
 	yAnchor string
+	scale   float64
 }
 
 func (f *Frame) initFrom(item *ast.Item) error {
@@ -39,6 +40,10 @@ func (f *Frame) initFrom(item *ast.Item) error {
 		return err
 	}
 	f.height, err = item.GetPropertyAsFloatWithDefault("height", 0)
+	if err != nil {
+		return err
+	}
+	f.scale, err = item.GetPropertyAsFloatWithDefault("scale", 1.0)
 	if err != nil {
 		return err
 	}

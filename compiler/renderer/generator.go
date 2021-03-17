@@ -108,7 +108,7 @@ func generateItem(item *ast.Item) (Node, error) {
 			return nil, err
 		}
 		if def.AllowChild(c.TokenType.Literal) == false {
-			return nil, errChildrenNotAllowed
+			return nil, fmt.Errorf("%w : in %s cannot have %s", errChildrenNotAllowed, item.TokenType.Literal, c.TokenType.Literal)
 		}
 		err = n.addChild(child)
 		if err != nil {

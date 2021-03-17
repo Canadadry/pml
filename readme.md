@@ -101,6 +101,7 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
@@ -115,6 +116,7 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent 
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
@@ -127,6 +129,7 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the image must be a float value in millimeter
  - `height` : height of the image must be a float value in millimeter (if zero it will keep image aspect ratio)
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
@@ -138,6 +141,7 @@ Where `Item` and `Child` are one of the following :
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
@@ -155,11 +159,12 @@ If you need your text to be diplayed on multiple line use a `Paragraph` instead
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`
  - `lineHeight` : height of the line must be a float value in millimeter
-  - `align` : how the paragraph is render in his box. Possible values are : `Left`, `Right`, `Center`, `Justify`
+ - `align` : how the paragraph is render in his box. Possible values are : `Left`, `Right`, `Center`, `Justify`
 
 
 Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`heigh`, `align` and achors properties. 
@@ -170,6 +175,7 @@ Draw text child item  in a paragraph flow way ignoring their `x`,`y`,`width`,`he
  - `y` : left coordinate must be a float value in millimeter absolute position in the `Page` or Relative to the most close `Container` parent
  - `width` : width of the rectangle must be a float value in millimeter
  - `height` : height of the rectangle must be a float value in millimeter
+ - `scale`: a scaling factor 
  - `xAnchor` : how to x-position the item in its parent : `relative` (default), `left`, `right`, `center`, `fill`
  - `yAnchor` : how to y-position the item in its parent : `relative` (default), `top`, `bottom`, `center`, `fill`
  - `anchor` : shortcut to x and y anchor : `center`, `fill`

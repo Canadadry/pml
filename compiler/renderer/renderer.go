@@ -31,7 +31,7 @@ func (r *renderer) Render(tree *ast.Item) error {
 		return err
 	}
 	pdf := r.pdf.Init()
-	err = r.draw(rt, pdf, renderBox{})
+	err = r.draw(rt, pdf, renderBox{s: 1.0})
 	if err != nil {
 		return err
 	}
