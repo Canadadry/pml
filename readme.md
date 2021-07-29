@@ -310,5 +310,9 @@ For a simplier build of pml a few pipeline are added on top of the basic one pro
 - `upper` : to capitalize a text ( args are `upper text`)
 
 
+## Next
 
+This is a good start of what we want to acheive. But we need to : 
 
+- seperate the rendenring capabilites build on top of the pdf rendering library and the pml language parser
+- create a static drawing and a flow drawing mode inspiration from [rml](https://github.com/zopefoundation/z3c.rml) 
