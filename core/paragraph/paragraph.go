@@ -5,6 +5,14 @@ import (
 	"strings"
 )
 
+type TextSizer interface {
+	GetStringWidth(str string, fontName string, font float64) float64
+}
+
+func Format(in []Block, maxWidth float64, sizer TextSizer) []Line {
+	return wordsToLines(blocsToWords(in), maxWidth, sizer)
+}
+
 type Block struct {
 	Text     string
 	FontSize float64
@@ -20,7 +28,7 @@ type Word struct {
 	Color    color.RGBA
 }
 
-func BlocsToWords(blocs []Bloc) []Word {
+func blocsToWords(blocs []Bloc) []Word {
 	words := []Word{}
 	for _, b := range r {
 		splitted := strings.Split(node.text, "\n")
@@ -42,11 +50,7 @@ type Line struct {
 	MaxWidth       float64
 }
 
-type TextSizer interface {
-	GetStringWidth(str string, fontName string, font float64) float64
-}
-
-func WordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
+func wordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
 	x := 0.0
 	lines := []Line{}
 	line := Line{}
