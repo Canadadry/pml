@@ -26,6 +26,10 @@ func (a Area) GetY() float64 {
 	return a.y
 }
 
+func (a Area) GetLineHeight() float64 {
+	return a.lineHeight
+}
+
 func (a *Area) Add(width, height float64) bool {
 	if a.x+width > a.right {
 		if a.y+a.lineHeight+height > a.bottom {
