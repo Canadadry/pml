@@ -6,7 +6,7 @@ import (
 )
 
 type TextSizer interface {
-	GetStringWidth(str string, fontName string, font float64) float64
+	GetStringWidth(str string, fontName string, fontSize float64) float64
 }
 
 func Format(in []Block, maxWidth float64, sizer TextSizer) []Line {
@@ -28,19 +28,33 @@ type Word struct {
 	Color    color.RGBA
 }
 
-func blocsToWords(blocs []Bloc) []Word {
+func blocsToWords(blocs []Block) []Word {
 	words := []Word{}
-	for _, b := range r {
-		splitted := strings.Split(node.text, "\n")
-		for _, s := range splitted {
-			words = append(words, Word{
-				Text:     cleanText(s),
-				FontSize: b.fontSize,
-				FontName: b.fontName,
-				Color:    b.color,
-			})
+	for _, b := range blocs {
+		lines := strings.Split(b.Text, "\n")
+		for i, l := range lines {
+			w := strings.Split(l, " ")
+			for _, s := range w {
+				if len(s) == 0 {
+					continue
+				}
+				words = append(words, Word{
+					Text:     cleanText(s),
+					FontSize: b.FontSize,
+					FontName: b.FontName,
+					Color:    b.Color,
+				})
+			}
+			if i < (len(lines) - 1) {
+				words = append(words, Word{Text: "\n"})
+			}
 		}
 	}
+	return words
+}
+
+func cleanText(in string) string {
+	return in
 }
 
 type Line struct {
@@ -48,6 +62,7 @@ type Line struct {
 	WordSpacing    float64
 	StartingOffset float64
 	MaxWidth       float64
+	LineWasBreaked bool
 }
 
 func wordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
@@ -55,22 +70,22 @@ func wordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
 	lines := []Line{}
 	line := Line{}
 	for _, w := range words {
-		if (x+w.width) > width || w.text == "\n" {
-			if x == 0 && w.text != "\n" {
+		if (x+w.Width) > maxWidth || w.Text == "\n" {
+			if x == 0 && w.Text != "\n" {
 				continue
 			}
-			line.lineWasBreaked = w.text == "\n"
+			line.LineWasBreaked = w.Text == "\n"
 			lines = append(lines, line)
-			line = Line{}
+			line = Line{MaxWidth: maxWidth}
 			x = 0
 		}
-		x = x + w.width + w.spaceWidth
-		if w.text != "\n" {
-			line.words = append(line.words, w)
+		x = x + w.Width + sizer.GetStringWidth(" ", w.FontName, w.FontSize)
+		if w.Text != "\n" {
+			line.Words = append(line.Words, w)
 		}
 	}
-	if len(line.words) > 0 {
-		line.lineWasBreaked = true
+	if len(line.Words) > 0 {
+		line.LineWasBreaked = true
 		lines = append(lines, line)
 	}
 	return lines
