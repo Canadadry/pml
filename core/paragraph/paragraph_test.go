@@ -1,14 +1,9 @@
 package paragraph
 
 import (
+	"fmt"
 	"testing"
 )
-
-type fakeSizer struct{}
-
-func (fs fakeSizer) GetStringWidth(str string, fontName string, font float64) float64 {
-	return float64(len(str))
-}
 
 func TestBlocsToWords(t *testing.T) {
 	tests := map[string]struct {
@@ -86,14 +81,138 @@ func TestBlocsToWords(t *testing.T) {
 		}
 
 		result := blocsToWords(b)
-		if len(tt.out) != len(result) {
-			t.Fatalf("[%s] result len got %d exp %d\n got %v\n exp %v", title, len(result), len(tt.out), result, tt.out)
-		}
+		testWords(t, title, result, tt.out)
+	}
+}
 
-		for j := range tt.out {
-			if tt.out[j].Text != result[j].Text {
-				t.Fatalf("[%s] result at %d got '%s' exp '%s'", title, j, result[j].Text, tt.out[j].Text)
-			}
+func testWords(t *testing.T, title string, result, expected []Word) {
+	if len(expected) != len(result) {
+		t.Fatalf("[%s] len got %d exp %d", title, len(result), len(expected))
+	}
+
+	for j := range expected {
+		if expected[j].Text != result[j].Text {
+			t.Fatalf("[%s:%d] got '%s' exp '%s'", title, j, result[j].Text, expected[j].Text)
 		}
 	}
+}
+
+type fakeSizer struct{}
+
+func (fs fakeSizer) GetStringWidth(str string, fontName string, font float64) float64 {
+	// fmt.Println("'"+str+"'", len(str))
+	return float64(len(str))
+}
+
+func TestFormat(t *testing.T) {
+	tests := map[string]struct {
+		in    string
+		width float64
+		out   []Line
+	}{
+		"one line text": {
+			in:    "Lorem ipsum dolor sit amet, consectetur",
+			width: 50,
+			out: []Line{
+				{
+					Words: []Word{
+						Word{Text: "Lorem", Width: 5},
+						Word{Text: "ipsum", Width: 5},
+						Word{Text: "dolor", Width: 5},
+						Word{Text: "sit", Width: 3},
+						Word{Text: "amet,", Width: 5},
+						Word{Text: "consectetur", Width: 11},
+					},
+					StartingOffset: 0,
+					MaxWidth:       50,
+					Overflow:       false,
+				},
+			},
+		},
+		"two lines text with \\n": {
+			in:    "Lorem ipsum dolor sit \n amet, consectetur",
+			width: 50,
+			out: []Line{
+				{
+					Words: []Word{
+						Word{Text: "Lorem", Width: 5},
+						Word{Text: "ipsum", Width: 5},
+						Word{Text: "dolor", Width: 5},
+						Word{Text: "sit", Width: 3},
+					},
+					StartingOffset: 0,
+					MaxWidth:       50,
+					Overflow:       false,
+				},
+				{
+					Words: []Word{
+						Word{Text: "amet,", Width: 5},
+						Word{Text: "consectetur", Width: 11},
+					},
+					StartingOffset: 0,
+					MaxWidth:       50,
+					Overflow:       false,
+				},
+			},
+		},
+		"two line text with overflow": {
+			in:    "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce sagittis tincidunt porttitor. Donec",
+			width: 50,
+			out: []Line{
+				{
+					Words: []Word{
+						Word{Text: "Lorem", Width: 5},
+						Word{Text: "ipsum", Width: 5},
+						Word{Text: "dolor", Width: 5},
+						Word{Text: "sit", Width: 3},
+						Word{Text: "amet,", Width: 5},
+						Word{Text: "consectetur", Width: 11},
+						Word{Text: "adipiscing", Width: 10},
+					},
+					StartingOffset: 0,
+					MaxWidth:       50,
+					Overflow:       true,
+				},
+				{
+					Words: []Word{
+						Word{Text: "elit.", Width: 5},
+						Word{Text: "Fusce", Width: 5},
+						Word{Text: "sagittis", Width: 8},
+						Word{Text: "tincidunt", Width: 9},
+						Word{Text: "porttitor.", Width: 9},
+						Word{Text: "Donec", Width: 5},
+					},
+					StartingOffset: 0,
+					MaxWidth:       50,
+					Overflow:       false,
+				},
+			},
+		},
+	}
+
+	for title, tt := range tests {
+		b := append([]Block{}, Block{Text: tt.in})
+
+		result := Format(b, tt.width, fakeSizer{})
+
+		if len(result) != len(tt.out) {
+			t.Fatalf("[%s] result len got %d exp %d", title, len(result), len(tt.out))
+		}
+		for j := range tt.out {
+			testLine(t, fmt.Sprintf("%s:line[%d]", title, j), result[j], tt.out[j])
+		}
+	}
+}
+
+func testLine(t *testing.T, title string, result, expected Line) {
+	if result.StartingOffset != expected.StartingOffset {
+		t.Fatalf("[%s] StartingOffset got '%v' exp '%v'", title, result.StartingOffset, expected.StartingOffset)
+	}
+	if result.MaxWidth != expected.MaxWidth {
+		t.Fatalf("[%s] MaxWidth got '%v' exp '%v'", title, result.MaxWidth, expected.MaxWidth)
+	}
+	if result.Overflow != expected.Overflow {
+		t.Fatalf("[%s] Overflow got '%v' exp '%v'", title, result.Overflow, expected.Overflow)
+	}
+	testWords(t, title+".words", result.Words, expected.Words)
 }

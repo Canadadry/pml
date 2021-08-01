@@ -59,34 +59,51 @@ func cleanText(in string) string {
 
 type Line struct {
 	Words          []Word
-	WordSpacing    float64
 	StartingOffset float64
 	MaxWidth       float64
-	LineWasBreaked bool
+	Overflow       bool
+}
+
+type lines struct {
+	l         []Line
+	w         float64
+	lastLineX float64
+}
+
+func newLines(maxWidth float64) lines {
+	return lines{
+		l: []Line{{MaxWidth: maxWidth}},
+		w: maxWidth,
+	}
+}
+
+func (l *lines) AddWordInLastLine(w Word, sizer TextSizer) {
+	w.Width = sizer.GetStringWidth(w.Text, w.FontName, w.FontSize)
+	spacing := sizer.GetStringWidth(" ", w.FontName, w.FontSize)
+
+	if l.lastLineX+w.Width > l.w {
+		l.l[len(l.l)-1].Overflow = true
+		l.BreakLine()
+	}
+
+	l.lastLineX += w.Width + spacing
+
+	l.l[len(l.l)-1].Words = append(l.l[len(l.l)-1].Words, w)
+}
+
+func (l *lines) BreakLine() {
+	l.lastLineX = 0
+	l.l = append(l.l, Line{MaxWidth: l.w})
 }
 
 func wordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
-	x := 0.0
-	lines := []Line{}
-	line := Line{}
+	l := newLines(maxWidth)
 	for _, w := range words {
-		if (x+w.Width) > maxWidth || w.Text == "\n" {
-			if x == 0 && w.Text != "\n" {
-				continue
-			}
-			line.LineWasBreaked = w.Text == "\n"
-			lines = append(lines, line)
-			line = Line{MaxWidth: maxWidth}
-			x = 0
+		if w.Text == "\n" {
+			l.BreakLine()
+			continue
 		}
-		x = x + w.Width + sizer.GetStringWidth(" ", w.FontName, w.FontSize)
-		if w.Text != "\n" {
-			line.Words = append(line.Words, w)
-		}
+		l.AddWordInLastLine(w, sizer)
 	}
-	if len(line.Words) > 0 {
-		line.LineWasBreaked = true
-		lines = append(lines, line)
-	}
-	return lines
+	return l.l
 }
