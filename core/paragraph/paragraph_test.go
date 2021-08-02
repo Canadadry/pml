@@ -81,18 +81,21 @@ func TestBlocsToWords(t *testing.T) {
 		}
 
 		result := blocsToWords(b)
-		testWords(t, title, result, tt.out)
+		testWords(t, title, result, tt.out, 0)
 	}
 }
 
-func testWords(t *testing.T, title string, result, expected []Word) {
+func testWords(t *testing.T, title string, result, expected []Word, spacing float64) {
 	if len(expected) != len(result) {
 		t.Fatalf("[%s] len got %d exp %d", title, len(result), len(expected))
 	}
 
 	for j := range expected {
 		if expected[j].Text != result[j].Text {
-			t.Fatalf("[%s:%d] got '%s' exp '%s'", title, j, result[j].Text, expected[j].Text)
+			t.Fatalf("[%s:%d] text got '%s' exp '%s'", title, j, result[j].Text, expected[j].Text)
+		}
+		if spacing != result[j].Spacing {
+			t.Fatalf("[%s:%d] spacing got '%v' exp '%v'", title, j, result[j].Spacing, spacing)
 		}
 	}
 }
@@ -123,9 +126,9 @@ func TestFormat(t *testing.T) {
 						Word{Text: "amet,", Width: 5},
 						Word{Text: "consectetur", Width: 11},
 					},
-					StartingOffset: 0,
-					MaxWidth:       50,
-					Overflow:       false,
+					MaxWidth:  50,
+					Overflow:  false,
+					SpaceLeft: 11,
 				},
 			},
 		},
@@ -140,18 +143,18 @@ func TestFormat(t *testing.T) {
 						Word{Text: "dolor", Width: 5},
 						Word{Text: "sit", Width: 3},
 					},
-					StartingOffset: 0,
-					MaxWidth:       50,
-					Overflow:       false,
+					MaxWidth:  50,
+					Overflow:  false,
+					SpaceLeft: 29,
 				},
 				{
 					Words: []Word{
 						Word{Text: "amet,", Width: 5},
 						Word{Text: "consectetur", Width: 11},
 					},
-					StartingOffset: 0,
-					MaxWidth:       50,
-					Overflow:       false,
+					MaxWidth:  50,
+					Overflow:  false,
+					SpaceLeft: 33,
 				},
 			},
 		},
@@ -169,9 +172,9 @@ func TestFormat(t *testing.T) {
 						Word{Text: "consectetur", Width: 11},
 						Word{Text: "adipiscing", Width: 10},
 					},
-					StartingOffset: 0,
-					MaxWidth:       50,
-					Overflow:       true,
+					MaxWidth:  50,
+					Overflow:  true,
+					SpaceLeft: 0,
 				},
 				{
 					Words: []Word{
@@ -182,9 +185,9 @@ func TestFormat(t *testing.T) {
 						Word{Text: "porttitor.", Width: 9},
 						Word{Text: "Donec", Width: 5},
 					},
-					StartingOffset: 0,
-					MaxWidth:       50,
-					Overflow:       false,
+					MaxWidth:  50,
+					Overflow:  false,
+					SpaceLeft: 3,
 				},
 			},
 		},
@@ -205,14 +208,14 @@ func TestFormat(t *testing.T) {
 }
 
 func testLine(t *testing.T, title string, result, expected Line) {
-	if result.StartingOffset != expected.StartingOffset {
-		t.Fatalf("[%s] StartingOffset got '%v' exp '%v'", title, result.StartingOffset, expected.StartingOffset)
-	}
 	if result.MaxWidth != expected.MaxWidth {
 		t.Fatalf("[%s] MaxWidth got '%v' exp '%v'", title, result.MaxWidth, expected.MaxWidth)
 	}
 	if result.Overflow != expected.Overflow {
 		t.Fatalf("[%s] Overflow got '%v' exp '%v'", title, result.Overflow, expected.Overflow)
 	}
-	testWords(t, title+".words", result.Words, expected.Words)
+	if result.SpaceLeft != expected.SpaceLeft {
+		t.Fatalf("[%s] SpaceLeft got '%v' exp '%v'", title, result.SpaceLeft, expected.SpaceLeft)
+	}
+	testWords(t, title+".words", result.Words, expected.Words, 1)
 }

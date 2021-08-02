@@ -23,6 +23,7 @@ type Block struct {
 type Word struct {
 	Text     string
 	Width    float64
+	Spacing  float64
 	FontSize float64
 	FontName string
 	Color    color.RGBA
@@ -58,10 +59,10 @@ func cleanText(in string) string {
 }
 
 type Line struct {
-	Words          []Word
-	StartingOffset float64
-	MaxWidth       float64
-	Overflow       bool
+	Words     []Word
+	SpaceLeft float64
+	MaxWidth  float64
+	Overflow  bool
 }
 
 type lines struct {
@@ -79,19 +80,26 @@ func newLines(maxWidth float64) lines {
 
 func (l *lines) AddWordInLastLine(w Word, sizer TextSizer) {
 	w.Width = sizer.GetStringWidth(w.Text, w.FontName, w.FontSize)
-	spacing := sizer.GetStringWidth(" ", w.FontName, w.FontSize)
+	w.Spacing = sizer.GetStringWidth(" ", w.FontName, w.FontSize)
 
 	if l.lastLineX+w.Width > l.w {
 		l.l[len(l.l)-1].Overflow = true
 		l.BreakLine()
 	}
 
-	l.lastLineX += w.Width + spacing
+	l.lastLineX += w.Width + w.Spacing
 
 	l.l[len(l.l)-1].Words = append(l.l[len(l.l)-1].Words, w)
 }
 
+func (l *lines) ComputeLastLineSize() {
+	lastLineIndex := len(l.l) - 1
+	lastWordIndex := len(l.l[lastLineIndex].Words) - 1
+	l.l[lastLineIndex].SpaceLeft = l.w - l.lastLineX + l.l[lastLineIndex].Words[lastWordIndex].Spacing
+}
+
 func (l *lines) BreakLine() {
+	l.ComputeLastLineSize()
 	l.lastLineX = 0
 	l.l = append(l.l, Line{MaxWidth: l.w})
 }
@@ -105,5 +113,6 @@ func wordsToLines(words []Word, maxWidth float64, sizer TextSizer) []Line {
 		}
 		l.AddWordInLastLine(w, sizer)
 	}
+	l.ComputeLastLineSize()
 	return l.l
 }
