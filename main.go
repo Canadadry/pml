@@ -28,7 +28,11 @@ func run() error {
 
 		err = doc(c)
 		if err != nil {
-			return fmt.Errorf("%s : %w", name, err)
+			return fmt.Errorf("while rendering %s : %w", name, err)
+		}
+		err = c.Drawer.Output(fOut)
+		if err != nil {
+			return fmt.Errorf("while saving %s : %w", name, err)
 		}
 	}
 	return nil
